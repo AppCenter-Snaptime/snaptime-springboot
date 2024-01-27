@@ -25,6 +25,9 @@ jobs:
         echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application.yml
         find src
 
+    - name: Run chmod to make gradlew executable
+      run: chmod +x ./gradlew
+
     - name: Gradle build
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
