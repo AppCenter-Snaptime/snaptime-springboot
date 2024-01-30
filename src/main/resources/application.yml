@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: snaptime
-    url: jdbc:mysql://na2ru2.me:6306/snaptime
-    password: snaptime1@
+    username:
+    url: jdbc:mysql://
+    password:
   jpa:
     hibernate:
       ddl-auto: none
