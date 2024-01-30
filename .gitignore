@@ -16,7 +16,8 @@ build/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
-
+**/application.yml
+**/application-local.properties
 ### IntelliJ IDEA ###
 .idea
 *.iws
