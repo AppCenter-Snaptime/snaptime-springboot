@@ -1,13 +1,11 @@
-package me.snaptime.Social.data.domain;
+package me.snaptime.social.data.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.snaptime.Social.common.FriendStatus;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import me.snaptime.social.common.FriendStatus;
 
 @Entity
 @Getter

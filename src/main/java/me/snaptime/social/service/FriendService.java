@@ -1,7 +1,7 @@
-package me.snaptime.Social.service;
+package me.snaptime.social.service;
 
 import lombok.RequiredArgsConstructor;
-import me.snaptime.Social.data.repository.FriendRepository;
+import me.snaptime.social.data.repository.FriendRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

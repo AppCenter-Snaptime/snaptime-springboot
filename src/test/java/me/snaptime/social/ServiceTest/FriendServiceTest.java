@@ -1,9 +1,8 @@
-package me.snaptime.Social.ServiceTest;
+package me.snaptime.social.ServiceTest;
 
-import me.snaptime.Social.common.FriendStatus;
-import me.snaptime.Social.data.domain.Friend;
-import me.snaptime.Social.data.repository.FriendRepository;
-import me.snaptime.Social.service.FriendService;
+import me.snaptime.social.data.domain.Friend;
+import me.snaptime.social.data.repository.FriendRepository;
+import me.snaptime.social.service.FriendService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,10 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class FriendServiceTest {
