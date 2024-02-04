@@ -10,7 +10,6 @@ import me.snaptime.common.domain.BaseTimeEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Snap extends BaseTimeEntity {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
