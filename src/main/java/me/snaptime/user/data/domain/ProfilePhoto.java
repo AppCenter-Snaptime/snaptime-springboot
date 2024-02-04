@@ -15,7 +15,7 @@ public class ProfilePhoto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "profilePhoto_id")
-    private Long profilePhotoId;
+    private Long id;
 
     @Column(name = "profilePhoto_name",nullable = false)
     private String profilePhotoName;
@@ -28,9 +28,9 @@ public class ProfilePhoto {
     private User user;
 
     @Builder
-    protected ProfilePhoto(Long profilePhotoId,String profilePhotoName,String profilePhotoPath)
+    protected ProfilePhoto(Long id,String profilePhotoName,String profilePhotoPath)
     {
-        this.profilePhotoId = profilePhotoId;
+        this.id = id;
         this.profilePhotoName = profilePhotoName;
         this.profilePhotoPath = profilePhotoPath;
     }
