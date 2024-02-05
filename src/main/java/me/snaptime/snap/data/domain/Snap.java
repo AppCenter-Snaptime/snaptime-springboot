@@ -24,6 +24,10 @@ public class Snap extends BaseTimeEntity {
     @JoinColumn(name = "album_id")
     private Album album;
 
+
+/*    @OneToMany(mappedBy = "snap")
+    private List<Reply> replyList = new ArrayList<>();
+
     /*@ManyToOne
     @JoinColumn(name = "user_id")
     private User user;*/
