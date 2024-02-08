@@ -1,7 +1,6 @@
 package me.snaptime.user.data.domain;
 
 
-import io.micrometer.core.annotation.Counted;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
