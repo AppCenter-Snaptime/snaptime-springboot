@@ -1,5 +1,7 @@
 package me.snaptime.social.serviceTest;
 
+import me.snaptime.common.exception.customs.CustomException;
+import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.social.common.FriendStatus;
 import me.snaptime.social.data.domain.Friend;
 import me.snaptime.social.data.repository.FriendRepository;
@@ -71,8 +73,6 @@ public class FriendServiceTest {
         //given
         User fromUser = spy(user);
         User toUser = spy(user);
-        given(fromUser.getId()).willReturn(1l);
-        given(toUser.getId()).willReturn(2l);
         given(userRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(fromUser));
         given(userRepository.findUserByName(any(String.class))).willReturn(Optional.empty());
 
@@ -97,8 +97,6 @@ public class FriendServiceTest {
         User fromUser = spy(user);
         User toUser = spy(user);
         Friend friend = spy(this.friend);
-        given(fromUser.getId()).willReturn(1l);
-        given(toUser.getId()).willReturn(2l);
         given(friend.getFriendStatus()).willReturn(FriendStatus.WATING);
         given(userRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(fromUser));
         given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
@@ -108,9 +106,9 @@ public class FriendServiceTest {
         try{
             friendService.sendFriendReq(1l,"testName");
             fail("예외가 발생하지 않음");
-        }catch (Exception ex){
+        }catch (CustomException ex){
             //then
-            // assertThat(ex.getExceptionCode()).isEqualTo(예외코드);
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.WATING_FRIEND_REQ);
             verify(userRepository,times(1)).findUserByName("testName");
             verify(userRepository,times(1)).findById(1l);
             verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
@@ -126,9 +124,7 @@ public class FriendServiceTest {
         User fromUser = spy(user);
         User toUser = spy(user);
         Friend friend = spy(this.friend);
-        given(fromUser.getId()).willReturn(1l);
-        given(toUser.getId()).willReturn(2l);
-        given(friend.getFriendStatus()).willReturn(FriendStatus.FRIEND);
+        given(friend.getFriendStatus()).willReturn(FriendStatus.REJECTED);
         given(userRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(fromUser));
         given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
         given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friend));
@@ -137,9 +133,9 @@ public class FriendServiceTest {
         try{
             friendService.sendFriendReq(1l,"testName");
             fail("예외가 발생하지 않음");
-        }catch (Exception ex){
+        }catch (CustomException ex){
             //then
-            // assertThat(ex.getExceptionCode()).isEqualTo(예외코드);
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.REJECT_FRIEND_REQ);
             verify(userRepository,times(1)).findUserByName("testName");
             verify(userRepository,times(1)).findById(1l);
             verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
@@ -154,8 +150,6 @@ public class FriendServiceTest {
         User fromUser = spy(user);
         User toUser = spy(user);
         Friend friend = spy(this.friend);
-        given(fromUser.getId()).willReturn(1l);
-        given(toUser.getId()).willReturn(2l);
         given(friend.getFriendStatus()).willReturn(FriendStatus.FRIEND);
         given(userRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(fromUser));
         given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
@@ -165,9 +159,9 @@ public class FriendServiceTest {
         try{
             friendService.sendFriendReq(1l,"testName");
             fail("예외가 발생하지 않음");
-        }catch (Exception ex){
+        }catch (CustomException ex){
             //then
-            // assertThat(ex.getExceptionCode()).isEqualTo(예외코드);
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.ALREADY_FRIEND);
             verify(userRepository,times(1)).findUserByName("testName");
             verify(userRepository,times(1)).findById(1l);
             verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
@@ -192,9 +186,9 @@ public class FriendServiceTest {
         try{
             friendService.sendFriendReq(1l,"testName");
             fail("예외가 발생하지 않음");
-        }catch (Exception ex){
+        }catch (CustomException ex){
             //then
-            // assertThat(ex.getExceptionCode()).isEqualTo(예외코드);
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.SELF_FRIEND_REQ);
             verify(userRepository,times(1)).findUserByName("testName");
             verify(userRepository,times(1)).findById(1l);
             verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
