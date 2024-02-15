@@ -1,11 +1,12 @@
-package me.snaptime.Social.data.domain;
+package me.snaptime.social.data.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.snaptime.Social.common.FriendStatus;
+import me.snaptime.snap.data.domain.Snap;
+import me.snaptime.user.data.domain.User;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -15,24 +16,23 @@ import org.hibernate.annotations.OnDeleteAction;
 public class Reply {
 
     @Id
-    @Column(name = "reply_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long replyId;
+    private Long id;
 
     @Column(nullable = false)
     private String content;
 
-//    @ManyToOne
-//    @JoinColumn(name = "snap_id",nullable = false)
-//    private Snap snap;
+    @ManyToOne
+    @JoinColumn(name = "snap_id",nullable = false)
+    private Snap snap;
 
-//    @ManyToOne
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    @JoinColumn(name = "user_id",nullable = false)
-//    private User user;
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "user_id",nullable = false)
+    private User user;
 
     @Builder
-    public Reply(String content/*, Snap snap, User user*/){
+    public Reply(String content, Snap snap, User user){
         this.content=content;
         //this.snap=snap;
         //this.user=user;

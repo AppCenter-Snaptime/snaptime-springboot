@@ -1,8 +1,11 @@
-package me.snaptime.Social.data.repository;
+package me.snaptime.social.data.repository;
 
-import me.snaptime.Social.data.domain.Friend;
+import me.snaptime.social.data.domain.Friend;
+import me.snaptime.user.data.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface FriendRepository extends JpaRepository<Friend,Long> {
+import java.util.Optional;
 
+public interface FriendRepository extends JpaRepository<Friend,Long> {
+    Optional<Friend> findByToUserAndFromUser(User toUser, User fromUser);
 }
