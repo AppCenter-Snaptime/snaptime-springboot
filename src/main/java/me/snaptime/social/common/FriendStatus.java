@@ -1,4 +1,4 @@
-package me.snaptime.Social.common;
+package me.snaptime.social.common;
 
 public enum FriendStatus {
     FRIEND,

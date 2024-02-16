@@ -1,7 +1,10 @@
 package me.snaptime.snap.data.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import me.snaptime.common.domain.BaseTimeEntity;
 
 @Entity
