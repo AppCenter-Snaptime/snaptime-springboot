@@ -34,7 +34,7 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_birthDay",nullable = false)
     private String birthDay;
 
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private ProfilePhoto profilePhoto;
 
     @Builder
@@ -51,7 +51,5 @@ public class User extends BaseTimeEntity {
     public void updateUserLoginId(String loginId) { this.loginId = loginId;}
     public void updateUserEmail(String email) { this.email = email;}
     public void updateUserBirthDay(String birthDay) { this.birthDay = birthDay;}
-
-
 
 }
