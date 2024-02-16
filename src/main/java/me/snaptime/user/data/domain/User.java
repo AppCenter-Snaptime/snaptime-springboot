@@ -22,8 +22,8 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_name",nullable = false)
     private String name;
 
-    @Column(name = "user_logninId",nullable = false, unique = true)
-    private String longinId;
+    @Column(name = "user_loginId",nullable = false, unique = true)
+    private String loginId;
 
     @Column(name = "user_password",nullable = false)
     private String password;
@@ -41,11 +41,17 @@ public class User extends BaseTimeEntity {
     protected User(Long Id, String name,String loginId,String password, String email, String birthDay){
         this.Id = Id;
         this.name = name;
-        this.longinId = loginId;
+        this.loginId = loginId;
         this.password =password;
         this.email = email;
         this.birthDay = birthDay;
     }
+
+    public void updateUserName(String name) { this.name = name;}
+    public void updateUserLoginId(String loginId) { this.loginId = loginId;}
+    public void updateUserEmail(String email) { this.email = email;}
+    public void updateUserBirthDay(String birthDay) { this.birthDay = birthDay;}
+
 
 
 }
