@@ -2,7 +2,11 @@ package me.snaptime.snap.data.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import me.snaptime.Social.data.domain.Reply;
 import me.snaptime.common.domain.BaseTimeEntity;
+import me.snaptime.user.data.domain.User;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,19 +29,21 @@ public class Snap extends BaseTimeEntity {
     private Album album;
 
 
-/*    @OneToMany(mappedBy = "snap")
-    private List<Reply> replyList = new ArrayList<>();
+//    @OneToMany(mappedBy = "snap")
+//    private List<Reply> replyList = new ArrayList<>();
 
-    /*@ManyToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;*/
+    private User user;
 
     @Builder
-    protected Snap(Long id, String oneLineJournal, Photo photo, Album album) {
+    protected Snap(Long id, String oneLineJournal, Photo photo, Album album, List<Reply> replyList, User user) {
         this.Id = id;
         this.oneLineJournal = oneLineJournal;
         this.photo = photo;
         this.album = album;
+//        this.replyList = replyList;
+        this.user = user;
     }
 
 

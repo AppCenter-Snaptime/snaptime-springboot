@@ -17,7 +17,7 @@ public class Photo extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String originalFileName;
+    private String fileName;
 
     @Column(nullable = false)
     private String filePath;
@@ -26,9 +26,9 @@ public class Photo extends BaseTimeEntity {
     private String fileType;
 
     @Builder
-    protected Photo(Long id, String originalFileName, String filePath, String fileType) {
+    protected Photo(Long id, String fileName, String filePath, String fileType) {
         this.id = id;
-        this.originalFileName = originalFileName;
+        this.fileName = fileName;
         this.filePath = filePath;
         this.fileType = fileType;
     }
