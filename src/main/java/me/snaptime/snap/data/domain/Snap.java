@@ -3,6 +3,10 @@ package me.snaptime.snap.data.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import me.snaptime.Social.data.domain.Reply;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import me.snaptime.common.domain.BaseTimeEntity;
 import me.snaptime.user.data.domain.User;
 
