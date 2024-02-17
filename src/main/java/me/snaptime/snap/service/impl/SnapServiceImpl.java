@@ -1,10 +1,11 @@
 package me.snaptime.snap.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import me.snaptime.snap.data.domain.Album;
 import me.snaptime.snap.data.domain.Photo;
 import me.snaptime.snap.data.domain.Snap;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
+import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.data.repository.AlbumRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.PhotoService;
@@ -22,20 +23,20 @@ public class SnapServiceImpl implements SnapService {
 
     @Override
     public void createSnap(CreateSnapReqDto createSnapReqDto, String userUid) {
-        // 이미지를 먼저 영속화 시킨다
-       Photo savedPhoto = photoService.uploadImageToFileSystem(createSnapReqDto.multipartFile());
-       // 앨범정보가 없다면 null
-        Album foundAlbum = null;
-        if (createSnapReqDto.album() != null) {
-            foundAlbum = albumRepository.findByName(createSnapReqDto.album());
-        }
+       Photo savedPhoto = photoService.uploadPhotoToFileSystem(createSnapReqDto.multipartFile());
        snapRepository.save(
                Snap.builder()
                        .oneLineJournal(createSnapReqDto.oneLineJournal())
                        .photo(savedPhoto)
                        .user(userRepository.findByLonginId(userUid))
-                       .album(foundAlbum)
+                       .album(albumRepository.findByName(createSnapReqDto.album()))
                        .build()
        );
+    }
+
+    @Override
+    public FindSnapResDto findSnap(Long id) {
+        Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("id가 존재하지 않습니다."));
+        return FindSnapResDto.entityToResDto(foundSnap);
     }
 }

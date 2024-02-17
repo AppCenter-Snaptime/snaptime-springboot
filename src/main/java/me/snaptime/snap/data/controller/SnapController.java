@@ -14,7 +14,7 @@ public class SnapController {
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public void createSnap(final @ModelAttribute CreateSnapReqDto createSnapReqDto) {
-        snapService.createSnap(createSnapReqDto, "test");
+        snapService.createSnap(createSnapReqDto, null);
     }
 
 }

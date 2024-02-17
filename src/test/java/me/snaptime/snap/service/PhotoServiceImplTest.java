@@ -3,6 +3,7 @@ package me.snaptime.snap.service;
 import me.snaptime.snap.data.domain.Photo;
 import me.snaptime.snap.data.repository.PhotoRepository;
 import me.snaptime.snap.service.impl.PhotoServiceImpl;
+import me.snaptime.snap.util.FileNameGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,9 +17,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,27 +39,33 @@ public class PhotoServiceImplTest {
     @Test
     public void uploadPhotoTest() throws IOException {
         // given
-        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMddHHmmssSSS"));
-
         MultipartFile imageFile = new MockMultipartFile(
                 "image",
                 "image",
                 "image/jpeg",
                 resource.getInputStream().readAllBytes()
         );
-        String filePath = FOLDER_PATH + imageFile.getOriginalFilename() + currentTime;
 
-        Photo savedPhoto = Photo.builder()
+        String fileName = FileNameGenerator.generatorName(imageFile.getOriginalFilename());
+        String filePath = FOLDER_PATH + fileName;
+
+        Photo expectedPhoto = Photo.builder()
                 .id(1L)
                 .fileName(imageFile.getOriginalFilename())
                 .fileType(imageFile.getContentType())
                 .filePath(filePath)
                 .build();
 
-        given(photoRepository.save(Mockito.any(Photo.class))).willReturn(savedPhoto);
+        given(photoRepository.save(Mockito.any(Photo.class))).willReturn(expectedPhoto);
 
         // when
-        photoServiceImpl.uploadImageToFileSystem(imageFile);
+        Photo result = photoServiceImpl.uploadPhotoToFileSystem(imageFile);
+
+        // then
+        assertEquals(expectedPhoto.getFileName(), result.getFileName());
+        assertEquals(expectedPhoto.getFilePath(), result.getFilePath());
+        assertEquals(expectedPhoto.getId(), result.getId());
+        assertEquals(expectedPhoto.getFileType(), result.getFileType());
 
     }
 }
