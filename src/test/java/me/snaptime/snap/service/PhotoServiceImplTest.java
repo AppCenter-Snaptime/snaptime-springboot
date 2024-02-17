@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles
 public class PhotoServiceImplTest {
     @Mock
     private PhotoRepository photoRepository;
@@ -41,7 +43,7 @@ public class PhotoServiceImplTest {
         // given
         MultipartFile imageFile = new MockMultipartFile(
                 "image",
-                "image",
+        "image",
                 "image/jpeg",
                 resource.getInputStream().readAllBytes()
         );
@@ -68,4 +70,23 @@ public class PhotoServiceImplTest {
         assertEquals(expectedPhoto.getFileType(), result.getFileType());
 
     }
+
+//    @DisplayName("사진 다운로드 테스트")
+//    @Test
+//    public void downloadPhotoTest() throws IOException {
+//        // given
+//        Long givenId = 1L;
+//        byte[] expectedPhotoByte = {};
+//        Photo expectedPhoto = Photo.builder()
+//                .id(1L)
+//                .fileName("image")
+//                .filePath("C:\\Image\\0217170430779asdasdasdsdasd.png")
+//                .fileType(null)
+//                .build();
+//        given(photoRepository.findById(givenId)).willReturn(Optional.ofNullable(expectedPhoto));
+//        // when
+//        byte[] result = photoServiceImpl.downloadPhotoFromFileSystem(givenId);
+//        // then
+//        assertEquals(expectedPhotoByte, result);
+//    }
 }
