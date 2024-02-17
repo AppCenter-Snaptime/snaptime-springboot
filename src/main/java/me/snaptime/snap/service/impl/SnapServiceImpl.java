@@ -28,7 +28,7 @@ public class SnapServiceImpl implements SnapService {
                Snap.builder()
                        .oneLineJournal(createSnapReqDto.oneLineJournal())
                        .photo(savedPhoto)
-                       .user(userRepository.findByLonginId(userUid))
+                       .user(userRepository.findByLoginId(userUid))
                        .album(albumRepository.findByName(createSnapReqDto.album()))
                        .build()
        );

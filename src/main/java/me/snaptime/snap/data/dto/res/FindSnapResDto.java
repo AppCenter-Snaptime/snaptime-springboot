@@ -18,7 +18,7 @@ public record FindSnapResDto(
                 albumName = entity.getAlbum().getName();
         }
         if (entity.getUser() != null) {
-            userUid = entity.getUser().getLonginId();
+            userUid = entity.getUser().getLoginId();
         }
         return FindSnapResDto.builder()
                 .id(entity.getId())

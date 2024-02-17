@@ -1,15 +1,15 @@
 package me.snaptime.snap.data.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
-import me.snaptime.Social.data.domain.Reply;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.snaptime.common.domain.BaseTimeEntity;
+import me.snaptime.social.data.domain.Reply;
 import me.snaptime.user.data.domain.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,8 +33,8 @@ public class Snap extends BaseTimeEntity {
     private Album album;
 
 
-//    @OneToMany(mappedBy = "snap")
-//    private List<Reply> replyList = new ArrayList<>();
+    @OneToMany(mappedBy = "snap")
+    private List<Reply> replyList = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -46,7 +46,7 @@ public class Snap extends BaseTimeEntity {
         this.oneLineJournal = oneLineJournal;
         this.photo = photo;
         this.album = album;
-//        this.replyList = replyList;
+        this.replyList = replyList;
         this.user = user;
     }
 

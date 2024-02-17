@@ -74,7 +74,7 @@ public class SnapServiceImplTest {
                 .fileType(givenMultipartFile.getContentType())
                 .build();
         given(photoService.uploadPhotoToFileSystem(givenMultipartFile)).willReturn(expectPhoto);
-        given(userRepository.findByLonginId(givenUid)).willReturn(null);
+        given(userRepository.findByLoginId(givenUid)).willReturn(null);
         given(albumRepository.findByName(givenDto.album())).willReturn(null);
         given(snapRepository.save(Mockito.any(Snap.class))).willReturn(
                 Snap.builder()
