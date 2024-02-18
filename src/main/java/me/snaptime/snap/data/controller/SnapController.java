@@ -30,7 +30,7 @@ public class SnapController {
         ));
     }
 
-    @Operation(summary = "id로 Snap 찾기", description = "찾을 Snap의 id를 보내주세요")
+    @Operation(summary = "Snap 찾기", description = "찾을 Snap의 id를 보내주세요")
     @GetMapping
     public ResponseEntity<CommonResponseDto<FindSnapResDto>> findSnap(final Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(
