@@ -3,7 +3,7 @@ package me.snaptime.social.serviceTest;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.social.common.FriendStatus;
-import me.snaptime.social.data.domain.Friend;
+import me.snaptime.social.data.domain.FriendShip;
 import me.snaptime.social.data.repository.FriendRepository;
 import me.snaptime.social.service.FriendService;
 import me.snaptime.user.data.domain.User;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.util.AssertionErrors.fail;
 
 @ExtendWith(MockitoExtension.class)
-public class FriendServiceTest {
+public class FriendShipServiceTest {
 
     @InjectMocks
     private FriendService friendService;
@@ -34,12 +34,12 @@ public class FriendServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    private Friend friend;
+    private FriendShip friendShip;
     private User user;
 
     @BeforeEach
     void beforeEach(){
-        friend = Friend.builder()
+        friendShip = FriendShip.builder()
                 .build();
         user = User.builder()
                 .build();
@@ -58,13 +58,13 @@ public class FriendServiceTest {
         given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.empty());
 
         //when
-        friendService.sendFriendReq(1l,"testName");
+        friendService.sendFriendShipReq(1l,"testName");
 
         //then
         verify(userRepository,times(1)).findUserByName("testName");
         verify(userRepository,times(1)).findById(1l);
         verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
-        verify(friendRepository,times(1)).save(any(Friend.class));
+        verify(friendRepository,times(1)).save(any(FriendShip.class));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class FriendServiceTest {
 
         //when
         try{
-            friendService.sendFriendReq(1l,"testName");
+            friendService.sendFriendShipReq(1l,"testName");
             fail("예외가 발생하지 않음");
         }catch (Exception ex){
             //then
@@ -86,7 +86,7 @@ public class FriendServiceTest {
             verify(userRepository,times(1)).findUserByName("testName");
             verify(userRepository,times(1)).findById(1l);
             verify(friendRepository,times(0)).findByToUserAndFromUser(any(User.class),any(User.class));
-            verify(friendRepository,times(0)).save(any(Friend.class));
+            verify(friendRepository,times(0)).save(any(FriendShip.class));
         }
     }
 
@@ -96,15 +96,15 @@ public class FriendServiceTest {
         //given
         User fromUser = spy(user);
         User toUser = spy(user);
-        Friend friend = spy(this.friend);
-        given(friend.getFriendStatus()).willReturn(FriendStatus.WATING);
+        FriendShip friendShip = spy(this.friendShip);
+        given(friendShip.getFriendStatus()).willReturn(FriendStatus.WATING);
         given(userRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(fromUser));
         given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
-        given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friend));
+        given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friendShip));
 
         //when
         try{
-            friendService.sendFriendReq(1l,"testName");
+            friendService.sendFriendShipReq(1l,"testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -112,7 +112,7 @@ public class FriendServiceTest {
             verify(userRepository,times(1)).findUserByName("testName");
             verify(userRepository,times(1)).findById(1l);
             verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
-            verify(friendRepository,times(0)).save(any(Friend.class));
+            verify(friendRepository,times(0)).save(any(FriendShip.class));
         }
     }
 
@@ -123,15 +123,15 @@ public class FriendServiceTest {
         //given
         User fromUser = spy(user);
         User toUser = spy(user);
-        Friend friend = spy(this.friend);
-        given(friend.getFriendStatus()).willReturn(FriendStatus.REJECTED);
+        FriendShip friendShip = spy(this.friendShip);
+        given(friendShip.getFriendStatus()).willReturn(FriendStatus.REJECTED);
         given(userRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(fromUser));
         given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
-        given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friend));
+        given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friendShip));
 
         //when
         try{
-            friendService.sendFriendReq(1l,"testName");
+            friendService.sendFriendShipReq(1l,"testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -139,7 +139,7 @@ public class FriendServiceTest {
             verify(userRepository,times(1)).findUserByName("testName");
             verify(userRepository,times(1)).findById(1l);
             verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
-            verify(friendRepository,times(0)).save(any(Friend.class));
+            verify(friendRepository,times(0)).save(any(FriendShip.class));
         }
     }
 
@@ -149,15 +149,15 @@ public class FriendServiceTest {
         //given
         User fromUser = spy(user);
         User toUser = spy(user);
-        Friend friend = spy(this.friend);
-        given(friend.getFriendStatus()).willReturn(FriendStatus.FRIEND);
+        FriendShip friendShip = spy(this.friendShip);
+        given(friendShip.getFriendStatus()).willReturn(FriendStatus.FRIEND);
         given(userRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(fromUser));
         given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
-        given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friend));
+        given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friendShip));
 
         //when
         try{
-            friendService.sendFriendReq(1l,"testName");
+            friendService.sendFriendShipReq(1l,"testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -165,7 +165,7 @@ public class FriendServiceTest {
             verify(userRepository,times(1)).findUserByName("testName");
             verify(userRepository,times(1)).findById(1l);
             verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
-            verify(friendRepository,times(0)).save(any(Friend.class));
+            verify(friendRepository,times(0)).save(any(FriendShip.class));
         }
 
     }
@@ -184,7 +184,7 @@ public class FriendServiceTest {
 
         //when
         try{
-            friendService.sendFriendReq(1l,"testName");
+            friendService.sendFriendShipReq(1l,"testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -192,7 +192,7 @@ public class FriendServiceTest {
             verify(userRepository,times(1)).findUserByName("testName");
             verify(userRepository,times(1)).findById(1l);
             verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
-            verify(friendRepository,times(0)).save(any(Friend.class));
+            verify(friendRepository,times(0)).save(any(FriendShip.class));
         }
     }
 }

@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.snaptime.common.domain.BaseTimeEntity;
 import me.snaptime.snap.data.domain.Snap;
 import me.snaptime.user.data.domain.User;
 import org.hibernate.annotations.OnDelete;
@@ -13,7 +14,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Reply {
+public class Reply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +35,8 @@ public class Reply {
     @Builder
     public Reply(String content, Snap snap, User user){
         this.content=content;
-        //this.snap=snap;
-        //this.user=user;
+        this.snap=snap;
+        this.user=user;
     }
 
     public void updateReply(String content){
