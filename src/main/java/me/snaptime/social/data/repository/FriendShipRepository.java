@@ -7,7 +7,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.Optional;
 
-public interface FriendRepository extends JpaRepository<FriendShip,Long> ,
+public interface FriendShipRepository extends JpaRepository<FriendShip,Long> ,
         QuerydslPredicateExecutor<FriendShip> {
     Optional<FriendShip> findByToUserAndFromUser(User toUser, User fromUser);
 }

@@ -10,7 +10,8 @@ public enum ExceptionCode {
     WATING_FRIEND_REQ(HttpStatus.BAD_REQUEST,"이미 친구요청을 보냈습니다."),
     REJECT_FRIEND_REQ(HttpStatus.BAD_REQUEST,"팔로우요청이 거절되었습니다."),
     ALREADY_FOLLOW(HttpStatus.BAD_REQUEST,"이미 팔로우관계입니다."),
-    FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 친구입니다.");
+    FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 친구입니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 유저입니다.");
 
     private final HttpStatus status;
     private final String message;
