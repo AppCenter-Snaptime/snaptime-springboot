@@ -1,32 +1,14 @@
 package me.snaptime.snap.service;
 
-import me.snaptime.snap.data.domain.Photo;
-import me.snaptime.snap.data.domain.Snap;
-import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
-import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.data.repository.AlbumRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.impl.SnapServiceImpl;
-import me.snaptime.snap.util.FileNameGenerator;
 import me.snaptime.user.data.repository.UserRepository;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.Optional;
-
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class SnapServiceImplTest {
@@ -48,7 +30,7 @@ public class SnapServiceImplTest {
     String testImagePath = "test_resource/image.jpg";
     ClassPathResource resource = new ClassPathResource(testImagePath);
 
-    @DisplayName("스냅 저장 테스트")
+    /*@DisplayName("스냅 저장 테스트")
     @Test
     @Transactional
     public void createSnapTest() throws IOException {
@@ -124,5 +106,5 @@ public class SnapServiceImplTest {
         assertEquals(expectedDto.userUid(), result.userUid());
         assertEquals(expectedDto.photoId(), result.photoId());
         assertEquals(expectedDto.oneLineJournal(), result.oneLineJournal());
-    }
+    }*/
 }

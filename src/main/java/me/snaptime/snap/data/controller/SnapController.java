@@ -22,7 +22,7 @@ public class SnapController {
     @Operation(summary = "Snap 생성", description = "Empty Value를 보내지마세요")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CommonResponseDto<?>> createSnap(final @ModelAttribute CreateSnapReqDto createSnapReqDto) {
-        snapService.createSnap(createSnapReqDto, null);
+        snapService.createSnap(createSnapReqDto, "test2");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CommonResponseDto<>(
                 "스냅이 정상적으로 저장되었습니다.",

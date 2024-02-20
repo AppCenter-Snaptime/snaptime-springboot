@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,9 +21,12 @@ public class PhotoController {
 
     @Operation(summary = "Photo 조회", description = "조회할 Photo의 id를 입력해주세요")
     @GetMapping
-    public ResponseEntity<byte[]> findPhoto(final Long id) {
+    public ResponseEntity<byte[]> findPhoto(
+            final @RequestParam("id") Long id,
+            final @RequestParam("secretKey") String secretKey
+    ) {
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(
-                photoService.downloadPhotoFromFileSystem(id)
+                photoService.downloadPhotoFromFileSystem(id, secretKey)
         );
     }
 }
