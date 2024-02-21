@@ -1,6 +1,7 @@
 package me.snaptime.snap.data.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.dto.CommonResponseDto;
@@ -30,7 +31,8 @@ public class SnapController {
         ));
     }
 
-    @Operation(summary = "Snap 찾기", description = "찾을 Snap의 id를 보내주세요")
+    @Operation(summary = "Snap 찾기", description = "Snap 한 개 가져오기")
+    @Parameter(name = "id", description = "찾을 Snap의 id")
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponseDto<FindSnapResDto>> findSnap(final @PathVariable("id") Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(

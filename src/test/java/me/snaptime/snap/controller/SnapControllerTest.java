@@ -87,7 +87,7 @@ public class SnapControllerTest {
         FindSnapResDto findSnapResDto = FindSnapResDto.entityToResDto(expectedSnap);
         given(snapService.findSnap(1L)).willReturn(findSnapResDto);
         // when
-        mockMvc.perform(get("/snap?id=" + 1L))
+        mockMvc.perform(get("/snap/" + 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.msg").exists())
                 .andExpect(jsonPath("$.result").exists())
