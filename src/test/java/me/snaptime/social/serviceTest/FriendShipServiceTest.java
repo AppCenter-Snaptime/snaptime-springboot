@@ -244,6 +244,64 @@ public class FriendShipServiceTest {
             verify(userRepository,times(1)).findByLoginId("loginId");
             verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
         }
+    }
 
+    @Test
+    @DisplayName("팔로우 삭제테스트 : 성공")
+    public void deleteFollowTest1(){
+        //given
+        FriendShip friendShip = spy(this.friendShip);
+        given(friendShip.getFromUser()).willReturn(user);
+        given(friendShipRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(friendShip));
+        given(userRepository.findByLoginId(any(String.class))).willReturn(user);
+
+        //when
+        friendShipService.deleteFriendShip("loginId",1l);
+
+        //then
+        verify(friendShipRepository,times(1)).delete(any(FriendShip.class));
+        verify(friendShipRepository,times(1)).findById(any(Long.class));
+        verify(userRepository,times(1)).findByLoginId(any(String.class));
+    }
+
+    @Test
+    @DisplayName("팔로우 삭제테스트 : 실패(존재하지 않는 팔로우)")
+    public void deleteFollowTest2(){
+        //given
+        given(friendShipRepository.findById(any(Long.class))).willReturn(Optional.empty());
+
+        //when
+        try{
+            friendShipService.deleteFriendShip("loginId",1l);
+        }catch (CustomException ex){
+            //then
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIENDSHIP_NOT_FOUND);
+            verify(friendShipRepository,times(0)).delete(any(FriendShip.class));
+            verify(friendShipRepository,times(1)).findById(any(Long.class));
+            verify(userRepository,times(0)).findByLoginId(any(String.class));
+        }
+    }
+
+    @Test
+    @DisplayName("팔로우 삭제테스트 : 실패(팔로우 삭제권한 없음)")
+    // 다른사람의 팔로우를 삭제하려고 할 경우 팔로우삭제권한이 없기때문에 예외를 발생시킵니다.
+    public void deleteFollowTest3(){
+        //given
+        User fromUser = this.user;
+        FriendShip friendShip = spy(this.friendShip);
+        given(friendShip.getFromUser()).willReturn(fromUser);
+        given(friendShipRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(friendShip));
+        given(userRepository.findByLoginId(any(String.class))).willReturn(user);
+
+        //when
+        try{
+            friendShipService.deleteFriendShip("loginId",1l);
+        }catch (CustomException ex){
+            //then
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.ACCESS_FAIL_FRIENDSHIP);
+            verify(friendShipRepository,times(0)).delete(any(FriendShip.class));
+            verify(friendShipRepository,times(1)).findById(any(Long.class));
+            verify(userRepository,times(1)).findByLoginId(any(String.class));
+        }
     }
 }

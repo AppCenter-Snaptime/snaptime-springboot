@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -234,5 +235,69 @@ public class FriendShipControllerTest {
                 .andDo(print());
 
         verify(friendShipService,times(1)).acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class));
+    }
+
+    @Test
+    @DisplayName("팔로우 삭제테스트 -> 성공")
+    public void deleteFollowTest1() throws Exception {
+        //given
+
+        //when, then
+        this.mockMvc.perform(delete("/friends/{friendShipId}","1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.msg").value("팔로우삭제가 완료되었습니다."))
+                .andDo(print());
+
+        verify(friendShipService,times(1)).deleteFriendShip(any(String.class),any(Long.class));
+    }
+
+    @Test
+    @DisplayName("팔로우 삭제테스트 -> 실패(PathVariable 타입예외)")
+    public void deleteFollowTest2() throws Exception {
+        //given
+
+        //when, then
+        this.mockMvc.perform(delete("/friends/{friendShipId}","string")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.msg").value("friendShipId이 Long타입이여야 합니다."))
+                .andDo(print());
+
+        verify(friendShipService,times(0)).deleteFriendShip(any(String.class),any(Long.class));
+    }
+
+    @Test
+    @DisplayName("팔로우 삭제테스트 -> 실패(존재하지 않는 팔로우)")
+    public void deleteFollowTest3() throws Exception {
+        //given
+        doThrow(new CustomException(ExceptionCode.FRIENDSHIP_NOT_FOUND))
+                .when(friendShipService).deleteFriendShip(any(String.class),any(Long.class));
+
+        //when, then
+        this.mockMvc.perform(delete("/friends/{friendShipId}","1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.msg").value("존재하지 않는 친구입니다."))
+                .andDo(print());
+
+        verify(friendShipService,times(1)).deleteFriendShip(any(String.class),any(Long.class));
+    }
+
+    @Test
+    @DisplayName("팔로우 삭제테스트 -> 실패(팔로우 삭제권한 없음)")
+    public void deleteFollowTest4() throws Exception {
+        //given
+        doThrow(new CustomException(ExceptionCode.ACCESS_FAIL_FRIENDSHIP))
+                .when(friendShipService).deleteFriendShip(any(String.class),any(Long.class));
+
+        //when, then
+        this.mockMvc.perform(delete("/friends/{friendShipId}","1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.msg").value("해당 친구에 대한 권한이 없습니다."))
+                .andDo(print());
+
+        verify(friendShipService,times(1)).deleteFriendShip(any(String.class),any(Long.class));
     }
 }

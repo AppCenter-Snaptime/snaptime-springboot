@@ -78,11 +78,16 @@ public class FriendShipService {
     // 팔로우 해제
     @Transactional
     public void deleteFriendShip(String loginId, Long friendShipId){
+        FriendShip friendShip = friendShipRepository.findById(friendShipId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.FRIENDSHIP_NOT_FOUND));
 
+        User fromUser = userRepository.findByLoginId(loginId);
 
-        // friendShip 삭제
+        if(!friendShip.getFromUser().equals(fromUser)){
+            throw new CustomException(ExceptionCode.ACCESS_FAIL_FRIENDSHIP);
+        }
 
-        //friendShip리소스가 존재하지 않으면 예외발생
+        friendShipRepository.delete(friendShip);
     }
     
     // 팔로워 or 팔로우 친구리스트 조회

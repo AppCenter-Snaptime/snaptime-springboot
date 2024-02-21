@@ -45,4 +45,15 @@ public class FriendShipController {
         String msg = friendShipService.acceptFriendShipReq(loginId, acceptFollowReqDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto(msg, null));
     }
+
+    @DeleteMapping("/{friendShipId}")
+    @Operation(summary = "팔로우하는 친구삭제", description = "팔로우요청을 수락or거절할 유저의 이름을 입력해주세요.")
+    @Parameter(name = "friendShipId", description = "팔로우 삭제할 친구관계 id", required = true, example = "1")
+    public ResponseEntity<CommonResponseDto> deleteFollow(@PathVariable final Long friendShipId) {
+
+        // 토큰에서 loginId추출하는 로직
+        String loginId = tmpLoginId;
+        friendShipService.deleteFriendShip(loginId,friendShipId);
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("팔로우삭제가 완료되었습니다.", null));
+    }
 }
