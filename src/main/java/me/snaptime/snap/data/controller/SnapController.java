@@ -31,8 +31,8 @@ public class SnapController {
     }
 
     @Operation(summary = "Snap 찾기", description = "찾을 Snap의 id를 보내주세요")
-    @GetMapping
-    public ResponseEntity<CommonResponseDto<FindSnapResDto>> findSnap(final Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<CommonResponseDto<FindSnapResDto>> findSnap(final @PathVariable("id") Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "스냅이 정상적으로 불러와졌습니다.",
