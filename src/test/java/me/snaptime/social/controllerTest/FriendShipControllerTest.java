@@ -260,7 +260,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(delete("/friends/{friendShipId}","string")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("friendShipId이 Long타입이여야 합니다."))
                 .andDo(print());
 
