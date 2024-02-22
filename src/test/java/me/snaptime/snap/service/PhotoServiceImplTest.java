@@ -3,6 +3,7 @@ package me.snaptime.snap.service;
 import me.snaptime.snap.data.domain.Photo;
 import me.snaptime.snap.data.repository.PhotoRepository;
 import me.snaptime.snap.service.impl.PhotoServiceImpl;
+import me.snaptime.snap.util.EncryptionUtil;
 import me.snaptime.snap.util.FileNameGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,16 +15,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import javax.crypto.SecretKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles
 public class PhotoServiceImplTest {
     @Mock
     private PhotoRepository photoRepository;
@@ -39,7 +38,7 @@ public class PhotoServiceImplTest {
 
     @DisplayName("사진 저장 테스트")
     @Test
-    public void uploadPhotoTest() throws IOException {
+    public void uploadPhotoTest() throws Exception {
         // given
         MultipartFile imageFile = new MockMultipartFile(
                 "image",
@@ -58,10 +57,12 @@ public class PhotoServiceImplTest {
                 .filePath(filePath)
                 .build();
 
+        SecretKey secretKey = EncryptionUtil.generateAESKey();
+
         given(photoRepository.save(Mockito.any(Photo.class))).willReturn(expectedPhoto);
 
         // when
-        Photo result = photoServiceImpl.uploadPhotoToFileSystem(imageFile);
+        Photo result = photoServiceImpl.uploadPhotoToFileSystem(imageFile, secretKey);
 
         // then
         assertEquals(expectedPhoto.getFileName(), result.getFileName());
