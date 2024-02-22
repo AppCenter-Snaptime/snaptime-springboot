@@ -1,6 +1,7 @@
 package me.snaptime.snap.data.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.dto.CommonResponseDto;
@@ -22,7 +23,7 @@ public class SnapController {
     @Operation(summary = "Snap 생성", description = "Empty Value를 보내지마세요")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CommonResponseDto<?>> createSnap(final @ModelAttribute CreateSnapReqDto createSnapReqDto) {
-        snapService.createSnap(createSnapReqDto, null);
+        snapService.createSnap(createSnapReqDto, "abcd");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CommonResponseDto<>(
                 "스냅이 정상적으로 저장되었습니다.",
@@ -30,9 +31,10 @@ public class SnapController {
         ));
     }
 
-    @Operation(summary = "id로 Snap 찾기", description = "찾을 Snap의 id를 보내주세요")
-    @GetMapping
-    public ResponseEntity<CommonResponseDto<FindSnapResDto>> findSnap(final Long id) {
+    @Operation(summary = "Snap 찾기", description = "Snap 한 개 가져오기")
+    @Parameter(name = "id", description = "찾을 Snap의 id")
+    @GetMapping("/{id}")
+    public ResponseEntity<CommonResponseDto<FindSnapResDto>> findSnap(final @PathVariable("id") Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "스냅이 정상적으로 불러와졌습니다.",

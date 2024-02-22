@@ -6,6 +6,5 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProfilePhotoRepository extends JpaRepository<ProfilePhoto,Long> ,
-        QuerydslPredicateExecutor<ProfilePhoto> {
+public interface ProfilePhotoRepository extends JpaRepository<ProfilePhoto,Long>{
 }

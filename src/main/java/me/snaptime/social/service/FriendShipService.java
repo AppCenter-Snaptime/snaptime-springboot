@@ -1,17 +1,21 @@
 package me.snaptime.social.service;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.social.common.FriendStatus;
 import me.snaptime.social.data.domain.FriendShip;
 import me.snaptime.social.data.dto.req.AcceptFollowReqDto;
+import me.snaptime.social.data.dto.res.FriendCntResDto;
 import me.snaptime.social.data.repository.FriendShipRepository;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,11 +25,13 @@ public class FriendShipService {
 
     private final FriendShipRepository friendShipRepository;
     private final UserRepository userRepository;
+    private final JPAQueryFactory jpaQueryFactory;
 
-    // 친구요청 전송(fromUser의 팔로우 +1, toUser의 팔로워 +1)
+    // 친구요청 전송(fromUser(요청자)의 팔로잉 +1, toUser의 팔로워 +1)
     @Transactional
     public void sendFriendShipReq(String loginId, String fromUserName){
-        User fromUser = userRepository.findByLoginId(loginId);
+        User fromUser = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
         User toUser = findUserByName(fromUserName);
 
         Optional<FriendShip> friendShip = friendShipRepository.findByToUserAndFromUser(toUser,fromUser);
@@ -53,10 +59,13 @@ public class FriendShipService {
                         .build());
     }
 
-    // 친구요청 수락(fromUser의 팔로워 +1, toUser의 팔로우 +1)
+    // 친구요청 수락(fromUser(수락자)의 팔로잉 +1, toUser의 팔로워 +1)
+    // 친구요청 거절(fromUser(수락자)의 팔로워 -1, toUser의 팔로잉 -1)
     @Transactional
     public String acceptFriendShipReq(String loginId, AcceptFollowReqDto acceptFollowReqDto){
-        User fromUser = userRepository.findByLoginId(loginId);
+        User fromUser = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+
         User toUser = findUserByName(acceptFollowReqDto.fromUserName());
 
         FriendShip friendShip = findFriendShipByToUserAndFromUser(toUser,fromUser);
@@ -75,13 +84,14 @@ public class FriendShipService {
         }
     }
 
-    // 팔로우 해제
+    // 친구 삭제(fromUser(삭제자)의 팔로잉 -1, toUser의 팔로워 -1)
     @Transactional
     public void deleteFriendShip(String loginId, Long friendShipId){
         FriendShip friendShip = friendShipRepository.findById(friendShipId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.FRIENDSHIP_NOT_FOUND));
 
-        User fromUser = userRepository.findByLoginId(loginId);
+        User fromUser = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
 
         if(!friendShip.getFromUser().equals(fromUser)){
             throw new CustomException(ExceptionCode.ACCESS_FAIL_FRIENDSHIP);
@@ -90,9 +100,9 @@ public class FriendShipService {
         friendShipRepository.delete(friendShip);
     }
     
-    // 팔로워 or 팔로우 친구리스트 조회
+    // 팔로워 or 팔로잉 친구리스트 조회
     public Object findFollowerList(String loginId, String searchType){
-        // user조회
+        // user 조회
 
         // 나를 팔로우 or 팔로워하는 사람의 프로필과 이름 페이징조회
 
@@ -100,16 +110,19 @@ public class FriendShipService {
         return null;
     }
 
-    // 유저 프로필 조회 시 팔로우,팔로워 수를 반환하는 메소드
-    public Object findFriendShipCnt(String loginId){
-        // user조회
+    // 유저 프로필 조회 시 팔로잉,팔로워 수를 반환하는 메소드
+    public FriendCntResDto findFriendShipCnt(String loginId){
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
 
         // 나를 팔로우하는 사람의 수, 내가 팔로우하는 사람의 수 조회
+        Long followerCnt = friendShipRepository.countByToUserAndFriendStatus(user,FriendStatus.FOLLOW);
+        Long followingCnt = friendShipRepository.countByFromUserAndFriendStatus(user,FriendStatus.FOLLOW);
 
-        return null;
+        return FriendCntResDto.toDto(followerCnt,followingCnt);
     }
 
-    // 팔로우 or 팔로워 친구리스트에서 친구검색
+    // 팔로잉 or 팔로워 친구리스트에서 친구검색
     public Object findFriendByName(String loginId, String searchKeyword, String searchType){
         // user조회
         
