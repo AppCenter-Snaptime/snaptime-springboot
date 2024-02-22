@@ -13,7 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Friend {
+public class FriendShip {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class Friend {
     private User fromUser;
 
     @Builder
-    public Friend(FriendStatus friendStatus, User toUser, User fromUser){
+    public FriendShip(FriendStatus friendStatus, User toUser, User fromUser){
         this.toUser=toUser;
         this.friendStatus=friendStatus;
         this.fromUser=fromUser;
