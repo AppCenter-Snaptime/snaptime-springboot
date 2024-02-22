@@ -62,7 +62,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler{
     }
 
     // @PathVariable로 입력받은 값의 타입이 올바르지 않을 때
-    // 404와 400중 어떤 상태코드를 반환해야할 지 고민입니다.
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<CommonResponseDto> handleMethodArgTypeException(MethodArgumentTypeMismatchException ex){
 
@@ -70,7 +69,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler{
         String requiredType = ex.getRequiredType().getSimpleName();
         String message = fieldName+"이 "+requiredType+"타입이여야 합니다.";
         log.error("URI값이 올바르지 않습니다. - "+ message);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CommonResponseDto(message,null));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponseDto(message,null));
     }
 
 }
