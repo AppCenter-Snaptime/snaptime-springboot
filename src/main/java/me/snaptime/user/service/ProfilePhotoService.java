@@ -2,7 +2,8 @@ package me.snaptime.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.snaptime.snap.util.FileNameGenerator;
+import me.snaptime.common.exception.customs.CustomException;
+import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.user.data.domain.ProfilePhoto;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.dto.response.ProfilePhotoResponseDto;
@@ -42,6 +43,7 @@ public class ProfilePhotoService {
             uploadFile.transferTo(new File(filePath));
         }catch (IOException e){
             log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.FILE_NOT_EXIST);
         }
 
         return ProfilePhotoResponseDto.toDto(profilePhotoRepository.save(
@@ -52,7 +54,7 @@ public class ProfilePhotoService {
                         .build()));
     }
 
-
+    @Transactional(readOnly = true)
     public byte[] downloadPhotoFromFileSystem(Long id){
         ProfilePhoto profilePhoto = profilePhotoRepository.findById(id).orElseThrow(()->new NoSuchElementException("해당하는 id의 프로필 사진을 찾을 수 없습니다."));
         String filePath = profilePhoto.getProfilePhotoPath();
@@ -60,13 +62,13 @@ public class ProfilePhotoService {
         try{
             return Files.readAllBytes(new File(filePath).toPath());
         }catch (IOException e){
-            byte[] emptyByte = {};
             log.error(e.getMessage());
-            return emptyByte;
+            throw new CustomException(ExceptionCode.FILE_NOT_EXIST);
         }
     }
 
 
+    @Transactional
     public void deletePhotoFromFileSystem(Long userId) throws Exception{
         User deleteUser = userRepository.findById(userId).orElseThrow(()-> new NoSuchElementException("삭제 할 유저가 존재하지 않습니다."));
         ProfilePhoto profilePhoto = profilePhotoRepository.findProfilePhotoByUser(deleteUser).orElseThrow(()-> new NoSuchElementException("해당하는 프로필 사진이 존재하지 않습니다."));
@@ -79,7 +81,7 @@ public class ProfilePhotoService {
                 Files.deleteIfExists(path);
             }catch (Exception e){
                 e.printStackTrace();
-                throw new Exception("프로필 사진 파일 삭제를 실패하였습니다.");
+                throw new CustomException(ExceptionCode.FILE_NOT_EXIST);
             }
         }
     }
@@ -98,6 +100,7 @@ public class ProfilePhotoService {
             updateFile.transferTo(new File(updateFilePath));
         }catch (IOException e){
             log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.FILE_NOT_EXIST);
         }
 
         profilePhoto.updateProfile(updateFileName,updateFilePath);

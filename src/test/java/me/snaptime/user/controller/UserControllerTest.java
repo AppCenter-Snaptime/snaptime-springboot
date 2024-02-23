@@ -32,6 +32,7 @@ public class UserControllerTest {
     @MockBean
     UserService userService;
 
+
     @Test
     @DisplayName("유저 정보 조회 컨트롤러 테스트")
     void getUserTest() throws Exception{

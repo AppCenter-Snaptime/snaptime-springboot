@@ -9,6 +9,8 @@ import me.snaptime.user.data.repository.UserRepository;
 import me.snaptime.user.util.ProfilePhotoNameGenerator;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,9 +29,13 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class ProfilePhotoServiceTest {
 
-    private UserRepository userRepository = Mockito.mock(UserRepository.class);
-    private ProfilePhotoRepository profilePhotoRepository = Mockito.mock(ProfilePhotoRepository.class);
+    @InjectMocks
     private ProfilePhotoService profilePhotoService;
+
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private ProfilePhotoRepository profilePhotoRepository;
 
     private String deleteFilePath;
     private User givenUser;
@@ -38,7 +44,6 @@ public class ProfilePhotoServiceTest {
 
     @BeforeEach
     public void setUpTest(){
-        profilePhotoService = new ProfilePhotoService(userRepository,profilePhotoRepository);
         givenUser =  User.builder()
                 .Id(1L)
                 .name("홍길순")

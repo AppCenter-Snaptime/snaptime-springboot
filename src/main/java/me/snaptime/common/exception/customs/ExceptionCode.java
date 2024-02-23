@@ -12,7 +12,11 @@ public enum ExceptionCode {
     ALREADY_FOLLOW(HttpStatus.BAD_REQUEST,"이미 팔로우관계입니다."),
     FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 친구입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 유저입니다."),
-    ACCESS_FAIL_FRIENDSHIP(HttpStatus.FORBIDDEN,"해당 친구에 대한 권한이 없습니다.");
+    ACCESS_FAIL_FRIENDSHIP(HttpStatus.FORBIDDEN,"해당 친구에 대한 권한이 없습니다."),
+
+    // ProfilePhotoException
+    FILE_NOT_EXIST(HttpStatus.NOT_FOUND,"해당하는 경로에 파일이 존재하지 않습니다.");
+
 
     private final HttpStatus status;
     private final String message;

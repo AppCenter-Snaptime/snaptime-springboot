@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.util.Optional;
@@ -18,23 +21,21 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-
-//    @InjectMocks
-//    private UserService userService;
-//
-//    @Mock
-//    private UserRepository userRepository;
-
-    private final UserRepository userRepository = Mockito.mock(UserRepository.class);
+    @InjectMocks
     private UserService userService;
+
+    @Mock
+    private UserRepository userRepository;
 
     private User givenUser;
 
     @BeforeEach
     public void setUpTestSet() {
-        userService = new UserService(userRepository);
         givenUser = User.builder()
                 .Id(1L)
                 .name("홍길순")
