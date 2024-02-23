@@ -30,16 +30,12 @@ class UserServiceTest {
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
     private UserService userService;
 
+    private User givenUser;
+
     @BeforeEach
     public void setUpTestSet() {
         userService = new UserService(userRepository);
-    }
-
-    @Test
-    @DisplayName("given_when_then 방식으로 getUser 서비스 성공 테스트")
-    void getUser() {
-        //given
-        User givenUser = User.builder()
+        givenUser = User.builder()
                 .Id(1L)
                 .name("홍길순")
                 .loginId("kang4746")
@@ -47,7 +43,12 @@ class UserServiceTest {
                 .email("strong@gmail.com")
                 .birthDay("1999-10-29")
                 .build();
+    }
 
+    @Test
+    @DisplayName("given_when_then 방식으로 getUser 서비스 성공 테스트")
+    public void getUser() {
+        //given
         Mockito.when(userRepository.findById(1L))
                 .thenReturn(Optional.of(givenUser));
         //when
@@ -66,9 +67,15 @@ class UserServiceTest {
 
     @Test
     @DisplayName("given_when_then 방식으로 signUp 서비스 성공 테스트")
-    void signUp() {
+    public void signUp() {
         //given
-        UserRequestDto givenRequest = new UserRequestDto("홍길순","kang4746","test1234","strong@gmail.com","1999-10-29");
+        UserRequestDto givenRequest = UserRequestDto.builder()
+                .name("홍길순")
+                .loginId("kang4746")
+                .password("test1234")
+                .email("strong@gmail.com")
+                .birthDay("1999-10-29")
+                .build();
 
 
         //userRepository.save(any(User.class)) 메서드가 호출되면
@@ -90,38 +97,22 @@ class UserServiceTest {
 
     @Test
     @DisplayName("given_when_then 방식으로 deleteUser 서비스 성공 테스트")
-    void deleteUser() {
+    public void deleteUser() {
         //given
-        User givenUser = User.builder()
-                .Id(1L)
-                .name("홍길순")
-                .loginId("kang4746")
-                .password("test1234")
-                .email("strong@gmail.com")
-                .birthDay("1999-10-29")
-                .build();
-
         Mockito.when(userRepository.findById(1L))
                 .thenReturn(Optional.of(givenUser));
         //when
         userService.deleteUser(1L);
 
         //then
+        verify(userRepository,times(1)).findById(1L);
         verify(userRepository,times(1)).deleteById(1L);
     }
 
     @Test
     @DisplayName("given_when_then 방식으로 updateUser 서비스 성공 테스트")
-    void updateUser() {
+    public void updateUser() {
         //given
-        User givenUser = User.builder()
-                .Id(1L)
-                .name("홍길순")
-                .loginId("kang4746")
-                .password("test1234")
-                .email("strong@gmail.com")
-                .birthDay("1999-10-29")
-                .build();
 
         UserUpdateDto userUpdateDto = new UserUpdateDto("string","jun4746","strong@naver.com","string");
         Mockito.when(userRepository.findById(1L))
