@@ -6,6 +6,7 @@ import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.dto.response.ProfilePhotoResponseDto;
 import me.snaptime.user.data.repository.ProfilePhotoRepository;
 import me.snaptime.user.data.repository.UserRepository;
+import me.snaptime.user.util.ProfilePhotoNameGenerator;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -69,7 +70,7 @@ public class ProfilePhotoServiceTest {
                 "profile/jpeg",
                 new byte[]{});
 
-        String fileName = FileNameGenerator.generatorName(uploadFile.getOriginalFilename());
+        String fileName = ProfilePhotoNameGenerator.generatorProfilePhotoName(uploadFile.getOriginalFilename());
         String filePath = FOLDER_PATH + fileName;
 
         ProfilePhoto givenProfilePhoto = ProfilePhoto.builder()
@@ -114,7 +115,7 @@ public class ProfilePhotoServiceTest {
                 "profile/jpeg",
                 new byte[]{});
 
-        String fileName = FileNameGenerator.generatorName(updateFile.getOriginalFilename());
+        String fileName = ProfilePhotoNameGenerator.generatorProfilePhotoName(updateFile.getOriginalFilename());
         String filePath = FOLDER_PATH + fileName;
 
         /*업데이트 할 프로필 사진*/

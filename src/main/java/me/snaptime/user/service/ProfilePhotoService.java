@@ -8,6 +8,7 @@ import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.dto.response.ProfilePhotoResponseDto;
 import me.snaptime.user.data.repository.ProfilePhotoRepository;
 import me.snaptime.user.data.repository.UserRepository;
+import me.snaptime.user.util.ProfilePhotoNameGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +35,7 @@ public class ProfilePhotoService {
     @Transactional
     public ProfilePhotoResponseDto uploadPhotoToFileSystem(Long userId, MultipartFile uploadFile) throws Exception{
         User createUser = userRepository.findById(userId).orElseThrow(()-> new NoSuchElementException("프로필 사진을 업로드 할 유저가 존재하지 않습니다."));
-        String fileName = FileNameGenerator.generatorName(uploadFile.getOriginalFilename());
+        String fileName = ProfilePhotoNameGenerator.generatorProfilePhotoName(uploadFile.getOriginalFilename());
         String filePath = FOLDER_PATH + fileName;
 
         try{
@@ -88,7 +89,7 @@ public class ProfilePhotoService {
         User updateUser = userRepository.findById(userId).orElseThrow(()-> new NoSuchElementException("수정 할 유저가 존재하지 않습니다."));
         ProfilePhoto profilePhoto = profilePhotoRepository.findProfilePhotoByUser(updateUser).orElseThrow(()-> new NoSuchElementException("수정 할 프로필 사진이 없습니다."));
 
-        String updateFileName = FileNameGenerator.generatorName(updateFile.getOriginalFilename());
+        String updateFileName = ProfilePhotoNameGenerator.generatorProfilePhotoName(updateFile.getOriginalFilename());
         String updateFilePath = FOLDER_PATH + updateFileName;
 
         try{
