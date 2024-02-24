@@ -3,6 +3,8 @@ package me.snaptime.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.snaptime.common.exception.customs.CustomException;
+import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.dto.request.UserRequestDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
@@ -11,7 +13,6 @@ import me.snaptime.user.data.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -22,11 +23,12 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserResponseDto getUser(Long id){
-        User user = userRepository.findById(id).orElseThrow(()-> new NoSuchElementException("해당 로그인 아이드의 유저를 찾을 수 없습니다."));
+        User user = userRepository.findById(id).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
 
         return UserResponseDto.toDto(user);
     }
 
+    @Transactional
     public UserResponseDto signUp(UserRequestDto userRequestDto){
 
         User user = User.builder()
@@ -41,14 +43,16 @@ public class UserService {
         return UserResponseDto.toDto(userRepository.save(user));
     }
 
+    @Transactional
     public void deleteUser(Long id){
-        User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 id의 유저가 존재하지 않습니다."));
+        User user = userRepository.findById(id).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
         userRepository.deleteById(user.getId());
     }
 
+    @Transactional
     public UserResponseDto updateUser(Long id, UserUpdateDto userUpdateDto){
 
-        User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 loginId의 유저가 존재하지 않습니다."));
+        User user = userRepository.findById(id).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
 
         if (userUpdateDto.name() !=null && !userUpdateDto.name().isEmpty() && !userUpdateDto.name().equals("string")){
             user.updateUserName(userUpdateDto.name());

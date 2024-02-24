@@ -2,7 +2,9 @@ package me.snaptime.user.data.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 
+@Builder
 public record UserUpdateDto(
         @Schema(
                 example = "홍길순",

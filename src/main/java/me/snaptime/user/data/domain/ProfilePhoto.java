@@ -37,5 +37,9 @@ public class ProfilePhoto extends BaseTimeEntity {
         this.user = user;
     }
 
-
+    public void updateProfile(String profilePhotoName,String profilePhotoPath)
+    {
+        this.profilePhotoName = profilePhotoName;
+        this.profilePhotoPath = profilePhotoPath;
+    }
 }
