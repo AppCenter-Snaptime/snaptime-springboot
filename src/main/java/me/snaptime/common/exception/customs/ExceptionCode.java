@@ -15,6 +15,8 @@ public enum ExceptionCode {
     ACCESS_FAIL_FRIENDSHIP(HttpStatus.FORBIDDEN,"해당 친구에 대한 권한이 없습니다."),
 
     // ProfilePhotoException
+    PROFILE_PHOTO_EXIST(HttpStatus.BAD_REQUEST,"이미 프로필 사진이 존재합니다."),
+    PROFILE_PHOTO_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 프로필 사진입니다."),
     FILE_NOT_EXIST(HttpStatus.NOT_FOUND,"해당하는 경로에 파일이 존재하지 않습니다.");
 
 

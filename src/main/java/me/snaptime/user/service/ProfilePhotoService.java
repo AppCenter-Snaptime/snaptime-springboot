@@ -36,6 +36,13 @@ public class ProfilePhotoService {
     @Transactional
     public ProfilePhotoResponseDto uploadPhotoToFileSystem(Long userId, MultipartFile uploadFile) throws Exception{
         User createUser = userRepository.findById(userId).orElseThrow(()-> new NoSuchElementException("프로필 사진을 업로드 할 유저가 존재하지 않습니다."));
+
+        //이미 프로필 사진이 존재하는 경우
+        if(profilePhotoRepository.findProfilePhotoByUser(createUser).isPresent())
+        {
+            throw new CustomException(ExceptionCode.PROFILE_PHOTO_EXIST);
+        }
+
         String fileName = ProfilePhotoNameGenerator.generatorProfilePhotoName(uploadFile.getOriginalFilename());
         String filePath = FOLDER_PATH + fileName;
 
@@ -56,7 +63,7 @@ public class ProfilePhotoService {
 
     @Transactional(readOnly = true)
     public byte[] downloadPhotoFromFileSystem(Long id){
-        ProfilePhoto profilePhoto = profilePhotoRepository.findById(id).orElseThrow(()->new NoSuchElementException("해당하는 id의 프로필 사진을 찾을 수 없습니다."));
+        ProfilePhoto profilePhoto = profilePhotoRepository.findById(id).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
         String filePath = profilePhoto.getProfilePhotoPath();
 
         try{
@@ -68,13 +75,15 @@ public class ProfilePhotoService {
     }
 
 
-    @Transactional
+    //트랜잭션 어노테이션을 사용하면 upload -> delete -> delete, 삭제를 2번해도 성공메시지가 뜸
+    //@Transactional
     public void deletePhotoFromFileSystem(Long userId) throws Exception{
-        User deleteUser = userRepository.findById(userId).orElseThrow(()-> new NoSuchElementException("삭제 할 유저가 존재하지 않습니다."));
-        ProfilePhoto profilePhoto = profilePhotoRepository.findProfilePhotoByUser(deleteUser).orElseThrow(()-> new NoSuchElementException("해당하는 프로필 사진이 존재하지 않습니다."));
+        User deleteUser = userRepository.findById(userId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+        ProfilePhoto profilePhoto = profilePhotoRepository.findProfilePhotoByUser(deleteUser).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
         profilePhotoRepository.deleteById(profilePhoto.getId());
 
         String photoPath = profilePhoto.getProfilePhotoPath();
+
         if(!photoPath.isEmpty()){
             try{
                 Path path = Paths.get(photoPath);
@@ -86,10 +95,11 @@ public class ProfilePhotoService {
         }
     }
 
-    @Transactional
+    //트랜잭션 어노테이션을 사용하면 upload -> delete -> update, 프로필을 삭제를 해도 수정에 성공함.
+    //@Transactional
     public ProfilePhotoResponseDto updatePhotoFromFileSystem(Long userId, MultipartFile updateFile) throws Exception{
-        User updateUser = userRepository.findById(userId).orElseThrow(()-> new NoSuchElementException("수정 할 유저가 존재하지 않습니다."));
-        ProfilePhoto profilePhoto = profilePhotoRepository.findProfilePhotoByUser(updateUser).orElseThrow(()-> new NoSuchElementException("수정 할 프로필 사진이 없습니다."));
+        User updateUser = userRepository.findById(userId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+        ProfilePhoto profilePhoto = profilePhotoRepository.findProfilePhotoByUser(updateUser).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
 
         String updateFileName = ProfilePhotoNameGenerator.generatorProfilePhotoName(updateFile.getOriginalFilename());
         String updateFilePath = FOLDER_PATH + updateFileName;

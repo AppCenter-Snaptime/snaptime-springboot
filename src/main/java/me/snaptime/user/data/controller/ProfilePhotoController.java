@@ -41,7 +41,7 @@ public class ProfilePhotoController {
 
     @Operation(summary = "프로필 사진 조회",description = "유저의 프로필 사진을 조회 합니다.")
     @Parameter(name = "profilePhotoId",description = "조회 할 프로필 사진의 id")
-    @GetMapping()
+    @GetMapping("/{profilePhotoId}")
     public ResponseEntity<?> downloadProfileToFileSystem(@PathVariable("profilePhotoId") Long profilePhotoId) {
         log.info("[downloadProfile] 유저의 프로필 사진을 조회합니다.");
 
