@@ -67,7 +67,7 @@ public class UserController {
     @Operation(summary = "회원가입", description = "회원 가입 할 유저의 정보를 입력합니다.")
     @PostMapping("/sign-up")
     public ResponseEntity<CommonResponseDto<UserResponseDto>> signUp(@RequestBody UserRequestDto userRequestDto){
-        String role = "USER";
+        //String role = "USER";
         log.info("[signUp] 회원가입을 수행합니다. loginId : {}, password : ****, name : {}, email : {}, birthDay : {}",userRequestDto.loginId(),userRequestDto.name(),userRequestDto.email(),userRequestDto.birthDay());
 
         UserResponseDto userResponseDto = userService.signUp(userRequestDto);
