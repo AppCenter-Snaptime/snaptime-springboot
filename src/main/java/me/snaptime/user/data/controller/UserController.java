@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.dto.CommonResponseDto;
+import me.snaptime.user.data.dto.request.SignInRequestDto;
 import me.snaptime.user.data.dto.request.UserRequestDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
+import me.snaptime.user.data.dto.response.SignInResponseDto;
 import me.snaptime.user.data.dto.response.UserResponseDto;
 import me.snaptime.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -78,5 +80,19 @@ public class UserController {
                 new CommonResponseDto<>(
                         "유저 회원가입을 성공적으로 완료하였습니다.",
                         userResponseDto));
+    }
+
+    @Operation(summary = "로그인", description = "회원 가입 한 유저의 loginId와 password를 입력합니다.")
+    @PostMapping("/sign-in")
+    public ResponseEntity<CommonResponseDto<SignInResponseDto>> signIn(@RequestBody SignInRequestDto signInRequestDto){
+        log.info("[sign-in] 로그인을 수행합니다. id : {}, passowrd : ****",signInRequestDto.loginId());
+        SignInResponseDto signInResponseDto = userService.signIn(signInRequestDto);
+
+        log.info("[sign-in] 정상적으로 로그인에 성공하였습니다. accessToken : {}",signInResponseDto.accessToken());
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "유저 로그인을 성공적으로 완료하였습니다.",
+                        signInResponseDto));
     }
 }
