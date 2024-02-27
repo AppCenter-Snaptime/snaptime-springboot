@@ -27,7 +27,7 @@ public class User extends BaseTimeEntity implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long Id;
+    private Long id;
 
     @Column(name = "user_name",nullable = false)
     private String name;
@@ -56,8 +56,8 @@ public class User extends BaseTimeEntity implements UserDetails{
     private List<String> roles = new ArrayList<>();
 
     @Builder
-    protected User(Long Id, String name,String loginId,String password, String email, String birthDay, List<String> roles){
-        this.Id = Id;
+    protected User(Long id, String name,String loginId,String password, String email, String birthDay, List<String> roles){
+        this.id = id;
         this.name = name;
         this.loginId = loginId;
         this.password =password;

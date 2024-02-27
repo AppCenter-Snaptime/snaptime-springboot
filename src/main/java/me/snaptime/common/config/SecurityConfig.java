@@ -1,8 +1,10 @@
-package me.snaptime.common.config.security;
+package me.snaptime.common.config;
 
 import lombok.RequiredArgsConstructor;
-import me.snaptime.common.config.security.exception.CustomAccessDeniedHandler;
-import me.snaptime.common.config.security.exception.CustomAuthenticationEntryPoint;
+import me.snaptime.common.exception.security.CustomAccessDeniedHandler;
+import me.snaptime.common.exception.security.CustomAuthenticationEntryPoint;
+import me.snaptime.common.jwt.JwtAuthenticationFilter;
+import me.snaptime.common.jwt.JwtProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //웹 보안 활성화
 //WebSecurityConfigurer 빈 생성
 @EnableWebSecurity
-public class SecurityConfiguration {
+public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
 

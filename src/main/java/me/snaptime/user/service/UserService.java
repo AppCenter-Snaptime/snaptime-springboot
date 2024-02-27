@@ -3,9 +3,9 @@ package me.snaptime.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.snaptime.common.config.security.JwtProvider;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
+import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.dto.request.SignInRequestDto;
 import me.snaptime.user.data.dto.request.UserRequestDto;
@@ -30,8 +30,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public UserResponseDto getUser(Long id){
-        User user = userRepository.findById(id).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+    public UserResponseDto getUser(String loginId){
+        User user = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
 
         return UserResponseDto.toDto(user);
     }
@@ -41,7 +41,6 @@ public class UserService {
         log.info("[signUp] 회원 가입 정보를 전달합니다.");
 
         User user = User.builder()
-                .Id(null)
                 .name(userRequestDto.name())
                 .loginId(userRequestDto.loginId())
                 .password(passwordEncoder.encode(userRequestDto.password()))
@@ -76,15 +75,15 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Long id){
-        User user = userRepository.findById(id).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+    public void deleteUser(String loginId){
+        User user = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
         userRepository.deleteById(user.getId());
     }
 
     @Transactional
-    public UserResponseDto updateUser(Long id, UserUpdateDto userUpdateDto){
+    public UserResponseDto updateUser(String loginId, UserUpdateDto userUpdateDto){
 
-        User user = userRepository.findById(id).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+        User user = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
 
         if (userUpdateDto.name() !=null && !userUpdateDto.name().isEmpty() && !userUpdateDto.name().equals("string")){
             user.updateUserName(userUpdateDto.name());

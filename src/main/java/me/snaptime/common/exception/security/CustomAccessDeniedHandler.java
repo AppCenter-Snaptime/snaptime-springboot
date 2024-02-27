@@ -1,4 +1,4 @@
-package me.snaptime.common.config.security.exception;
+package me.snaptime.common.exception.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
