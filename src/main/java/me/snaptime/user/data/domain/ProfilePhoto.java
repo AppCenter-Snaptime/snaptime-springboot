@@ -24,8 +24,7 @@ public class ProfilePhoto extends BaseTimeEntity {
     @Column(name = "profile_photo_name",nullable = false)
     private String profilePhotoName;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",nullable = false)
+    @OneToOne(mappedBy = "profilePhoto",fetch = FetchType.EAGER)
     private User user;
 
     @Builder

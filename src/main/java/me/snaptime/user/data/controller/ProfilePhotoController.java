@@ -67,7 +67,7 @@ public class ProfilePhotoController {
     @Operation(summary = "프로필 사진 삭제",description = "유저의 프로필 사진을 삭제 합니다.")
     @Parameter(name = "userId", description = "프로필 사진을 삭제할 유저의 id")
     @DeleteMapping("/{userId}")
-    public ResponseEntity<?> deleteProfileToFileSystem(@PathVariable("userId") Long userId)throws Exception{
+    public ResponseEntity<?> deleteProfileToFileSystem(@PathVariable("userId") Long userId) throws Exception {
         log.info("[deleteProfile] 유저의 프로필 사진을 삭제합니다. userId : {}", userId);
         profilePhotoService.deletePhotoFromFileSystem(userId);
 

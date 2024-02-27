@@ -25,7 +25,7 @@ public class FriendShipController {
     private String tmpLoginId = "tempString";
 
     @PostMapping
-    @Operation(summary = "팔로우 요청", description = "팔로우할 유저의 이름을 입력해주세요.")
+    @Operation(summary = "팔로우 요청", description = "팔로우할 유저의 이름을 입력해주세요.<br>fromUser(요청자)의 팔로잉 +1, toUser의 팔로워 +1")
     @Parameter(name = "fromUserName", description = "팔로우할 유저의 이름", required = true, example = "seyong")
     public ResponseEntity<CommonResponseDto> sendFollowReq(
             @RequestParam(name = "fromUserName") @NotBlank(message = "팔로우요청을 보낼 유저의 이름을 입력해주세요.")String fromUserName) {
@@ -37,7 +37,7 @@ public class FriendShipController {
     }
 
     @PostMapping("/accept")
-    @Operation(summary = "팔로우 수락or거절 요청", description = "팔로우요청을 수락or거절할 유저의 이름을 입력해주세요.")
+    @Operation(summary = "팔로우 수락or거절 요청", description = "팔로우요청을 수락or거절할 유저의 이름을 입력해주세요.<br>친구요청 수락(fromUser(수락자)의 팔로잉 +1, toUser의 팔로워 +1)<br>친구요청 거절(fromUser(수락자)의 팔로워 -1, toUser의 팔로잉 -1) ")
     public ResponseEntity<CommonResponseDto> acceptFollowReq(@RequestBody @Valid AcceptFollowReqDto acceptFollowReqDto) {
 
         // 토큰에서 loginId추출하는 로직
@@ -47,7 +47,7 @@ public class FriendShipController {
     }
 
     @DeleteMapping("/{friendShipId}")
-    @Operation(summary = "팔로우하는 친구삭제", description = "팔로우요청을 수락or거절할 유저의 이름을 입력해주세요.")
+    @Operation(summary = "팔로우하는 친구삭제", description = "팔로우요청을 수락or거절할 유저의 이름을 입력해주세요.<br>fromUser(삭제자)의 팔로잉 -1, toUser의 팔로워 -1")
     @Parameter(name = "friendShipId", description = "팔로우 삭제할 친구관계 id", required = true, example = "1")
     public ResponseEntity<CommonResponseDto> deleteFollow(@PathVariable final Long friendShipId) {
 

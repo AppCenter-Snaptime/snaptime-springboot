@@ -34,7 +34,7 @@ public class FriendShip {
     private User fromUser;
 
     @Builder
-    public FriendShip(FriendStatus friendStatus, User toUser, User fromUser){
+    protected FriendShip(FriendStatus friendStatus, User toUser, User fromUser){
         this.toUser=toUser;
         this.friendStatus=friendStatus;
         this.fromUser=fromUser;

@@ -42,7 +42,7 @@ public class FriendShipServiceTest {
     @BeforeEach
     void beforeEach(){
         friendShip = FriendShip.builder()
-                .friendStatus(FriendStatus.WATING)
+                .friendStatus(FriendStatus.WAITING)
                 .build();
         user = User.builder()
                 .build();
@@ -214,7 +214,7 @@ public class FriendShipServiceTest {
         //then
         assertThat(msg).isEqualTo("팔로우 거절을 완료했습니다.");
         assertThat(rejectedfriendShip.getFriendStatus()).isEqualTo(FriendStatus.REJECTED);
-        assertThat(friendShip.getFriendStatus()).isEqualTo(FriendStatus.WATING);
+        assertThat(friendShip.getFriendStatus()).isEqualTo(FriendStatus.WAITING);
         verify(friendShipRepository,times(1)).save(any(FriendShip.class));
         verify(friendShipRepository,times(1)).delete(any(FriendShip.class));
         verify(userRepository,times(1)).findUserByName("testName");

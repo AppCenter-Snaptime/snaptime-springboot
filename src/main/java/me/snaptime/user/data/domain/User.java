@@ -34,7 +34,8 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_birthDay",nullable = false)
     private String birthDay;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_photo_id",nullable = false)
     private ProfilePhoto profilePhoto;
 
     @Builder
