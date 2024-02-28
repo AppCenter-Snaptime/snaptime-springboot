@@ -1,8 +1,11 @@
 package me.snaptime.user.service;
 
+import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.user.data.domain.User;
+import me.snaptime.user.data.dto.request.SignInRequestDto;
 import me.snaptime.user.data.dto.request.UserRequestDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
+import me.snaptime.user.data.dto.response.SignInResponseDto;
 import me.snaptime.user.data.dto.response.UserResponseDto;
 import me.snaptime.user.data.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -20,8 +23,8 @@ import java.util.Optional;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -35,12 +38,14 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private JwtProvider jwtProvider;
+
     private User givenUser;
 
     @BeforeEach
     public void setUpTestSet() {
         givenUser = User.builder()
-                .id(1L)
                 .name("홍길순")
                 .loginId("kang4746")
                 .password("test1234")
@@ -50,7 +55,6 @@ class UserServiceTest {
     }
 
     @Test
-    //@WithMockUser(username = "kang4746",password = "test1234",roles = "USER")
     @DisplayName("given_when_then 방식으로 getUser 서비스 성공 테스트")
     public void getUser() {
         //given
@@ -103,17 +107,43 @@ class UserServiceTest {
     @Test
     @DisplayName("given_when_then 방식으로 signIn 서비스 성공 테스트")
     public void signIn(){
+        //given
+        SignInRequestDto signInRequestDto = SignInRequestDto.builder()
+                .loginId("kang4746")
+                .password("test1234")
+                .build();
+
+        Mockito.when(userRepository.findByLoginId("kang4746"))
+                .thenReturn(Optional.of(givenUser));
+        Mockito.when(passwordEncoder.matches(signInRequestDto.password(), givenUser.getPassword()))
+                .thenReturn(true);
+        Mockito.when(jwtProvider.createAccessToken(givenUser.getLoginId(), givenUser.getRoles()))
+                .thenReturn("mockToken");
+
+        //when
+        SignInResponseDto signInResponseDto = userService.signIn(signInRequestDto);
+
+        //then
+        Assertions.assertEquals("mockToken",signInResponseDto.accessToken());
+        Assertions.assertEquals(signInRequestDto.loginId(),givenUser.getLoginId());
+        Assertions.assertEquals(signInRequestDto.password(),givenUser.getPassword());
+
+        verify(userRepository,times(1)).findByLoginId("kang4746");
+        verify(passwordEncoder,times(1)).matches(signInRequestDto.password(),givenUser.getPassword());
+        verify(jwtProvider,times(1)).createAccessToken(givenUser.getLoginId(),givenUser.getRoles());
 
     }
 
 
     @Test
-    //@WithMockUser(username = "kang4746",password = "test1234",roles = "USER")
     @DisplayName("given_when_then 방식으로 deleteUser 서비스 성공 테스트")
     public void deleteUser() {
         //given
+        User user = spy(givenUser);
+        given(user.getId()).willReturn(1L);
+
         Mockito.when(userRepository.findByLoginId("kang4746"))
-                .thenReturn(Optional.of(givenUser));
+                .thenReturn(Optional.of(user));
         //when
         userService.deleteUser("kang4746");
 
@@ -123,11 +153,16 @@ class UserServiceTest {
     }
 
     @Test
-    //@WithMockUser(username = "kang4746",password = "test1234",roles = "USER")
     @DisplayName("given_when_then 방식으로 updateUser 서비스 성공 테스트")
     public void updateUser() {
         //given
-        UserUpdateDto userUpdateDto = new UserUpdateDto("string","jun4746","strong@naver.com","string");
+        UserUpdateDto userUpdateDto = UserUpdateDto.builder()
+                .loginId("jun4746")
+                .name("string")
+                .email("strong@naver.com")
+                .birthDay("string")
+                .build();
+
         Mockito.when(userRepository.findByLoginId("kang4746"))
                 .thenReturn(Optional.of(givenUser));
         Mockito.when(userRepository.save(any(User.class)))
@@ -137,7 +172,6 @@ class UserServiceTest {
         UserResponseDto userResponseDto = userService.updateUser("kang4746",userUpdateDto);
 
         //then
-        Assertions.assertEquals(1L,userResponseDto.id());
         Assertions.assertEquals("홍길순",userResponseDto.name());
         Assertions.assertEquals("jun4746",userResponseDto.loginId());
         Assertions.assertEquals("strong@naver.com",userResponseDto.email());

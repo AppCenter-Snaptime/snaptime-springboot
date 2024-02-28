@@ -16,7 +16,7 @@ public class ProfilePhoto extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "profile_photo_id")
-    private Long Id;
+    private Long id;
 
     @Column(name = "profile_photo_path",nullable = false)
     private String profilePhotoPath;
@@ -29,9 +29,9 @@ public class ProfilePhoto extends BaseTimeEntity {
     private User user;
 
     @Builder
-    protected ProfilePhoto(Long Id, String profilePhotoPath, String profilePhotoName,User user)
+    protected ProfilePhoto(Long id, String profilePhotoPath, String profilePhotoName,User user)
     {
-        this.Id= Id;
+        this.id= id;
         this.profilePhotoPath = profilePhotoPath;
         this.profilePhotoName = profilePhotoName;
         this.user = user;

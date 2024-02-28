@@ -12,7 +12,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -56,8 +55,7 @@ public class User extends BaseTimeEntity implements UserDetails{
     private List<String> roles = new ArrayList<>();
 
     @Builder
-    protected User(Long id, String name,String loginId,String password, String email, String birthDay, List<String> roles){
-        this.id = id;
+    protected User(String name,String loginId,String password, String email, String birthDay, List<String> roles){
         this.name = name;
         this.loginId = loginId;
         this.password =password;
@@ -70,6 +68,7 @@ public class User extends BaseTimeEntity implements UserDetails{
     public void updateUserLoginId(String loginId) { this.loginId = loginId;}
     public void updateUserEmail(String email) { this.email = email;}
     public void updateUserBirthDay(String birthDay) { this.birthDay = birthDay;}
+
 
     //UserDetails 인터페이스를 구현한 클래스에서 사용자의 권한을 반환하는 메서드
     //Spring Security에서 사용자의 권한은 GrantedAuthority 객체의 컬렉션으로 표현

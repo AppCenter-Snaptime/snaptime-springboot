@@ -45,7 +45,6 @@ public class ProfilePhotoServiceTest {
     @BeforeEach
     public void setUpTest(){
         givenUser =  User.builder()
-                .id(1L)
                 .name("홍길순")
                 .loginId("kang4746")
                 .password("test1234")
@@ -79,7 +78,6 @@ public class ProfilePhotoServiceTest {
         String filePath = FOLDER_PATH + fileName;
 
         ProfilePhoto givenProfilePhoto = ProfilePhoto.builder()
-                .Id(1L)
                 .user(givenUser)
                 .profilePhotoName(uploadFile.getOriginalFilename())
                 .profilePhotoPath(filePath)
@@ -125,14 +123,12 @@ public class ProfilePhotoServiceTest {
 
         /*업데이트 할 프로필 사진*/
         ProfilePhoto updateProfilePhoto = ProfilePhoto.builder()
-                .Id(1L)
                 .user(givenUser)
                 .profilePhotoName(updateFile.getOriginalFilename())
                 .profilePhotoPath(filePath)
                 .build();
         /* 기존의 프로필 사진 */
         ProfilePhoto oldProfilePhoto = ProfilePhoto.builder()
-                .Id(1L)
                 .user(givenUser)
                 .profilePhotoName("old.jpg")
                 .profilePhotoPath("/olg.jpg")

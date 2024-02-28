@@ -75,7 +75,7 @@ public class SnapControllerTest {
                         .fileType("image/png")
                         .build())
                 .user(User.builder()
-                        .id(1L)
+                        //.id(1L)
                         .password("1234")
                         .name("김원정")
                         .email("test@test.com")
