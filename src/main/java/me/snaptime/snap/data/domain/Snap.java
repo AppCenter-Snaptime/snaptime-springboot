@@ -32,7 +32,6 @@ public class Snap extends BaseTimeEntity {
     @JoinColumn(name = "album_id")
     private Album album;
 
-
     @OneToMany(mappedBy = "snap")
     private List<Reply> replyList = new ArrayList<>();
 
@@ -40,14 +39,21 @@ public class Snap extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private boolean isPrivate;
+
     @Builder
-    protected Snap(Long id, String oneLineJournal, Photo photo, Album album, List<Reply> replyList, User user) {
+    protected Snap(Long id, String oneLineJournal, Photo photo, Album album, List<Reply> replyList, User user, boolean isPrivate) {
         this.Id = id;
         this.oneLineJournal = oneLineJournal;
         this.photo = photo;
         this.album = album;
         this.replyList = replyList;
         this.user = user;
+        this.isPrivate = isPrivate;
+    }
+
+    public void updateIsPrivate(boolean state) {
+        this.isPrivate = state;
     }
 
 

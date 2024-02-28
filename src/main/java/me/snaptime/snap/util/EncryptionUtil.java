@@ -34,4 +34,10 @@ public class EncryptionUtil {
         return cipher.doFinal(encryptedData);
     }
 
+    public static byte[] decryptData(byte[] encryptedData, SecretKey secretKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        return cipher.doFinal(encryptedData);
+    }
+
 }

@@ -58,7 +58,7 @@ public class SnapControllerTest {
         ).andExpect(status().isCreated())
                 .andDo(print());
         // then
-        verify(snapService).createSnap(any(CreateSnapReqDto.class), eq("abcd"));
+        verify(snapService).createSnap(any(CreateSnapReqDto.class), eq("abcd"), true);
     }
 
     @DisplayName("Snap 가져오기 테스트")

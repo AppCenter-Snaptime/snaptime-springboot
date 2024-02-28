@@ -7,5 +7,9 @@ import javax.crypto.SecretKey;
 
 public interface PhotoService {
     Photo uploadPhotoToFileSystem(MultipartFile multipartFile, SecretKey secretKey);
-    byte[] downloadPhotoFromFileSystem(Long photoId, String secretKey);
+    Photo uploadPhotoToFileSystem(MultipartFile multipartFile);
+    byte[] downloadPhotoFromFileSystem(Long id, String secretKey);
+    void deletePhoto(Long id);
+    void encryptionPhoto(Long id, SecretKey secretKey);
+    void decryptionPhoto(Long id, SecretKey secretKey);
 }

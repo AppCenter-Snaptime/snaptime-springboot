@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Service
@@ -47,8 +48,26 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public byte[] downloadPhotoFromFileSystem(Long photoId, String secretKey) {
-        Photo foundPhoto = photoRepository.findById(photoId).orElseThrow(() -> new EntityNotFoundException("id에 해당되는 사진을 찾을 수 없습니다."));
+    public Photo uploadPhotoToFileSystem(MultipartFile multipartFile) {
+        String fileName = FileNameGenerator.generatorName(multipartFile.getOriginalFilename());
+        String filePath = FOLDER_PATH + fileName;
+        try {
+            Files.write(Paths.get(filePath), multipartFile.getInputStream().readAllBytes());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return photoRepository.save(
+                Photo.builder()
+                        .fileName(fileName)
+                        .fileType(multipartFile.getContentType())
+                        .filePath(filePath)
+                        .build()
+        );
+    }
+
+    @Override
+    public byte[] downloadPhotoFromFileSystem(Long id, String secretKey) {
+        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("id에 해당되는 사진을 찾을 수 없습니다."));
         String filePath = foundPhoto.getFilePath();
         try {
             byte[] foundFile = Files.readAllBytes(new File(filePath).toPath());
@@ -57,6 +76,50 @@ public class PhotoServiceImpl implements PhotoService {
             byte[] emptyByte = {};
             log.error(e.getMessage());
             return emptyByte;
+        }
+    }
+
+    @Override
+    public void deletePhoto(Long id) {
+        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("id에 해당되는 사진을 찾을 수 없었습니다."));
+        String filePath = foundPhoto.getFilePath();
+        try {
+            Path path = Paths.get(filePath);
+            Files.delete(path);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        photoRepository.delete(foundPhoto);
+    }
+
+    @Override
+    public void encryptionPhoto(Long id, SecretKey secretKey) {
+        // 1. 사진을 찾는다
+        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("id에 해당되는 사진을 찾을 수 없었습니다"));
+        // 2. 찾은 사진의 경로를 가져온다
+        String filePath = foundPhoto.getFilePath();
+        try {
+            // 3. 찾은 사진의 경로를 파일 시스템에서 가져온다
+            byte[] foundFile = Files.readAllBytes(new File(filePath).toPath());
+            // 4. 찾아진 사진 파일 데이터를 암호화 한다.
+            byte[] EncryptionData = EncryptionUtil.encryptData(foundFile, secretKey);
+            // 5. 암호화한 데이터를 파일 시스템에 덮어씌운다.
+            Files.write(Paths.get(filePath), EncryptionData);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public void decryptionPhoto(Long id, SecretKey secretKey) {
+        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("id에 해당되는 사진을 찾을 수 없었습니다"));
+        String filePath = foundPhoto.getFilePath();
+        try {
+            byte[] foundFile = Files.readAllBytes(new File(filePath).toPath());
+            byte[] EncryptionData = EncryptionUtil.decryptData(foundFile, secretKey);
+            Files.write(Paths.get(filePath), EncryptionData);
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
     }
 }

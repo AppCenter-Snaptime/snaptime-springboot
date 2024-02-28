@@ -107,7 +107,7 @@ public class SnapServiceImplTest {
                 .build()
         );
         // when
-        snapServiceImpl.createSnap(givenDto, givenUid);
+        snapServiceImpl.createSnap(givenDto, givenUid, true);
     }
 
     @DisplayName("스냅 가져오기 테스트")

@@ -22,8 +22,11 @@ public class SnapController {
 
     @Operation(summary = "Snap 생성", description = "Empty Value를 보내지마세요")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<CommonResponseDto<?>> createSnap(final @ModelAttribute CreateSnapReqDto createSnapReqDto) {
-        snapService.createSnap(createSnapReqDto, "abcd");
+    public ResponseEntity<CommonResponseDto<?>> createSnap(
+            final @ModelAttribute CreateSnapReqDto createSnapReqDto,
+            final @RequestParam("isPrivate") boolean isPrivate
+    ) {
+        snapService.createSnap(createSnapReqDto, "abcd", isPrivate);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CommonResponseDto<>(
                 "스냅이 정상적으로 저장되었습니다.",
@@ -39,6 +42,20 @@ public class SnapController {
                 new CommonResponseDto<>(
                         "스냅이 정상적으로 불러와졌습니다.",
                         snapService.findSnap(id)
+                )
+        );
+    }
+
+    @PostMapping
+    public ResponseEntity<CommonResponseDto<Void>> changeVisibility(
+            final @RequestParam("snapId") Long snapId,
+            final @RequestParam("isPrivate") boolean isPrivate
+    ) {
+        snapService.changeVisibility(snapId, "abcd", isPrivate);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "게시글의 상태가 성공적으로 변경되었습니다.",
+                        null
                 )
         );
     }
