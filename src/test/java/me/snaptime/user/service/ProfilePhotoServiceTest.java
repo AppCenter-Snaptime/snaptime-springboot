@@ -1,6 +1,5 @@
 package me.snaptime.user.service;
 
-import me.snaptime.snap.util.FileNameGenerator;
 import me.snaptime.user.data.domain.ProfilePhoto;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.dto.response.ProfilePhotoResponseDto;
@@ -13,15 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
