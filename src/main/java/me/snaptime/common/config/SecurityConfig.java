@@ -7,6 +7,7 @@ import me.snaptime.common.jwt.JwtAuthenticationFilter;
 import me.snaptime.common.jwt.JwtProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -33,6 +34,7 @@ public class SecurityConfig {
                         requests
                                 .requestMatchers("/swagger-resources/**", "/swagger-ui/index.html", "/webjars/**", "/swagger/**", "/users/exception", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                                 .requestMatchers("/users/sign-in", "/users/sign-up").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/users","/profilePhotos/**","/snap/**","/friends/**","/photo").permitAll()
                                 .requestMatchers("**exception**").permitAll()
                                 .anyRequest().hasRole("USER")
                 )
