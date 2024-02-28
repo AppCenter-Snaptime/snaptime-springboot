@@ -23,8 +23,8 @@ public class SnapController {
     @Operation(summary = "Snap 생성", description = "Empty Value를 보내지마세요")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CommonResponseDto<?>> createSnap(
-            final @ModelAttribute CreateSnapReqDto createSnapReqDto,
-            final @RequestParam("isPrivate") boolean isPrivate
+            final @RequestParam("isPrivate") boolean isPrivate,
+            final @ModelAttribute CreateSnapReqDto createSnapReqDto
     ) {
         snapService.createSnap(createSnapReqDto, "abcd", isPrivate);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -46,7 +46,7 @@ public class SnapController {
         );
     }
 
-    @PostMapping
+    @PostMapping("/visibility")
     public ResponseEntity<CommonResponseDto<Void>> changeVisibility(
             final @RequestParam("snapId") Long snapId,
             final @RequestParam("isPrivate") boolean isPrivate

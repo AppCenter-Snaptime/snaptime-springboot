@@ -82,6 +82,7 @@ public class SnapServiceImpl implements SnapService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        snapRepository.save(foundSnap);
 
     }
 
