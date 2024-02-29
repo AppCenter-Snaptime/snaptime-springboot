@@ -39,13 +39,14 @@ public class User extends BaseTimeEntity {
     private ProfilePhoto profilePhoto;
 
     @Builder
-    protected User(Long Id, String name,String loginId,String password, String email, String birthDay){
+    protected User(Long Id, String name,String loginId,String password, String email, String birthDay,ProfilePhoto profilePhoto){
         this.Id = Id;
         this.name = name;
         this.loginId = loginId;
         this.password =password;
         this.email = email;
         this.birthDay = birthDay;
+        this.profilePhoto = profilePhoto;
     }
 
     public void updateUserName(String name) { this.name = name;}

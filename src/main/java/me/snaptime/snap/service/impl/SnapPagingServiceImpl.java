@@ -29,11 +29,9 @@ public class SnapPagingServiceImpl {
 
         List<Tuple> result = snapRepository.findSnapPaging(loginId,pageNum,reqUser);
 
-        return result.stream()
-                .map(entity -> {
+        return result.stream().map(entity -> {
                     return FindSnapPagingResDto.toDto(entity);
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
     }
 
 }

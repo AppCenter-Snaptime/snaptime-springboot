@@ -23,7 +23,7 @@ public record FindSnapPagingResDto(
     public static FindSnapPagingResDto toDto(Tuple result){
         return FindSnapPagingResDto.builder()
                 .snapId(result.get(snap.Id))
-                .oneLineJournal(String.valueOf(snap.oneLineJournal))
+                .oneLineJournal(String.valueOf(result.get(snap.oneLineJournal)))
                 .photoId(result.get(snap.photo.id))
                 .snapCreatedDate(result.get(snap.createdDate))
                 .snapModifiedDate(result.get(snap.lastModifiedDate))

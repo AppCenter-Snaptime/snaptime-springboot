@@ -24,7 +24,7 @@ public class Snap extends BaseTimeEntity {
 
     private String oneLineJournal;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "photo_id")
     private Photo photo;
 

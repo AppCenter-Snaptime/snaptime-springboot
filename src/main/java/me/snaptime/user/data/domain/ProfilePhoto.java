@@ -28,17 +28,16 @@ public class ProfilePhoto extends BaseTimeEntity {
     private User user;
 
     @Builder
-    protected ProfilePhoto(Long Id, String profilePhotoPath, String profilePhotoName,User user)
-    {
+    protected ProfilePhoto(Long Id, String profilePhotoPath, String profilePhotoName,User user) {
         this.Id= Id;
         this.profilePhotoPath = profilePhotoPath;
         this.profilePhotoName = profilePhotoName;
         this.user = user;
     }
 
-    public void updateProfile(String profilePhotoName,String profilePhotoPath)
-    {
+    public void updateProfile(String profilePhotoName,String profilePhotoPath) {
         this.profilePhotoName = profilePhotoName;
         this.profilePhotoPath = profilePhotoPath;
     }
+
 }
