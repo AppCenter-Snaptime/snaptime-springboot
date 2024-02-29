@@ -23,7 +23,7 @@ public class SnapPagingController {
     private String tmpLoginId = "tempString";
 
     @Operation(summary = "Snap 조회", description = "커뮤니티에서 Snap을 10개씩 페이징조회합니다.")
-    @Parameter(name = "pageNum", description = "Snap페이지 번호")
+    @Parameter(name = "pageNum", description = "Snap페이지 번호를 보내주세요")
     @GetMapping("/community/{pageNum}")
     public ResponseEntity findSnapPaging(final @PathVariable Long pageNum) {
         // 토큰에서 loginId추출하는 로직

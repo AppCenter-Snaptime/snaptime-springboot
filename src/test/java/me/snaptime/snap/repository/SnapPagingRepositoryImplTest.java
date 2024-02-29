@@ -7,6 +7,7 @@ import me.snaptime.snap.data.domain.Album;
 import me.snaptime.snap.data.domain.Photo;
 import me.snaptime.snap.data.domain.Snap;
 import me.snaptime.snap.data.repository.AlbumRepository;
+import me.snaptime.snap.data.repository.PhotoRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.data.repository.impl.SnapPagingRepositoryImpl;
 import me.snaptime.social.common.FriendStatus;
@@ -46,6 +47,8 @@ public class SnapPagingRepositoryImplTest {
     private AlbumRepository albumRepository;
     @Autowired
     private SnapPagingRepositoryImpl snapPagingRepository;
+    @Autowired
+    private PhotoRepository photoRepository;
     private User user1;
     private User user2;
     private User user3;
@@ -134,6 +137,7 @@ public class SnapPagingRepositoryImplTest {
                     .filePath("testFilePath"+i)
                     .fileType("testType")
                     .build();
+            photoRepository.save(photo);
             Snap snap = Snap.builder()
                     .album(album)
                     .oneLineJournal("snap" + i + " 1줄일기")
