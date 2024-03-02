@@ -80,7 +80,7 @@ public class SnapServiceImplTest {
                 .fileType(givenMultipartFile.getContentType())
                 .build();
         User expectedUser = User.builder()
-                .Id(1L)
+                //.id(1L)
                 .name("김원정")
                 .email("test@test.com")
                 .birthDay("990303")

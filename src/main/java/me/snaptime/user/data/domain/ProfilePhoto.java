@@ -16,7 +16,7 @@ public class ProfilePhoto extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "profile_photo_id")
-    private Long Id;
+    private Long id;
 
     @Column(name = "profile_photo_path",nullable = false)
     private String profilePhotoPath;
@@ -24,17 +24,14 @@ public class ProfilePhoto extends BaseTimeEntity {
     @Column(name = "profile_photo_name",nullable = false)
     private String profilePhotoName;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",nullable = false)
+    @OneToOne(mappedBy = "profilePhoto", cascade = CascadeType.ALL)
     private User user;
 
     @Builder
-    protected ProfilePhoto(Long Id, String profilePhotoPath, String profilePhotoName,User user)
+    protected ProfilePhoto(String profilePhotoPath, String profilePhotoName)
     {
-        this.Id= Id;
         this.profilePhotoPath = profilePhotoPath;
         this.profilePhotoName = profilePhotoName;
-        this.user = user;
     }
 
     public void updateProfile(String profilePhotoName,String profilePhotoPath)
