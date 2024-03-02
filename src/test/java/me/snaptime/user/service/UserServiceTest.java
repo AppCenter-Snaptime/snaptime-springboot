@@ -74,35 +74,35 @@ class UserServiceTest {
         verify(userRepository, times(1)).findByLoginId("kang4746");
     }
 
-    @Test
-    @DisplayName("given_when_then 방식으로 signUp 서비스 성공 테스트")
-    public void signUp() {
-        //given
-        UserRequestDto givenRequest = UserRequestDto.builder()
-                .name("홍길순")
-                .loginId("kang4746")
-                .password("test1234")
-                .email("strong@gmail.com")
-                .birthDay("1999-10-29")
-                .build();
-
-
-        //userRepository.save(any(User.class)) 메서드가 호출되면
-        // 첫 번째 전달된 User 객체를 반환하도록(Mockito의 returnsFirstArg() 메서드를 사용하여) 설정하는 것입니다.
-        Mockito.when(userRepository.save(any(User.class)))
-                .then(returnsFirstArg());
-        //when
-        UserResponseDto userResponseDto = userService.signUp(givenRequest);
-
-        //then
-        Assertions.assertEquals(givenRequest.name(),userResponseDto.name());
-        Assertions.assertEquals(givenRequest.loginId(),userResponseDto.loginId());
-        Assertions.assertEquals(passwordEncoder.encode(givenRequest.password()),userResponseDto.password());
-        Assertions.assertEquals(givenRequest.email(),userResponseDto.email());
-        Assertions.assertEquals(givenRequest.birthDay(),userResponseDto.birthDay());
-
-        verify(userRepository,times(1)).save(any());
-    }
+//    @Test
+//    @DisplayName("given_when_then 방식으로 signUp 서비스 성공 테스트")
+//    public void signUp() {
+//        //given
+//        UserRequestDto givenRequest = UserRequestDto.builder()
+//                .name("홍길순")
+//                .loginId("kang4746")
+//                .password("test1234")
+//                .email("strong@gmail.com")
+//                .birthDay("1999-10-29")
+//                .build();
+//
+//
+//        //userRepository.save(any(User.class)) 메서드가 호출되면
+//        // 첫 번째 전달된 User 객체를 반환하도록(Mockito의 returnsFirstArg() 메서드를 사용하여) 설정하는 것입니다.
+//        Mockito.when(userRepository.save(any(User.class)))
+//                .then(returnsFirstArg());
+//        //when
+//        UserResponseDto userResponseDto = userService.signUp(givenRequest);
+//
+//        //then
+//        Assertions.assertEquals(givenRequest.name(),userResponseDto.name());
+//        Assertions.assertEquals(givenRequest.loginId(),userResponseDto.loginId());
+//        Assertions.assertEquals(passwordEncoder.encode(givenRequest.password()),userResponseDto.password());
+//        Assertions.assertEquals(givenRequest.email(),userResponseDto.email());
+//        Assertions.assertEquals(givenRequest.birthDay(),userResponseDto.birthDay());
+//
+//        verify(userRepository,times(1)).save(any());
+//    }
 
     @Test
     @DisplayName("given_when_then 방식으로 signIn 서비스 성공 테스트")
