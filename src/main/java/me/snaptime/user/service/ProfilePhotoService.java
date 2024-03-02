@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.NoSuchElementException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,37 +32,12 @@ public class ProfilePhotoService {
     @Value("${fileSystemPath}")
     private String FOLDER_PATH;
 
-    @Transactional
-    public ProfilePhotoResponseDto uploadPhotoToFileSystem(Long userId, MultipartFile uploadFile) throws Exception{
-        User createUser = userRepository.findById(userId).orElseThrow(()-> new NoSuchElementException("프로필 사진을 업로드 할 유저가 존재하지 않습니다."));
-
-        //이미 프로필 사진이 존재하는 경우
-        if(profilePhotoRepository.findProfilePhotoByUser(createUser).isPresent())
-        {
-            throw new CustomException(ExceptionCode.PROFILE_PHOTO_EXIST);
-        }
-
-        String fileName = ProfilePhotoNameGenerator.generatorProfilePhotoName(uploadFile.getOriginalFilename());
-        String filePath = FOLDER_PATH + fileName;
-
-        try{
-            uploadFile.transferTo(new File(filePath));
-        }catch (IOException e){
-            log.error(e.getMessage());
-            throw new CustomException(ExceptionCode.FILE_NOT_EXIST);
-        }
-
-        return ProfilePhotoResponseDto.toDto(profilePhotoRepository.save(
-                ProfilePhoto.builder()
-                        .profilePhotoName(fileName)
-                        .profilePhotoPath(filePath)
-                        .user(createUser)
-                        .build()));
-    }
-
     @Transactional(readOnly = true)
-    public byte[] downloadPhotoFromFileSystem(Long id){
-        ProfilePhoto profilePhoto = profilePhotoRepository.findById(id).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
+    public byte[] downloadPhotoFromFileSystem(String loginId){
+        log.info("[downloadPhoto] 유저의 로그인 아이디로 유저를 불러옵니다. loginId : {}",loginId);
+        User user = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+        ProfilePhoto profilePhoto = profilePhotoRepository.findById(user.getProfilePhoto().getId()).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
+        log.info("[downloadPhoto] 해당 유저의 프로필 사진을 불러옵니다. profileId : {}",profilePhoto.getId());
         String filePath = profilePhoto.getProfilePhotoPath();
 
         try{
@@ -72,34 +46,15 @@ public class ProfilePhotoService {
             log.error(e.getMessage());
             throw new CustomException(ExceptionCode.FILE_NOT_EXIST);
         }
+
     }
 
-
-    //트랜잭션 어노테이션을 사용하면 upload -> delete -> delete, 삭제를 2번해도 성공메시지가 뜸
-    //@Transactional
-    public void deletePhotoFromFileSystem(Long userId) throws Exception{
-        User deleteUser = userRepository.findById(userId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
-        ProfilePhoto profilePhoto = profilePhotoRepository.findProfilePhotoByUser(deleteUser).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
-        profilePhotoRepository.deleteById(profilePhoto.getId());
-
-        String photoPath = profilePhoto.getProfilePhotoPath();
-
-        if(!photoPath.isEmpty()){
-            try{
-                Path path = Paths.get(photoPath);
-                Files.deleteIfExists(path);
-            }catch (Exception e){
-                e.printStackTrace();
-                throw new CustomException(ExceptionCode.FILE_NOT_EXIST);
-            }
-        }
-    }
 
     //트랜잭션 어노테이션을 사용하면 upload -> delete -> update, 프로필을 삭제를 해도 수정에 성공함.
     //@Transactional
-    public ProfilePhotoResponseDto updatePhotoFromFileSystem(Long userId, MultipartFile updateFile) throws Exception{
-        User updateUser = userRepository.findById(userId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
-        ProfilePhoto profilePhoto = profilePhotoRepository.findProfilePhotoByUser(updateUser).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
+    public ProfilePhotoResponseDto updatePhotoFromFileSystem(String loginId, MultipartFile updateFile) throws Exception{
+        User updateUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+        ProfilePhoto profilePhoto = profilePhotoRepository.findById(updateUser.getProfilePhoto().getId()).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
 
         String updateFileName = ProfilePhotoNameGenerator.generatorProfilePhotoName(updateFile.getOriginalFilename());
         String updateFilePath = FOLDER_PATH + updateFileName;
@@ -117,5 +72,53 @@ public class ProfilePhotoService {
 
         return ProfilePhotoResponseDto.toDto(profilePhotoRepository.save(profilePhoto));
     }
+
+    //    @Transactional
+//    public ProfilePhotoResponseDto uploadPhotoToFileSystem(String loginId, MultipartFile uploadFile) throws Exception{
+//        User createUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+//
+//        //이미 프로필 사진이 존재하는 경우
+//        if(profilePhotoRepository.findProfilePhotoByUser(createUser).isPresent())
+//        {
+//            throw new CustomException(ExceptionCode.PROFILE_PHOTO_EXIST);
+//        }
+//
+//        String fileName = ProfilePhotoNameGenerator.generatorProfilePhotoName(uploadFile.getOriginalFilename());
+//        String filePath = FOLDER_PATH + fileName;
+//
+//        try{
+//            uploadFile.transferTo(new File(filePath));
+//        }catch (IOException e){
+//            log.error(e.getMessage());
+//            throw new CustomException(ExceptionCode.FILE_NOT_EXIST);
+//        }
+//
+//        return ProfilePhotoResponseDto.toDto(profilePhotoRepository.save(
+//                ProfilePhoto.builder()
+//                        .profilePhotoName(fileName)
+//                        .profilePhotoPath(filePath)
+//                        .build()));
+//    }
+
+
+    //트랜잭션 어노테이션을 사용하면 upload -> delete -> delete, 삭제를 2번해도 성공메시지가 뜸
+    //@Transactional
+//    public void deletePhotoFromFileSystem(Long userId) throws Exception{
+//        User deleteUser = userRepository.findById(userId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+//        ProfilePhoto profilePhoto = profilePhotoRepository.findProfilePhotoByUser(deleteUser).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
+//        profilePhotoRepository.deleteById(profilePhoto.getId());
+//
+//        String photoPath = profilePhoto.getProfilePhotoPath();
+//
+//        if(!photoPath.isEmpty()){
+//            try{
+//                Path path = Paths.get(photoPath);
+//                Files.deleteIfExists(path);
+//            }catch (Exception e){
+//                e.printStackTrace();
+//                throw new CustomException(ExceptionCode.FILE_NOT_EXIST);
+//            }
+//        }
+//    }
 
 }

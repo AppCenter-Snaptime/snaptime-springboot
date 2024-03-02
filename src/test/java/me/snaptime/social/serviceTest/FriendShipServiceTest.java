@@ -322,3 +322,4 @@ public class FriendShipServiceTest {
         assertThat(friendCntResDto.followingCnt()).isEqualTo(2l);
     }
 }
+
