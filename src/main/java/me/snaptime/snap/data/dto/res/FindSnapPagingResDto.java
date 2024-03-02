@@ -27,8 +27,8 @@ public record FindSnapPagingResDto(
                 .photoId(result.get(snap.photo.id))
                 .snapCreatedDate(result.get(snap.createdDate))
                 .snapModifiedDate(result.get(snap.lastModifiedDate))
-                .userId(result.get(user.Id))
-                .profilePhotoId(result.get(user.profilePhoto.Id))
+                .userId(result.get(user.id))
+                .profilePhotoId(result.get(user.profilePhoto.id))
                 .userName(result.get(user.name))
                 .build();
     }

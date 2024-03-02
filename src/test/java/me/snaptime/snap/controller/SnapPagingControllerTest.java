@@ -1,15 +1,20 @@
 package me.snaptime.snap.controller;
 
+import me.snaptime.common.config.SecurityConfig;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
+import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.snap.data.controller.SnapPagingController;
 import me.snaptime.snap.service.impl.SnapPagingServiceImpl;
+import me.snaptime.user.service.UserDetailsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -22,14 +27,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = SnapPagingController.class)
+@Import({SecurityConfig.class, JwtProvider.class})
 public class SnapPagingControllerTest {
 
     @MockBean
     private SnapPagingServiceImpl snapPagingService;
+
+    @MockBean
+    private UserDetailsServiceImpl userDetailsService;
+
     @Autowired
     private MockMvc mockMvc;
 
     @Test
+    @WithMockUser
     @DisplayName("스냅 페이징조회테스트 -> 성공")
     public void findSnapPagingTest1() throws Exception {
         //given
@@ -45,6 +56,7 @@ public class SnapPagingControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("스냅 페이징조회테스트 -> (실패 : PathVariable 타입예외)")
     public void findSnapPagingTest2() throws Exception{
         //given
@@ -60,6 +72,7 @@ public class SnapPagingControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("스냅 페이징조회테스트 -> (실패 : 존재하지 않는 페이지)")
     public void findSnapPagingTest3() throws Exception{
         //given
