@@ -45,7 +45,8 @@ public class User extends BaseTimeEntity implements UserDetails{
     @Column(name = "user_birthDay",nullable = false)
     private String birthDay;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_photo_id")
     private ProfilePhoto profilePhoto;
 
     //연관관계가 아닌 값 타입(value type)을 사용할 때 사용된다.
@@ -55,13 +56,14 @@ public class User extends BaseTimeEntity implements UserDetails{
     private List<String> roles = new ArrayList<>();
 
     @Builder
-    protected User(String name,String loginId,String password, String email, String birthDay, List<String> roles){
+    protected User(String name,String loginId,String password, String email, String birthDay, List<String> roles, ProfilePhoto profilePhoto){
         this.name = name;
         this.loginId = loginId;
         this.password =password;
         this.email = email;
         this.birthDay = birthDay;
         this.roles = roles;
+        this.profilePhoto = profilePhoto;
     }
 
     public void updateUserName(String name) { this.name = name;}

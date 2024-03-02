@@ -1,7 +1,6 @@
 package me.snaptime.user.data.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -121,4 +120,5 @@ public class UserController {
                         "유저 로그인을 성공적으로 완료하였습니다.",
                         signInResponseDto));
     }
+
 }
