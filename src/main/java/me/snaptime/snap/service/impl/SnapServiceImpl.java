@@ -1,8 +1,9 @@
 package me.snaptime.snap.service.impl;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.snaptime.common.exception.customs.CustomException;
+import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.domain.Photo;
 import me.snaptime.snap.data.domain.Snap;
@@ -34,7 +35,7 @@ public class SnapServiceImpl implements SnapService {
 
     @Override
     public void createSnap(CreateSnapReqDto createSnapReqDto, String userUid, boolean isPrivate) {
-        User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new EntityNotFoundException("사용자가 요청한 uid를 가진 User를 찾을 수 없었습니다."));
+        User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         Photo savedPhoto = persistPhoto(foundUser, createSnapReqDto.multipartFile(), isPrivate);
         snapRepository.save(
                 Snap.builder()
@@ -50,7 +51,7 @@ public class SnapServiceImpl implements SnapService {
 
     @Override
     public FindSnapResDto findSnap(Long id) {
-        Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("id가 존재하지 않습니다."));
+        Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         return FindSnapResDto.entityToResDto(foundSnap);
     }
 
@@ -60,8 +61,8 @@ public class SnapServiceImpl implements SnapService {
 
     @Override
     public void changeVisibility(Long snapId, String userUid, boolean isPrivate) {
-        Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new EntityNotFoundException("사용자가 요청한 id를 가진 Snap을 찾을 수 없었습니다."));
-        User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new EntityNotFoundException("사용자가 요청한 uid를 가진 사용자를 찾을 수 없었습니다."));
+        Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
+        User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         if (foundSnap.isPrivate() == isPrivate) {
             throw new RuntimeException("이미 설정되어 있습니다.");
         }
@@ -80,7 +81,8 @@ public class SnapServiceImpl implements SnapService {
                 foundSnap.updateIsPrivate(false);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.ENCRYPTION_ERROR);
         }
         snapRepository.save(foundSnap);
 
@@ -107,6 +109,7 @@ public class SnapServiceImpl implements SnapService {
                return photoService.uploadPhotoToFileSystem(multipartFile, encryption.getEncryptionKey());
             } catch(Exception e)  {
                 log.error(e.getMessage());
+                throw new CustomException(ExceptionCode.ENCRYPTION_ERROR);
             }
         }
         return photoService.uploadPhotoToFileSystem(multipartFile);

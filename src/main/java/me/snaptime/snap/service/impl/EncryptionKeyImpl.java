@@ -1,7 +1,8 @@
 package me.snaptime.snap.service.impl;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import me.snaptime.common.exception.customs.CustomException;
+import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.repository.EncryptionRepository;
 import me.snaptime.snap.service.EncryptionService;
@@ -19,7 +20,7 @@ public class EncryptionKeyImpl implements EncryptionService {
 
     @Override
     public String getEncryptionKey(String uid) {
-        User foundUser = userRepository.findUserByName(uid).orElseThrow(() -> new EntityNotFoundException("id를 찾을 수 없습니다."));
+        User foundUser = userRepository.findUserByName(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         Encryption foundEncryption = encryptionRepository.findByUser(foundUser);
         return Base64.getEncoder().encodeToString(foundEncryption.getEncryptionKey().getEncoded());
     }

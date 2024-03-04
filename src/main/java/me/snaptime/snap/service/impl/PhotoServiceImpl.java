@@ -1,9 +1,10 @@
 package me.snaptime.snap.service.impl;
 
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.snaptime.common.exception.customs.CustomException;
+import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.domain.Photo;
 import me.snaptime.snap.data.repository.PhotoRepository;
 import me.snaptime.snap.service.PhotoService;
@@ -37,6 +38,7 @@ public class PhotoServiceImpl implements PhotoService {
             Files.write(Paths.get(filePath), encryptFile);
         } catch (Exception e) {
             log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.ENCRYPTION_ERROR);
         }
         return photoRepository.save(
                 Photo.builder()
@@ -55,6 +57,7 @@ public class PhotoServiceImpl implements PhotoService {
             Files.write(Paths.get(filePath), multipartFile.getInputStream().readAllBytes());
         } catch (Exception e) {
             log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.FILE_WRITE_ERROR);
         }
         return photoRepository.save(
                 Photo.builder()
@@ -67,27 +70,27 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public byte[] downloadPhotoFromFileSystem(Long id, String secretKey) {
-        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("id에 해당되는 사진을 찾을 수 없습니다."));
+        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
         String filePath = foundPhoto.getFilePath();
         try {
             byte[] foundFile = Files.readAllBytes(new File(filePath).toPath());
             return EncryptionUtil.decryptData(foundFile, secretKey);
         } catch (Exception e) {
-            byte[] emptyByte = {};
             log.error(e.getMessage());
-            return emptyByte;
+            throw new CustomException(ExceptionCode.FILE_READ_ERROR);
         }
     }
 
     @Override
     public void deletePhoto(Long id) {
-        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("id에 해당되는 사진을 찾을 수 없었습니다."));
+        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
         String filePath = foundPhoto.getFilePath();
         try {
             Path path = Paths.get(filePath);
             Files.delete(path);
         } catch (Exception e) {
             log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.FILE_DELETE_ERROR);
         }
         photoRepository.delete(foundPhoto);
     }
@@ -95,7 +98,7 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     public void encryptionPhoto(Long id, SecretKey secretKey) {
         // 1. 사진을 찾는다
-        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("id에 해당되는 사진을 찾을 수 없었습니다"));
+        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
         // 2. 찾은 사진의 경로를 가져온다
         String filePath = foundPhoto.getFilePath();
         try {
@@ -107,12 +110,13 @@ public class PhotoServiceImpl implements PhotoService {
             Files.write(Paths.get(filePath), EncryptionData);
         } catch (Exception e) {
             log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.FILE_WRITE_ERROR);
         }
     }
 
     @Override
     public void decryptionPhoto(Long id, SecretKey secretKey) {
-        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("id에 해당되는 사진을 찾을 수 없었습니다"));
+        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
         String filePath = foundPhoto.getFilePath();
         try {
             byte[] foundFile = Files.readAllBytes(new File(filePath).toPath());
@@ -120,6 +124,7 @@ public class PhotoServiceImpl implements PhotoService {
             Files.write(Paths.get(filePath), EncryptionData);
         } catch (Exception e) {
             log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.FILE_WRITE_ERROR);
         }
     }
 }
