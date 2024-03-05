@@ -22,9 +22,9 @@ public class QEncryption extends EntityPathBase<Encryption> {
 
     public static final QEncryption encryption = new QEncryption("encryption");
 
-    public final SimplePath<javax.crypto.SecretKey> encryptionKey = createSimple("encryptionKey", javax.crypto.SecretKey.class);
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final SimplePath<javax.crypto.SecretKey> secretKey = createSimple("secretKey", javax.crypto.SecretKey.class);
 
     public final me.snaptime.user.data.domain.QUser user;
 

@@ -76,4 +76,9 @@ public class EncryptionKeyImpl implements EncryptionService {
         }
         throw new CustomException(ExceptionCode.ENCRYPTION_ERROR);
     }
+
+    @Override
+    public void deleteEncryption(Encryption encryption) {
+        encryptionRepository.delete(encryption);
+    }
 }

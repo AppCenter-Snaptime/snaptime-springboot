@@ -61,22 +61,22 @@ public class SnapServiceImpl implements SnapService {
         Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         Long photoId = foundSnap.getPhoto().getId();
+
         if (foundSnap.isPrivate() == isPrivate) {
             throw new RuntimeException("이미 설정되어 있습니다.");
         }
 
         byte[] foundPhotoByte = photoService.getPhotoByte(photoId);
-        // Public에서 Private로 게시글이 변경되었다면,
         if(isPrivate) {
-            // setEncryption Method로 Encryption 엔티티를 생성해준 뒤
-            // encryptionData로 가져온 Photo Byte를 암호화시켜준 뒤
-            // 암호화 된 정보를 파일 시스템 경로상의 Photo에 덮어씌운다.
+            // public -> private (암호화)
             Encryption encryption = encryptionService.setEncryption(foundUser);
             byte[] encryptedByte = encryptionService.encryptData(encryption, foundPhotoByte);
             photoService.updateFileSystemPhoto(photoId, encryptedByte);
         } else {
+            // private -> public (복호화)
             Encryption encryption = encryptionService.getEncryption(foundUser);
             byte[] decryptedByte = encryptionService.decryptData(encryption, foundPhotoByte);
+            encryptionService.deleteEncryption(encryption);
             photoService.updateFileSystemPhoto(photoId, decryptedByte);
         }
         foundSnap.updateIsPrivate(isPrivate);
