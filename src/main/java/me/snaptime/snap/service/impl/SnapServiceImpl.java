@@ -11,7 +11,6 @@ import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.data.dto.req.ModifySnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.data.repository.AlbumRepository;
-import me.snaptime.snap.data.repository.EncryptionRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.EncryptionService;
 import me.snaptime.snap.service.PhotoService;
@@ -30,7 +29,6 @@ public class SnapServiceImpl implements SnapService {
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
     private final EncryptionService encryptionService;
-    private final EncryptionRepository encryptionRepository;
 
     @Override
     public void createSnap(CreateSnapReqDto createSnapReqDto, String userUid, boolean isPrivate) {
@@ -62,24 +60,27 @@ public class SnapServiceImpl implements SnapService {
     public void changeVisibility(Long snapId, String userUid, boolean isPrivate) {
         Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        Long photoId = foundSnap.getPhoto().getId();
         if (foundSnap.isPrivate() == isPrivate) {
             throw new RuntimeException("이미 설정되어 있습니다.");
         }
-        try {
-            if(isPrivate) {
-                Encryption encryption = encryptionService.setEncryption(foundUser);
-                photoService.encryptPhoto(foundSnap.getId(), encryption.getSecretKey());
-                foundSnap.updateIsPrivate(true);
-            } else {
-                Encryption encryption = encryptionService.getEncryption(foundUser);
-                photoService.decryptPhoto(foundSnap.getId(), encryption.getSecretKey());
-                encryptionRepository.delete(encryption);
-                foundSnap.updateIsPrivate(false);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(ExceptionCode.ENCRYPTION_ERROR);
+
+        byte[] foundPhotoByte = photoService.getPhotoByte(photoId);
+        // Public에서 Private로 게시글이 변경되었다면,
+        if(isPrivate) {
+            // setEncryption Method로 Encryption 엔티티를 생성해준 뒤
+            // encryptionData로 가져온 Photo Byte를 암호화시켜준 뒤
+            // 암호화 된 정보를 파일 시스템 경로상의 Photo에 덮어씌운다.
+            Encryption encryption = encryptionService.setEncryption(foundUser);
+            byte[] encryptedByte = encryptionService.encryptData(encryption, foundPhotoByte);
+            photoService.updateFileSystemPhoto(photoId, encryptedByte);
+        } else {
+            Encryption encryption = encryptionService.getEncryption(foundUser);
+            byte[] decryptedByte = encryptionService.decryptData(encryption, foundPhotoByte);
+            photoService.updateFileSystemPhoto(photoId, decryptedByte);
         }
+        foundSnap.updateIsPrivate(isPrivate);
+
         snapRepository.save(foundSnap);
 
     }
@@ -91,14 +92,10 @@ public class SnapServiceImpl implements SnapService {
 
     private Photo persistPhoto(User user, MultipartFile multipartFile, boolean isPrivate) {
         if (isPrivate) {
-            try {
-                Encryption encryption = encryptionService.setEncryption(user);
-               return photoService.uploadPhotoToFileSystem(multipartFile, encryption.getSecretKey());
-            } catch(Exception e)  {
-                log.error(e.getMessage());
-                throw new CustomException(ExceptionCode.ENCRYPTION_ERROR);
-            }
+            Encryption encryption = encryptionService.setEncryption(user);
+            return photoService.uploadPhotoToFileSystem(multipartFile, encryption.getSecretKey());
+        } else {
+            return photoService.uploadPhotoToFileSystem(multipartFile);
         }
-        return photoService.uploadPhotoToFileSystem(multipartFile);
     }
 }

@@ -42,6 +42,26 @@ public class EncryptionKeyImpl implements EncryptionService {
         return encryption;
     }
 
+    @Override
+    public byte[] encryptData(Encryption encryption, byte[] fileBytes) {
+        try {
+            return EncryptionUtil.encryptData(fileBytes, encryption.getSecretKey());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.ENCRYPTION_ERROR);
+        }
+    }
+
+    @Override
+    public byte[] decryptData(Encryption encryption, byte[] fileBytes) {
+        try {
+            return EncryptionUtil.decryptData(fileBytes, encryption.getSecretKey());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.ENCRYPTION_ERROR);
+        }
+    }
+
     private Encryption createSecretKey(User user) {
         try {
             SecretKey secretKey = EncryptionUtil.generateAESKey();

@@ -10,4 +10,6 @@ public interface EncryptionService {
     SecretKey getSecretKey(String uId);
     Encryption getEncryption(User user);
     Encryption setEncryption(User user);
+    byte[] encryptData(Encryption encryption, byte[] fileBytes);
+    byte[] decryptData(Encryption encryption, byte[] fileBytes);
 }

@@ -96,32 +96,23 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public void encryptPhoto(Long id, SecretKey secretKey) {
-        // 1. 사진을 찾는다
-        // 2. 찾은 사진의 경로를 가져온다
-        // 3. 찾은 사진의 경로를 파일 시스템에서 가져온다
-        // 4. 찾아진 사진 파일 데이터를 암호화 한다.
-        // 5. 암호화한 데이터를 파일 시스템에 덮어씌운다.
+    public byte[] getPhotoByte(Long id) {
         Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
         String filePath = foundPhoto.getFilePath();
         try {
-            byte[] foundFile = Files.readAllBytes(new File(filePath).toPath());
-            byte[] EncryptionData = EncryptionUtil.encryptData(foundFile, secretKey);
-            Files.write(Paths.get(filePath), EncryptionData);
+            return Files.readAllBytes(new File(filePath).toPath());
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new CustomException(ExceptionCode.FILE_WRITE_ERROR);
+            throw new CustomException(ExceptionCode.FILE_READ_ERROR);
         }
     }
 
-    @Override
-    public void decryptPhoto(Long id, SecretKey secretKey) {
+@Override
+    public void updateFileSystemPhoto(Long id, byte[] fileBytes) {
         Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
         String filePath = foundPhoto.getFilePath();
         try {
-            byte[] foundFile = Files.readAllBytes(new File(filePath).toPath());
-            byte[] EncryptionData = EncryptionUtil.decryptData(foundFile, secretKey);
-            Files.write(Paths.get(filePath), EncryptionData);
+            Files.write(Paths.get(filePath), fileBytes);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(ExceptionCode.FILE_WRITE_ERROR);

@@ -10,6 +10,6 @@ public interface PhotoService {
     Photo uploadPhotoToFileSystem(MultipartFile multipartFile);
     byte[] downloadPhotoFromFileSystem(Long id, SecretKey secretKey);
     void deletePhoto(Long id);
-    void encryptPhoto(Long id, SecretKey secretKey);
-    void decryptPhoto(Long id, SecretKey secretKey);
+    byte[] getPhotoByte(Long id);
+    void updateFileSystemPhoto(Long id, byte[] fileBytes);
 }
