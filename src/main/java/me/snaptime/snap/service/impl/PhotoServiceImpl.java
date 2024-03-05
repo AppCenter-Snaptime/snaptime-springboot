@@ -69,7 +69,7 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public byte[] downloadPhotoFromFileSystem(Long id, String secretKey) {
+    public byte[] downloadPhotoFromFileSystem(Long id, SecretKey secretKey) {
         Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
         String filePath = foundPhoto.getFilePath();
         try {
@@ -96,17 +96,17 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public void encryptionPhoto(Long id, SecretKey secretKey) {
+    public void encryptPhoto(Long id, SecretKey secretKey) {
         // 1. 사진을 찾는다
-        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
         // 2. 찾은 사진의 경로를 가져온다
+        // 3. 찾은 사진의 경로를 파일 시스템에서 가져온다
+        // 4. 찾아진 사진 파일 데이터를 암호화 한다.
+        // 5. 암호화한 데이터를 파일 시스템에 덮어씌운다.
+        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
         String filePath = foundPhoto.getFilePath();
         try {
-            // 3. 찾은 사진의 경로를 파일 시스템에서 가져온다
             byte[] foundFile = Files.readAllBytes(new File(filePath).toPath());
-            // 4. 찾아진 사진 파일 데이터를 암호화 한다.
             byte[] EncryptionData = EncryptionUtil.encryptData(foundFile, secretKey);
-            // 5. 암호화한 데이터를 파일 시스템에 덮어씌운다.
             Files.write(Paths.get(filePath), EncryptionData);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -115,7 +115,7 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public void decryptionPhoto(Long id, SecretKey secretKey) {
+    public void decryptPhoto(Long id, SecretKey secretKey) {
         Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
         String filePath = foundPhoto.getFilePath();
         try {

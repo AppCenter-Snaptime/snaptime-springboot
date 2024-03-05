@@ -41,15 +41,14 @@ public class PhotoControllerTest {
     @Test
     public void findPhoto() throws Exception {
         SecretKey secretKey = EncryptionUtil.generateAESKey();
-        String encodedKey = Base64.getEncoder().encodeToString(secretKey.getEncoded());
-        given(photoService.downloadPhotoFromFileSystem(givenId, encodedKey)).willReturn(
+        given(photoService.downloadPhotoFromFileSystem(givenId, secretKey)).willReturn(
                 resource.getInputStream().readAllBytes()
         );
         mockMvc.perform(
-                get("/photo?id="+givenId+"&secretKey="+encodedKey)
+                get("/photo?id="+givenId+"&uId=abcd")
         ).andExpect(status().isOk())
                 .andDo(print());
 
-        verify(photoService).downloadPhotoFromFileSystem(givenId, encodedKey);
+        verify(photoService).downloadPhotoFromFileSystem(givenId, secretKey);
     }
 }

@@ -8,8 +8,8 @@ import javax.crypto.SecretKey;
 public interface PhotoService {
     Photo uploadPhotoToFileSystem(MultipartFile multipartFile, SecretKey secretKey);
     Photo uploadPhotoToFileSystem(MultipartFile multipartFile);
-    byte[] downloadPhotoFromFileSystem(Long id, String secretKey);
+    byte[] downloadPhotoFromFileSystem(Long id, SecretKey secretKey);
     void deletePhoto(Long id);
-    void encryptionPhoto(Long id, SecretKey secretKey);
-    void decryptionPhoto(Long id, SecretKey secretKey);
+    void encryptPhoto(Long id, SecretKey secretKey);
+    void decryptPhoto(Long id, SecretKey secretKey);
 }

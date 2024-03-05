@@ -1,10 +1,8 @@
 package me.snaptime.snap.util;
 
 import javax.crypto.*;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 public class EncryptionUtil {
     public static SecretKey generateAESKey() throws Exception {
@@ -24,14 +22,6 @@ public class EncryptionUtil {
         cipher.init(Cipher.ENCRYPT_MODE, key);
         // doFinal 메소드를 호출해 암호화 연산을 완료한다.
         return cipher.doFinal(dataToEncrypt);
-    }
-
-    public static byte[] decryptData(byte[] encryptedData, String key) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        byte[] decodedKey = Base64.getDecoder().decode(key);
-        SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        return cipher.doFinal(encryptedData);
     }
 
     public static byte[] decryptData(byte[] encryptedData, SecretKey secretKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {

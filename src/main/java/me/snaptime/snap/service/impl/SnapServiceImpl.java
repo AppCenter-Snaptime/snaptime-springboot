@@ -13,15 +13,13 @@ import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.data.repository.AlbumRepository;
 import me.snaptime.snap.data.repository.EncryptionRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
+import me.snaptime.snap.service.EncryptionService;
 import me.snaptime.snap.service.PhotoService;
 import me.snaptime.snap.service.SnapService;
-import me.snaptime.snap.util.EncryptionUtil;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.crypto.SecretKey;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +29,7 @@ public class SnapServiceImpl implements SnapService {
     private final SnapRepository snapRepository;
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
+    private final EncryptionService encryptionService;
     private final EncryptionRepository encryptionRepository;
 
     @Override
@@ -68,16 +67,13 @@ public class SnapServiceImpl implements SnapService {
         }
         try {
             if(isPrivate) {
-                SecretKey secretKey = EncryptionUtil.generateAESKey();
-                photoService.encryptionPhoto(foundSnap.getId(), secretKey);
+                Encryption encryption = encryptionService.setEncryption(foundUser);
+                photoService.encryptPhoto(foundSnap.getId(), encryption.getSecretKey());
                 foundSnap.updateIsPrivate(true);
-                encryptionRepository.save(Encryption.builder()
-                                .encryptionKey(secretKey)
-                                .user(foundUser).build());
             } else {
-                Encryption foundEncryption = encryptionRepository.findByUser(foundUser);
-                photoService.decryptionPhoto(foundSnap.getId(), foundEncryption.getEncryptionKey());
-                encryptionRepository.delete(foundEncryption);
+                Encryption encryption = encryptionService.getEncryption(foundUser);
+                photoService.decryptPhoto(foundSnap.getId(), encryption.getSecretKey());
+                encryptionRepository.delete(encryption);
                 foundSnap.updateIsPrivate(false);
             }
         } catch (Exception e) {
@@ -96,17 +92,8 @@ public class SnapServiceImpl implements SnapService {
     private Photo persistPhoto(User user, MultipartFile multipartFile, boolean isPrivate) {
         if (isPrivate) {
             try {
-                Encryption encryption = encryptionRepository.findByUser(user);
-                if (encryption == null) {
-                    SecretKey generatedKey = EncryptionUtil.generateAESKey();
-                    encryption = encryptionRepository.save(
-                            Encryption.builder()
-                                    .encryptionKey(generatedKey)
-                                    .user(user)
-                                    .build()
-                    );
-                }
-               return photoService.uploadPhotoToFileSystem(multipartFile, encryption.getEncryptionKey());
+                Encryption encryption = encryptionService.setEncryption(user);
+               return photoService.uploadPhotoToFileSystem(multipartFile, encryption.getSecretKey());
             } catch(Exception e)  {
                 log.error(e.getMessage());
                 throw new CustomException(ExceptionCode.ENCRYPTION_ERROR);
