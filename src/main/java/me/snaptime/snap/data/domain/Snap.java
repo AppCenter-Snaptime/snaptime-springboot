@@ -20,7 +20,7 @@ public class Snap extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     private String oneLineJournal;
 
@@ -43,7 +43,7 @@ public class Snap extends BaseTimeEntity {
 
     @Builder
     protected Snap(Long id, String oneLineJournal, Photo photo, Album album, List<Reply> replyList, User user, boolean isPrivate) {
-        this.Id = id;
+        this.id = id;
         this.oneLineJournal = oneLineJournal;
         this.photo = photo;
         this.album = album;
