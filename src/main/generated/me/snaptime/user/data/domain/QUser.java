@@ -44,6 +44,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final QProfilePhoto profilePhoto;
 
+    public final ListPath<String, StringPath> roles = this.<String, StringPath>createList("roles", String.class, StringPath.class, PathInits.DIRECT2);
+
     public QUser(String variable) {
         this(User.class, forVariable(variable), INITS);
     }
