@@ -62,7 +62,7 @@ public class SnapServiceImpl implements SnapService {
         Long photoId = foundSnap.getPhoto().getId();
 
         if (foundSnap.isPrivate() == isPrivate) {
-            throw new RuntimeException("이미 설정되어 있습니다.");
+            throw new CustomException(ExceptionCode.CHANGE_SNAP_VISIBILITY_ERROR);
         }
 
         byte[] foundPhotoByte = photoService.getPhotoByte(photoId);
@@ -91,12 +91,12 @@ public class SnapServiceImpl implements SnapService {
 
     private Photo persistPhoto(User user, MultipartFile multipartFile, boolean isPrivate) {
         try {
-        if (isPrivate) {
-            Encryption encryption = encryptionComponent.setEncryption(user);
-            byte[] encryptedData = encryptionComponent.encryptData(encryption, multipartFile.getInputStream().readAllBytes());
-            return photoService.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), encryptedData);
-        } else {
-            return photoService.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), multipartFile.getInputStream().readAllBytes());
+            if (isPrivate) {
+                Encryption encryption = encryptionComponent.setEncryption(user);
+                byte[] encryptedData = encryptionComponent.encryptData(encryption, multipartFile.getInputStream().readAllBytes());
+                return photoService.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), encryptedData);
+            } else {
+                return photoService.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), multipartFile.getInputStream().readAllBytes());
         }
         } catch (Exception e) {
             log.error(e.getMessage());
