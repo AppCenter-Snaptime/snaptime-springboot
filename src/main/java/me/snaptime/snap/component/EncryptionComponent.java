@@ -1,11 +1,11 @@
-package me.snaptime.snap.service;
+package me.snaptime.snap.component;
 
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.user.data.domain.User;
 
 import javax.crypto.SecretKey;
 
-public interface EncryptionService {
+public interface EncryptionComponent {
 
     /*
     * getSecretKey

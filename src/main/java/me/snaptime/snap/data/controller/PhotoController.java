@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import me.snaptime.snap.service.EncryptionService;
+import me.snaptime.snap.component.EncryptionComponent;
 import me.snaptime.snap.service.PhotoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +23,7 @@ import javax.crypto.SecretKey;
 @Tag(name = "[Photo] Photo API")
 public class PhotoController {
     private final PhotoService photoService;
-    private final EncryptionService encryptionService;
+    private final EncryptionComponent encryptionComponent;
 
     @Operation(summary = "Photo 조회", description = "조회할 Photo의 id를 입력해주세요")
     @Parameters({
@@ -34,7 +34,7 @@ public class PhotoController {
             final @RequestParam("id") Long id
     ) {
         String uId = "abcd";
-        SecretKey secretKey = encryptionService.getSecretKey(uId);
+        SecretKey secretKey = encryptionComponent.getSecretKey(uId);
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(
                 photoService.downloadPhotoFromFileSystem(id, secretKey)
         );

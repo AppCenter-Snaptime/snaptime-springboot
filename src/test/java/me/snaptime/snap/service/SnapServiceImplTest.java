@@ -93,7 +93,7 @@ public class SnapServiceImplTest {
         given(encryptionRepository.findByUser(expectedUser)).willReturn(null);
         given(encryptionRepository.save(Mockito.any(Encryption.class))).willReturn(
                 Encryption.builder()
-                        .encryptionKey(secretKey)
+                        .secretKey(secretKey)
                         .user(expectedUser)
                         .build()
         );

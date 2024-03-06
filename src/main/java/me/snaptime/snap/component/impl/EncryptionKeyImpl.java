@@ -1,23 +1,23 @@
-package me.snaptime.snap.service.impl;
+package me.snaptime.snap.component.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
+import me.snaptime.snap.component.EncryptionComponent;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.repository.EncryptionRepository;
-import me.snaptime.snap.service.EncryptionService;
 import me.snaptime.snap.util.EncryptionUtil;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 
-@Service
+@Component
 @RequiredArgsConstructor
 @Slf4j
-public class EncryptionKeyImpl implements EncryptionService {
+public class EncryptionKeyImpl implements EncryptionComponent {
     private final UserRepository userRepository;
     private final EncryptionRepository encryptionRepository;
 
