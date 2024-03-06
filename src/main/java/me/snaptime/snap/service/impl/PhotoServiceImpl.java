@@ -12,8 +12,6 @@ import me.snaptime.snap.util.EncryptionUtil;
 import me.snaptime.snap.util.FileNameGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.nio.file.Files;
@@ -28,45 +26,6 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Value("${fileSystemPath}")
     private String FOLDER_PATH;
-
-    @Override
-    public Photo uploadPhotoToFileSystem(MultipartFile multipartFile, SecretKey secretKey) {
-        String fileName = FileNameGenerator.generatorName(multipartFile.getOriginalFilename());
-        String filePath = FOLDER_PATH + fileName;
-        try {
-            byte[] encryptFile = EncryptionUtil.encryptData(multipartFile.getInputStream().readAllBytes(), secretKey);
-            Files.write(Paths.get(filePath), encryptFile);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(ExceptionCode.ENCRYPTION_ERROR);
-        }
-        return photoRepository.save(
-                Photo.builder()
-                        .fileName(fileName)
-                        .fileType(multipartFile.getContentType())
-                        .filePath(filePath)
-                        .build()
-        );
-    }
-
-    @Override
-    public Photo uploadPhotoToFileSystem(MultipartFile multipartFile) {
-        String fileName = FileNameGenerator.generatorName(multipartFile.getOriginalFilename());
-        String filePath = FOLDER_PATH + fileName;
-        try {
-            Files.write(Paths.get(filePath), multipartFile.getInputStream().readAllBytes());
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(ExceptionCode.FILE_WRITE_ERROR);
-        }
-        return photoRepository.save(
-                Photo.builder()
-                        .fileName(fileName)
-                        .fileType(multipartFile.getContentType())
-                        .filePath(filePath)
-                        .build()
-        );
-    }
 
     @Override
     public byte[] downloadPhotoFromFileSystem(Long id, SecretKey secretKey) {
@@ -117,5 +76,24 @@ public class PhotoServiceImpl implements PhotoService {
             log.error(e.getMessage());
             throw new CustomException(ExceptionCode.FILE_WRITE_ERROR);
         }
+    }
+
+    @Override
+    public Photo writePhotoToFileSystem(String fileName, String contentType, byte[] fileBytes) {
+        String generatedName = FileNameGenerator.generatorName(fileName);
+        String filePath = FOLDER_PATH + generatedName;
+        try {
+            Files.write(Paths.get(filePath), fileBytes);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.FILE_WRITE_ERROR);
+        }
+        return photoRepository.save(
+                Photo.builder()
+                        .fileName(fileName)
+                        .fileType(contentType)
+                        .filePath(filePath)
+                        .build()
+        );
     }
 }

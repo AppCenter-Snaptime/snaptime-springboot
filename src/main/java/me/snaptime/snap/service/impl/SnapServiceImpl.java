@@ -90,11 +90,17 @@ public class SnapServiceImpl implements SnapService {
     }
 
     private Photo persistPhoto(User user, MultipartFile multipartFile, boolean isPrivate) {
+        try {
         if (isPrivate) {
             Encryption encryption = encryptionComponent.setEncryption(user);
-            return photoService.uploadPhotoToFileSystem(multipartFile, encryption.getSecretKey());
+            byte[] encryptedData = encryptionComponent.encryptData(encryption, multipartFile.getInputStream().readAllBytes());
+            return photoService.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), encryptedData);
         } else {
-            return photoService.uploadPhotoToFileSystem(multipartFile);
+            return photoService.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), multipartFile.getInputStream().readAllBytes());
+        }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.FILE_READ_ERROR);
         }
     }
 }
