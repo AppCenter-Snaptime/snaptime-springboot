@@ -1,7 +1,6 @@
 package me.snaptime.snap.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.snaptime.snap.data.controller.PhotoController;
 import me.snaptime.snap.service.PhotoService;
 import me.snaptime.snap.util.EncryptionUtil;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +12,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.crypto.SecretKey;
-import java.util.Base64;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;

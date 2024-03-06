@@ -1,7 +1,6 @@
 package me.snaptime.snap.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.snaptime.snap.data.controller.SnapController;
 import me.snaptime.snap.data.domain.Photo;
 import me.snaptime.snap.data.domain.Snap;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;

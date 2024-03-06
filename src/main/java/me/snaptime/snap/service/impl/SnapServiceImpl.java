@@ -24,10 +24,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Slf4j
 public class SnapServiceImpl implements SnapService {
-    private final PhotoService photoService;
     private final SnapRepository snapRepository;
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
+    private final PhotoService photoService;
     private final EncryptionComponent encryptionComponent;
 
     @Override
@@ -43,7 +43,6 @@ public class SnapServiceImpl implements SnapService {
                         .isPrivate(isPrivate)
                         .build()
         );
-
     }
 
     @Override
