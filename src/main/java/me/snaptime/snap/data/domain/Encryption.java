@@ -20,15 +20,15 @@ public class Encryption {
 
 
     @Column(nullable = false)
-    private SecretKey encryptionKey;
+    private SecretKey secretKey;
 
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     @Builder
-    protected Encryption(SecretKey encryptionKey, User user) {
-        this.encryptionKey = encryptionKey;
+    protected Encryption(SecretKey secretKey, User user) {
+        this.secretKey = secretKey;
         this.user = user;
     }
 }
