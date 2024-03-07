@@ -47,9 +47,9 @@ public class SnapPagingServiceImplTest {
         Tuple tuple1 = mock(Tuple.class);
         Tuple tuple2 = mock(Tuple.class);
         Tuple tuple3 = mock(Tuple.class);
-        given(tuple1.get(snap.Id)).willReturn(1l);
-        given(tuple2.get(snap.Id)).willReturn(2l);
-        given(tuple3.get(snap.Id)).willReturn(3l);
+        given(tuple1.get(snap.Id)).willReturn(1L);
+        given(tuple2.get(snap.Id)).willReturn(2L);
+        given(tuple3.get(snap.Id)).willReturn(3L);
         given(tuple1.get(snap.oneLineJournal)).willReturn("일기1");
         given(tuple2.get(snap.oneLineJournal)).willReturn("일기2");
         given(tuple3.get(snap.oneLineJournal)).willReturn("일기3");
