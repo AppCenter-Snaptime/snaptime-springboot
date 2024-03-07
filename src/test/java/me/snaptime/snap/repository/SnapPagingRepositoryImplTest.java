@@ -155,7 +155,7 @@ public class SnapPagingRepositoryImplTest {
         // given
 
         // when
-        List<Tuple> result = snapPagingRepository.findSnapPaging("testLoginId1",1l,user1);
+        List<Tuple> result = snapPagingRepository.findSnapPaging("testLoginId1",1L,user1);
 
         // then
         assertThat(result.size()).isEqualTo(9l);

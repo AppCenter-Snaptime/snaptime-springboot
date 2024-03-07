@@ -40,7 +40,7 @@ public class SnapPagingControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "kang4746",password = "test1234",roles = "USER")
     @DisplayName("스냅 페이징조회테스트 -> 성공")
     public void findSnapPagingTest1() throws Exception {
         //given

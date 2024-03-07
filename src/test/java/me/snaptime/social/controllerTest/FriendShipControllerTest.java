@@ -213,7 +213,8 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.result.isAccept").value("수락여부를 보내주세요."))
                 .andDo(print());
 
-        verify(friendShipService,times(0)).acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class));
+        verify(friendShipService,times(0))
+                .acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class));
     }
 
     @Test
@@ -224,7 +225,8 @@ public class FriendShipControllerTest {
         acceptFollowReqDto = new AcceptFollowReqDto("test",true);
         Gson gson = new Gson();
         String requestBody = gson.toJson(acceptFollowReqDto);
-        given(friendShipService.acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class))).willThrow(new CustomException(ExceptionCode.USER_NOT_FOUND));
+        given(friendShipService.acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class)))
+                .willThrow(new CustomException(ExceptionCode.USER_NOT_FOUND));
 
         //when, then
         this.mockMvc.perform(post("/friends/accept")

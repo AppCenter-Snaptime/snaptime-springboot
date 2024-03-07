@@ -54,8 +54,8 @@ public class FriendShipServiceTest {
         //given
         User fromUser = spy(user);
         User toUser = spy(user);
-        given(fromUser.getId()).willReturn(1l);
-        given(toUser.getId()).willReturn(2l);
+        given(fromUser.getId()).willReturn(1L);
+        given(toUser.getId()).willReturn(2L);
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.of(fromUser));
         given(userRepository.findUserByName(any(String.class))).willReturn(Optional.ofNullable(toUser));
         given(friendShipRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.empty());
@@ -153,8 +153,8 @@ public class FriendShipServiceTest {
         //given
         User fromUser = spy(user);
         User toUser = spy(user);
-        given(fromUser.getId()).willReturn(1l);
-        given(toUser.getId()).willReturn(1l);
+        given(fromUser.getId()).willReturn(1L);
+        given(toUser.getId()).willReturn(1L);
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.of(fromUser));
         given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
         given(friendShipRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.empty());
