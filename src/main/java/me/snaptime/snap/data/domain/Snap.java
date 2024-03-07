@@ -24,10 +24,6 @@ public class Snap extends BaseTimeEntity {
 
     private String oneLineJournal;
 
-    @OneToOne
-    @JoinColumn(name = "photo_id")
-    private Photo photo;
-
     @ManyToOne
     @JoinColumn(name = "album_id")
     private Album album;
@@ -41,15 +37,27 @@ public class Snap extends BaseTimeEntity {
 
     private boolean isPrivate;
 
+    @Column(nullable = false)
+    private String fileName;
+
+    @Column(nullable = false)
+    private String filePath;
+
+    @Column(nullable = false)
+    private String fileType;
+
     @Builder
-    protected Snap(Long id, String oneLineJournal, Photo photo, Album album, List<Reply> replyList, User user, boolean isPrivate) {
+    protected Snap(Long id, String oneLineJournal, Album album, List<Reply> replyList, User user, boolean isPrivate,
+                    String fileName, String filePath, String fileType) {
         this.id = id;
         this.oneLineJournal = oneLineJournal;
-        this.photo = photo;
         this.album = album;
         this.replyList = replyList;
         this.user = user;
         this.isPrivate = isPrivate;
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.filePath = filePath;
     }
 
     public void updateIsPrivate(boolean state) {

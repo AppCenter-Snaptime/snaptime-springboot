@@ -1,12 +1,14 @@
 package me.snaptime.snap.service;
 
-import me.snaptime.snap.data.domain.Photo;
+import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;
+
 import javax.crypto.SecretKey;
 
 public interface PhotoService {
-    byte[] downloadPhotoFromFileSystem(Long id, SecretKey secretKey);
+    byte[] downloadPhotoFromFileSystem(String filePath, SecretKey secretKey);
+    byte[] downloadPhotoFromFileSystem(String filePath);
     void deletePhoto(Long id);
-    byte[] getPhotoByte(Long id);
-    void updateFileSystemPhoto(Long id, byte[] fileBytes);
-    Photo writePhotoToFileSystem(String fileName, String contentType, byte[] fileBytes);
+    byte[] getPhotoByte(String filePath);
+    void updateFileSystemPhoto(String filePath, byte[] fileBytes);
+    WritePhotoToFileSystemResult writePhotoToFileSystem(String fileName, String contentType, byte[] fileBytes);
 }

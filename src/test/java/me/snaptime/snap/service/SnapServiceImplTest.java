@@ -84,7 +84,6 @@ public class SnapServiceImplTest {
         Snap expectedSnap = spy(Snap.builder()
                 .isPrivate(givenPrivate)
                 .album(null)
-                .photo(expectedPhoto)
                 .oneLineJournal(givenCreateSnapReqDto.oneLineJournal())
                 .build());
         Encryption expectedEncryption = spy(Encryption.builder()
@@ -115,7 +114,6 @@ public class SnapServiceImplTest {
                 .id(1L)
                 .oneLineJournal("한줄일기")
                 .user(null)
-                .photo(expectedPhoto)
                 .album(null)
                 .build();
         FindSnapResDto expectedDto = FindSnapResDto.builder()

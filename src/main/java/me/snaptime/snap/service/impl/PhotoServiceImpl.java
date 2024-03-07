@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.domain.Photo;
+import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;
 import me.snaptime.snap.data.repository.PhotoRepository;
 import me.snaptime.snap.service.PhotoService;
 import me.snaptime.snap.util.EncryptionUtil;
@@ -28,12 +29,22 @@ public class PhotoServiceImpl implements PhotoService {
     private String FOLDER_PATH;
 
     @Override
-    public byte[] downloadPhotoFromFileSystem(Long id, SecretKey secretKey) {
-        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
-        String filePath = foundPhoto.getFilePath();
+    public byte[] downloadPhotoFromFileSystem(String fileName, SecretKey secretKey) {
+        String filePath = FOLDER_PATH + fileName;
         try {
             byte[] foundFile = Files.readAllBytes(new File(filePath).toPath());
             return EncryptionUtil.decryptData(foundFile, secretKey);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.FILE_READ_ERROR);
+        }
+    }
+
+    @Override
+    public byte[] downloadPhotoFromFileSystem(String fileName) {
+        String filePath = FOLDER_PATH + fileName;
+        try {
+            return Files.readAllBytes(new File(filePath).toPath());
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(ExceptionCode.FILE_READ_ERROR);
@@ -55,9 +66,7 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public byte[] getPhotoByte(Long id) {
-        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
-        String filePath = foundPhoto.getFilePath();
+    public byte[] getPhotoByte(String filePath) {
         try {
             return Files.readAllBytes(new File(filePath).toPath());
         } catch (Exception e) {
@@ -67,9 +76,7 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
 @Override
-    public void updateFileSystemPhoto(Long id, byte[] fileBytes) {
-        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
-        String filePath = foundPhoto.getFilePath();
+    public void updateFileSystemPhoto(String filePath, byte[] fileBytes) {
         try {
             Files.write(Paths.get(filePath), fileBytes);
         } catch (Exception e) {
@@ -79,7 +86,7 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public Photo writePhotoToFileSystem(String fileName, String contentType, byte[] fileBytes) {
+    public WritePhotoToFileSystemResult writePhotoToFileSystem(String fileName, String contentType, byte[] fileBytes) {
         String generatedName = FileNameGenerator.generatorName(fileName);
         String filePath = FOLDER_PATH + generatedName;
         try {
@@ -88,12 +95,8 @@ public class PhotoServiceImpl implements PhotoService {
             log.error(e.getMessage());
             throw new CustomException(ExceptionCode.FILE_WRITE_ERROR);
         }
-        return photoRepository.save(
-                Photo.builder()
-                        .fileName(fileName)
-                        .fileType(contentType)
-                        .filePath(filePath)
-                        .build()
+        return new WritePhotoToFileSystemResult(
+                filePath, generatedName
         );
     }
 }

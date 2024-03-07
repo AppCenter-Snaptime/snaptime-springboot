@@ -23,7 +23,6 @@ public record FindSnapResDto(
         return FindSnapResDto.builder()
                 .id(entity.getId())
                 .oneLineJournal(entity.getOneLineJournal())
-                .photoId(entity.getPhoto().getId())
                 .albumName(albumName)
                 .userUid(userUid)
                 .build();
