@@ -138,13 +138,26 @@ public class SnapPagingRepositoryImplTest {
                     .fileType("testType")
                     .build();
             photoRepository.save(photo);
-            Snap snap = Snap.builder()
-                    .album(album)
-                    .oneLineJournal("snap" + i + " 1줄일기")
-                    .user(users.get(i-1))
-                    .photo(photo)
-                    .build();
-            snaps.add(snap);
+            if(i==10){
+                Snap snap = Snap.builder()
+                        .album(album)
+                        .isPrivate(true)
+                        .oneLineJournal("snap" + i + " 1줄일기")
+                        .user(users.get(i-1))
+                        .photo(photo)
+                        .build();
+                snaps.add(snap);
+            }
+            else{
+                Snap snap = Snap.builder()
+                        .album(album)
+                        .isPrivate(false)
+                        .oneLineJournal("snap" + i + " 1줄일기")
+                        .user(users.get(i-1))
+                        .photo(photo)
+                        .build();
+                snaps.add(snap);
+            }
         }
         snapRepository.saveAll(snaps);
     }
@@ -158,35 +171,32 @@ public class SnapPagingRepositoryImplTest {
         List<Tuple> result = snapPagingRepository.findSnapPaging("testLoginId1",1L,user1);
 
         // then
-        assertThat(result.size()).isEqualTo(9l);
-        assertThat(result.get(0).get(snap.Id)).isEqualTo(10);
-        assertThat(result.get(1).get(snap.Id)).isEqualTo(9);
-        assertThat(result.get(2).get(snap.Id)).isEqualTo(8);
-        assertThat(result.get(3).get(snap.Id)).isEqualTo(7);
-        assertThat(result.get(4).get(snap.Id)).isEqualTo(6);
-        assertThat(result.get(5).get(snap.Id)).isEqualTo(4);
-        assertThat(result.get(6).get(snap.Id)).isEqualTo(3);
-        assertThat(result.get(7).get(snap.Id)).isEqualTo(2);
-        assertThat(result.get(8).get(snap.Id)).isEqualTo(1);
+        assertThat(result.size()).isEqualTo(8);
+        assertThat(result.get(0).get(snap.id)).isEqualTo(9);
+        assertThat(result.get(1).get(snap.id)).isEqualTo(8);
+        assertThat(result.get(2).get(snap.id)).isEqualTo(7);
+        assertThat(result.get(3).get(snap.id)).isEqualTo(6);
+        assertThat(result.get(4).get(snap.id)).isEqualTo(4);
+        assertThat(result.get(5).get(snap.id)).isEqualTo(3);
+        assertThat(result.get(6).get(snap.id)).isEqualTo(2);
+        assertThat(result.get(7).get(snap.id)).isEqualTo(1);
 
-        assertThat(result.get(0).get(snap.photo.id)).isEqualTo(10);
-        assertThat(result.get(1).get(snap.photo.id)).isEqualTo(9);
-        assertThat(result.get(2).get(snap.photo.id)).isEqualTo(8);
-        assertThat(result.get(3).get(snap.photo.id)).isEqualTo(7);
-        assertThat(result.get(4).get(snap.photo.id)).isEqualTo(6);
-        assertThat(result.get(5).get(snap.photo.id)).isEqualTo(4);
-        assertThat(result.get(6).get(snap.photo.id)).isEqualTo(3);
-        assertThat(result.get(7).get(snap.photo.id)).isEqualTo(2);
-        assertThat(result.get(8).get(snap.photo.id)).isEqualTo(1);
+        assertThat(result.get(0).get(snap.photo.id)).isEqualTo(9);
+        assertThat(result.get(1).get(snap.photo.id)).isEqualTo(8);
+        assertThat(result.get(2).get(snap.photo.id)).isEqualTo(7);
+        assertThat(result.get(3).get(snap.photo.id)).isEqualTo(6);
+        assertThat(result.get(4).get(snap.photo.id)).isEqualTo(4);
+        assertThat(result.get(5).get(snap.photo.id)).isEqualTo(3);
+        assertThat(result.get(6).get(snap.photo.id)).isEqualTo(2);
+        assertThat(result.get(7).get(snap.photo.id)).isEqualTo(1);
 
         assertThat(result.get(0).get(user.name)).isEqualTo("testName3");
         assertThat(result.get(1).get(user.name)).isEqualTo("testName3");
         assertThat(result.get(2).get(user.name)).isEqualTo("testName3");
-        assertThat(result.get(3).get(user.name)).isEqualTo("testName3");
+        assertThat(result.get(3).get(user.name)).isEqualTo("testName2");
         assertThat(result.get(4).get(user.name)).isEqualTo("testName2");
-        assertThat(result.get(5).get(user.name)).isEqualTo("testName2");
+        assertThat(result.get(5).get(user.name)).isEqualTo("testName1");
         assertThat(result.get(6).get(user.name)).isEqualTo("testName1");
         assertThat(result.get(7).get(user.name)).isEqualTo("testName1");
-        assertThat(result.get(8).get(user.name)).isEqualTo("testName1");
     }
 }

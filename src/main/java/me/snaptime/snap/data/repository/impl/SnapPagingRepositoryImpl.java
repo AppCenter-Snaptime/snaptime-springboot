@@ -35,7 +35,7 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
 
         List<Tuple> result =  jpaQueryFactory.select(
                         user.id, user.profilePhoto.id, user.name,
-                        snap.Id, snap.createdDate, snap.lastModifiedDate, snap.oneLineJournal, snap.photo.id
+                        snap.id, snap.createdDate, snap.lastModifiedDate, snap.oneLineJournal, snap.photo.id
                 )
                 .from(friendShip)
                 .rightJoin(user).on(friendShip.toUser.id.eq(user.id)).fetchJoin()
@@ -63,6 +63,7 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
         builder.and(user.id.eq(reqUser.getId()));
         builder.or(friendShip.fromUser.eq(reqUser)
                 .and(friendShip.friendStatus.eq(FriendStatus.FOLLOW).or(friendShip.friendStatus.eq(FriendStatus.WAITING))));
+        builder.and(snap.isPrivate.isFalse());
         return builder;
     }
 

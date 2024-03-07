@@ -47,9 +47,9 @@ public class SnapPagingServiceImplTest {
         Tuple tuple1 = mock(Tuple.class);
         Tuple tuple2 = mock(Tuple.class);
         Tuple tuple3 = mock(Tuple.class);
-        given(tuple1.get(snap.Id)).willReturn(1L);
-        given(tuple2.get(snap.Id)).willReturn(2L);
-        given(tuple3.get(snap.Id)).willReturn(3L);
+        given(tuple1.get(snap.id)).willReturn(1L);
+        given(tuple2.get(snap.id)).willReturn(2L);
+        given(tuple3.get(snap.id)).willReturn(3L);
         given(tuple1.get(snap.oneLineJournal)).willReturn("일기1");
         given(tuple2.get(snap.oneLineJournal)).willReturn("일기2");
         given(tuple3.get(snap.oneLineJournal)).willReturn("일기3");
@@ -57,7 +57,7 @@ public class SnapPagingServiceImplTest {
         given(snapRepository.findSnapPaging(any(String.class),any(Long.class),any(User.class))).willReturn(List.of(tuple1,tuple2,tuple3));
 
         // when
-        List<FindSnapPagingResDto> result = snapPagingService.findSnapPaging("testLoginId",1l);
+        List<FindSnapPagingResDto> result = snapPagingService.findSnapPaging("testLoginId",1L);
 
         // then
         assertThat(result.size()).isEqualTo(3);

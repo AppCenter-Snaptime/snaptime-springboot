@@ -1,4 +1,4 @@
-package me.snaptime.snap.data.controller;
+package me.snaptime.snap.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

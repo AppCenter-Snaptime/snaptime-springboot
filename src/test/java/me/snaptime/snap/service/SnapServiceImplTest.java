@@ -1,5 +1,6 @@
 package me.snaptime.snap.service;
 
+import me.snaptime.snap.component.EncryptionComponent;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.domain.Photo;
 import me.snaptime.snap.data.domain.Snap;
@@ -10,7 +11,6 @@ import me.snaptime.snap.data.repository.EncryptionRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.impl.SnapServiceImpl;
 import me.snaptime.snap.util.EncryptionUtil;
-import me.snaptime.snap.util.FileNameGenerator;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -25,11 +25,11 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.crypto.SecretKey;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
 public class SnapServiceImplTest {
@@ -38,6 +38,9 @@ public class SnapServiceImplTest {
 
     @Mock
     private SnapRepository snapRepository;
+
+    @Mock
+    private EncryptionComponent encryptionComponent;
 
     @Mock
     private UserRepository userRepository;
@@ -60,54 +63,40 @@ public class SnapServiceImplTest {
     public void createSnapTest() throws Exception {
         // given
         MultipartFile givenMultipartFile = new MockMultipartFile(
-                "image",
-                "image",
-                "image/jpeg",
-                resource.getInputStream().readAllBytes()
+                "image", "image", "image/jpeg", resource.getInputStream().readAllBytes()
         );
-
-        CreateSnapReqDto givenDto = new CreateSnapReqDto(
-            "한줄일기", givenMultipartFile, ""
+        CreateSnapReqDto givenCreateSnapReqDto = new CreateSnapReqDto(
+            "한 줄 일기", givenMultipartFile, ""
         );
-
-        String fileName = FileNameGenerator.generatorName(givenMultipartFile.getOriginalFilename());
-
-        String givenUid = "test";
-        Photo expectPhoto = Photo.builder()
-                .id(1L)
-                .fileName(fileName)
-                .filePath("C:\\Image\\" + fileName)
-                .fileType(givenMultipartFile.getContentType())
-                .build();
-        User expectedUser = User.builder()
-                //.id(1L)
-                .name("김원정")
+        boolean givenPrivate = true;
+        User expectedUser = spy(User.builder()
+                .loginId("abcd")
                 .email("test@test.com")
                 .birthDay("990303")
                 .password("1234")
-                .build();
-        SecretKey secretKey = EncryptionUtil.generateAESKey();
-        given(photoService.uploadPhotoToFileSystem(givenMultipartFile, secretKey)).willReturn(expectPhoto);
-        given(userRepository.findByLoginId(givenUid)).willReturn(Optional.ofNullable(expectedUser));
-        given(albumRepository.findByName(givenDto.album())).willReturn(null);
-        given(encryptionRepository.findByUser(expectedUser)).willReturn(null);
-        given(encryptionRepository.save(Mockito.any(Encryption.class))).willReturn(
-                Encryption.builder()
-                        .encryptionKey(secretKey)
-                        .user(expectedUser)
-                        .build()
-        );
-        given(snapRepository.save(Mockito.any(Snap.class))).willReturn(
-                Snap.builder()
-                        .id(1L)
-                        .album(null)
-                        .photo(expectPhoto)
+                .name("김원정")
+                .build());
+        Photo expectedPhoto = spy(Photo.builder()
+                .filePath("/image/image.png")
+                .fileName("image")
+                .fileType("image/jpeg")
+                .build());
+        Snap expectedSnap = spy(Snap.builder()
+                .isPrivate(givenPrivate)
+                .album(null)
+                .photo(expectedPhoto)
+                .oneLineJournal(givenCreateSnapReqDto.oneLineJournal())
+                .build());
+        Encryption expectedEncryption = spy(Encryption.builder()
                 .user(expectedUser)
-                .oneLineJournal(givenDto.oneLineJournal())
-                .build()
-        );
+                .secretKey(EncryptionUtil.generateAESKey())
+                .build());
+        given(userRepository.findByLoginId("abcd")).willReturn(Optional.ofNullable(expectedUser));
+        given(snapRepository.save(Mockito.any(Snap.class))).willReturn(expectedSnap);
+        given(encryptionComponent.setEncryption(expectedUser)).willReturn(expectedEncryption);
         // when
-        snapServiceImpl.createSnap(givenDto, givenUid);
+        snapServiceImpl.createSnap(givenCreateSnapReqDto, "abcd", givenPrivate);
+        // then
     }
 
     @DisplayName("스냅 가져오기 테스트")

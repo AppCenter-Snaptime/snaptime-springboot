@@ -3,7 +3,6 @@ package me.snaptime.snap.service;
 import me.snaptime.snap.data.domain.Photo;
 import me.snaptime.snap.data.repository.PhotoRepository;
 import me.snaptime.snap.service.impl.PhotoServiceImpl;
-import me.snaptime.snap.util.EncryptionUtil;
 import me.snaptime.snap.util.FileNameGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.crypto.SecretKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -42,7 +39,7 @@ public class PhotoServiceImplTest {
         // given
         MultipartFile imageFile = new MockMultipartFile(
                 "image",
-        "image",
+        "image.jpg",
                 "image/jpeg",
                 resource.getInputStream().readAllBytes()
         );
@@ -57,12 +54,10 @@ public class PhotoServiceImplTest {
                 .filePath(filePath)
                 .build();
 
-        SecretKey secretKey = EncryptionUtil.generateAESKey();
-
         given(photoRepository.save(Mockito.any(Photo.class))).willReturn(expectedPhoto);
 
         // when
-        Photo result = photoServiceImpl.uploadPhotoToFileSystem(imageFile, secretKey);
+        Photo result = photoServiceImpl.writePhotoToFileSystem(imageFile.getOriginalFilename(), imageFile.getContentType(), imageFile.getInputStream().readAllBytes());
 
         // then
         assertEquals(expectedPhoto.getFileName(), result.getFileName());

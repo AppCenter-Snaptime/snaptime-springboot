@@ -4,7 +4,6 @@ import me.snaptime.common.config.SecurityConfig;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.common.jwt.JwtProvider;
-import me.snaptime.snap.data.controller.SnapPagingController;
 import me.snaptime.snap.service.impl.SnapPagingServiceImpl;
 import me.snaptime.user.service.UserDetailsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
