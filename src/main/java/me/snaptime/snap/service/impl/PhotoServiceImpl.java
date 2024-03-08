@@ -12,6 +12,7 @@ import me.snaptime.snap.util.EncryptionUtil;
 import me.snaptime.snap.util.FileNameGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.nio.file.Files;

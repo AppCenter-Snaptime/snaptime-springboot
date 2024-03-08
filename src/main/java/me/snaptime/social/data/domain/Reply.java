@@ -33,7 +33,7 @@ public class Reply extends BaseTimeEntity {
     private User user;
 
     @Builder
-    public Reply(String content, Snap snap, User user){
+    protected Reply(String content, Snap snap, User user){
         this.content=content;
         this.snap=snap;
         this.user=user;

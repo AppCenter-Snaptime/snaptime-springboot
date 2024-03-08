@@ -3,7 +3,6 @@ package me.snaptime.user.service;
 import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.dto.request.SignInRequestDto;
-import me.snaptime.user.data.dto.request.UserRequestDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
 import me.snaptime.user.data.dto.response.SignInResponseDto;
 import me.snaptime.user.data.dto.response.UserResponseDto;

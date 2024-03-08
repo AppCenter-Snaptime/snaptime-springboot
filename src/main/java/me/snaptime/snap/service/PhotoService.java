@@ -1,6 +1,7 @@
 package me.snaptime.snap.service;
 
 import me.snaptime.snap.data.domain.Photo;
+
 import javax.crypto.SecretKey;
 
 public interface PhotoService {

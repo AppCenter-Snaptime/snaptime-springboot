@@ -1,7 +1,6 @@
 package me.snaptime.user.data.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,7 +67,6 @@ public class ProfilePhotoController {
         );
     }
 
-
     //    @Operation(summary = "프로필 사진 업로드",description = "유저의 프로필 사진을 업로드 합니다.")
 //    //@Parameter(name = "userId", description = "프로필 사진을 업로드 할 유저 id")
 //    @PostMapping(consumes = MULTIPART_FORM_DATA)
@@ -104,7 +102,5 @@ public class ProfilePhotoController {
 //                        null)
 //        );
 //    }
-
-
 
 }
