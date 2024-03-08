@@ -17,7 +17,7 @@ import javax.crypto.SecretKey;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class EncryptionKeyImpl implements EncryptionComponent {
+public class EncryptionImpl implements EncryptionComponent {
     private final UserRepository userRepository;
     private final EncryptionRepository encryptionRepository;
 

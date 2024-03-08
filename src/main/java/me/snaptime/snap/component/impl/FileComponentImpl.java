@@ -1,44 +1,28 @@
-package me.snaptime.snap.service.impl;
+package me.snaptime.snap.component.impl;
 
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
-import me.snaptime.snap.data.domain.Photo;
+import me.snaptime.snap.component.FileComponent;
 import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;
-import me.snaptime.snap.data.repository.PhotoRepository;
-import me.snaptime.snap.service.PhotoService;
-import me.snaptime.snap.util.EncryptionUtil;
 import me.snaptime.snap.util.FileNameGenerator;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import javax.crypto.SecretKey;
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Service
+@Component
 @RequiredArgsConstructor
 @Slf4j
-public class PhotoServiceImpl implements PhotoService {
-    private final PhotoRepository photoRepository;
+public class FileComponentImpl implements FileComponent {
 
     @Value("${fileSystemPath}")
     private String FOLDER_PATH;
-
-    @Override
-    public byte[] downloadPhotoFromFileSystem(String fileName, SecretKey secretKey) {
-        String filePath = FOLDER_PATH + fileName;
-        try {
-            byte[] foundFile = Files.readAllBytes(new File(filePath).toPath());
-            return EncryptionUtil.decryptData(foundFile, secretKey);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(ExceptionCode.FILE_READ_ERROR);
-        }
-    }
 
     @Override
     public byte[] downloadPhotoFromFileSystem(String fileName) {
@@ -52,9 +36,8 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public void deletePhoto(Long id) {
-        Photo foundPhoto = photoRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.PHOTO_NOT_EXIST));
-        String filePath = foundPhoto.getFilePath();
+    public void deletePhoto(String fileName) {
+        String filePath = FOLDER_PATH + fileName;
         try {
             Path path = Paths.get(filePath);
             Files.delete(path);
@@ -62,7 +45,6 @@ public class PhotoServiceImpl implements PhotoService {
             log.error(e.getMessage());
             throw new CustomException(ExceptionCode.FILE_DELETE_ERROR);
         }
-        photoRepository.delete(foundPhoto);
     }
 
     @Override
@@ -75,7 +57,7 @@ public class PhotoServiceImpl implements PhotoService {
         }
     }
 
-@Override
+    @Override
     public void updateFileSystemPhoto(String filePath, byte[] fileBytes) {
         try {
             Files.write(Paths.get(filePath), fileBytes);

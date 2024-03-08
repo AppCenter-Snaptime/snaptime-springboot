@@ -13,7 +13,7 @@ import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.data.repository.AlbumRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.component.EncryptionComponent;
-import me.snaptime.snap.service.PhotoService;
+import me.snaptime.snap.component.FileComponent;
 import me.snaptime.snap.service.SnapService;
 import me.snaptime.snap.util.EncryptionUtil;
 import me.snaptime.user.data.domain.User;
@@ -30,7 +30,7 @@ public class SnapServiceImpl implements SnapService {
     private final SnapRepository snapRepository;
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
-    private final PhotoService photoService;
+    private final FileComponent fileComponent;
     private final EncryptionComponent encryptionComponent;
 
     @Override
@@ -69,18 +69,18 @@ public class SnapServiceImpl implements SnapService {
             throw new CustomException(ExceptionCode.CHANGE_SNAP_VISIBILITY_ERROR);
         }
 
-        byte[] foundPhotoByte = photoService.getPhotoByte(foundSnap.getFilePath());
+        byte[] foundPhotoByte = fileComponent.getPhotoByte(foundSnap.getFilePath());
         if(isPrivate) {
             // public -> private (암호화)
             Encryption encryption = encryptionComponent.setEncryption(foundUser);
             byte[] encryptedByte = encryptionComponent.encryptData(encryption, foundPhotoByte);
-            photoService.updateFileSystemPhoto(foundSnap.getFilePath(), encryptedByte);
+            fileComponent.updateFileSystemPhoto(foundSnap.getFilePath(), encryptedByte);
         } else {
             // private -> public (복호화)
             Encryption encryption = encryptionComponent.getEncryption(foundUser);
             byte[] decryptedByte = encryptionComponent.decryptData(encryption, foundPhotoByte);
             encryptionComponent.deleteEncryption(encryption);
-            photoService.updateFileSystemPhoto(foundSnap.getFilePath(), decryptedByte);
+            fileComponent.updateFileSystemPhoto(foundSnap.getFilePath(), decryptedByte);
         }
         foundSnap.updateIsPrivate(isPrivate);
 
@@ -95,7 +95,7 @@ public class SnapServiceImpl implements SnapService {
 
     @Override
     public byte[] downloadPhotoFromFileSystem(String fileName, String uId, boolean isEncrypted) {
-        byte[] photoData = photoService.downloadPhotoFromFileSystem(fileName);
+        byte[] photoData = fileComponent.downloadPhotoFromFileSystem(fileName);
         if (isEncrypted) {
             try {
                 SecretKey secretKey = encryptionComponent.getSecretKey(uId);
@@ -113,9 +113,9 @@ public class SnapServiceImpl implements SnapService {
             if (isPrivate) {
                 Encryption encryption = encryptionComponent.setEncryption(user);
                 byte[] encryptedData = encryptionComponent.encryptData(encryption, multipartFile.getInputStream().readAllBytes());
-                return photoService.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), encryptedData);
+                return fileComponent.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), encryptedData);
             } else {
-                return photoService.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), multipartFile.getInputStream().readAllBytes());
+                return fileComponent.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), multipartFile.getInputStream().readAllBytes());
         }
         } catch (Exception e) {
             log.error(e.getMessage());

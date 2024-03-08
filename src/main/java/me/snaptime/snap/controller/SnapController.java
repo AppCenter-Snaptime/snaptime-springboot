@@ -3,17 +3,18 @@ package me.snaptime.snap.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.dto.CommonResponseDto;
-import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.service.SnapService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,17 +24,16 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class SnapController {
     private final SnapService snapService;
-    private final JwtProvider jwtProvider;
 
     @Operation(summary = "Snap 생성", description = "Empty Value를 보내지마세요")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CommonResponseDto<?>> createSnap(
             final @RequestParam("isPrivate") boolean isPrivate,
-            final @ModelAttribute CreateSnapReqDto createSnapReqDto,
-            final HttpServletRequest request
+            final @ModelAttribute CreateSnapReqDto createSnapReqDto
     ) {
-        String token = jwtProvider.resolveToken(request);
-        String uId = jwtProvider.getUsername(token);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String uId = userDetails.getUsername();
         snapService.createSnap(createSnapReqDto, uId, isPrivate);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CommonResponseDto<>(
@@ -57,11 +57,11 @@ public class SnapController {
     @PostMapping("/visibility")
     public ResponseEntity<CommonResponseDto<Void>> changeVisibility(
             final @RequestParam("snapId") Long snapId,
-            final @RequestParam("isPrivate") boolean isPrivate,
-            final HttpServletRequest request
+            final @RequestParam("isPrivate") boolean isPrivate
     ) {
-        String token = jwtProvider.resolveToken(request);
-        String uId = jwtProvider.getUsername(token);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String uId = userDetails.getUsername();
         snapService.changeVisibility(snapId, uId, isPrivate);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(

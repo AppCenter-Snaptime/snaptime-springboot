@@ -1,6 +1,7 @@
 package me.snaptime.snap.service;
 
 import me.snaptime.snap.component.EncryptionComponent;
+import me.snaptime.snap.component.FileComponent;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.domain.Photo;
 import me.snaptime.snap.data.domain.Snap;
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.spy;
 @ExtendWith(MockitoExtension.class)
 public class SnapServiceImplTest {
     @Mock
-    private PhotoService photoService;
+    private FileComponent fileComponent;
 
     @Mock
     private SnapRepository snapRepository;
