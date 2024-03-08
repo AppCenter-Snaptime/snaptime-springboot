@@ -45,7 +45,7 @@ public class SnapServiceImpl implements SnapService {
                         .fileType(createSnapReqDto.multipartFile().getContentType())
                         .user(foundUser)
                         .album(albumRepository.findByName(createSnapReqDto.album()))
-                        .isPrivate(isPrivate)
+                        .isEncrypted(isPrivate)
                         .build()
         );
     }
@@ -65,7 +65,7 @@ public class SnapServiceImpl implements SnapService {
         Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        if (foundSnap.isPrivate() == isPrivate) {
+        if (foundSnap.isEncrypted() == isPrivate) {
             throw new CustomException(ExceptionCode.CHANGE_SNAP_VISIBILITY_ERROR);
         }
 

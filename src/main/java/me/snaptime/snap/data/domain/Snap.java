@@ -35,7 +35,7 @@ public class Snap extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private boolean isPrivate;
+    private boolean isEncrypted;
 
     @Column(nullable = false)
     private String fileName;
@@ -47,21 +47,21 @@ public class Snap extends BaseTimeEntity {
     private String fileType;
 
     @Builder
-    protected Snap(Long id, String oneLineJournal, Album album, List<Reply> replyList, User user, boolean isPrivate,
+    protected Snap(Long id, String oneLineJournal, Album album, List<Reply> replyList, User user, boolean isEncrypted,
                     String fileName, String filePath, String fileType) {
         this.id = id;
         this.oneLineJournal = oneLineJournal;
         this.album = album;
         this.replyList = replyList;
         this.user = user;
-        this.isPrivate = isPrivate;
+        this.isEncrypted = isEncrypted;
         this.fileName = fileName;
         this.fileType = fileType;
         this.filePath = filePath;
     }
 
     public void updateIsPrivate(boolean state) {
-        this.isPrivate = state;
+        this.isEncrypted = state;
     }
 
 
