@@ -83,7 +83,7 @@ public class SnapServiceImplTest {
                 .fileType("image/jpeg")
                 .build());
         Snap expectedSnap = spy(Snap.builder()
-                .isPrivate(givenPrivate)
+                .isEncrypted(givenPrivate)
                 .album(null)
                 .oneLineJournal(givenCreateSnapReqDto.oneLineJournal())
                 .build());

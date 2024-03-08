@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class PhotoController {
     private final SnapService snapService;
 
-    @Operation(summary = "Photo 조회", description = "")
+    @Operation(summary = "Photo 조회")
     @Parameters({
             @Parameter(name = "fileName", description = "찾을 사진의 이름을 입력해주세요"),
     })
