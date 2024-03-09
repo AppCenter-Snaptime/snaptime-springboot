@@ -23,7 +23,7 @@ public class EncryptionImpl implements EncryptionComponent {
 
     @Override
     public SecretKey getSecretKey(String uId) {
-        User foundUser = userRepository.findUserByName(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         Encryption foundSecretKey = encryptionRepository.findByUser(foundUser);
         return foundSecretKey.getSecretKey();
     }
