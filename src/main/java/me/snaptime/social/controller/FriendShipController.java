@@ -64,7 +64,7 @@ public class FriendShipController {
     @Parameters({
             @Parameter(name = "searchKeyword", description = "친구 검색키워드", required = false, example = "홍길동"),
             @Parameter(name = "friendSearchType", description = "검색 타입(팔로워 조회 시 FOLLOWER/팔로잉 조회 시 FOLLOWING)으로 입력해주세요.", required = true, example = "FOLLOWER")
-    })q
+    })
     public ResponseEntity<CommonResponseDto> findFriendList(
             @RequestParam(name = "friendSearchType") @NotEmpty(message = "팔로잉과 팔로워중 어느 친구목록을 조회할 지 입력해주세요.") FriendSearchType friendSearchType,
             @RequestParam(name = "searchKeyword",required = false) String searchKeyword){
