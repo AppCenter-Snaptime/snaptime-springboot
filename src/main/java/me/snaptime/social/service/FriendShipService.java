@@ -3,6 +3,7 @@ package me.snaptime.social.service;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
+import me.snaptime.social.common.FriendSearchType;
 import me.snaptime.social.common.FriendStatus;
 import me.snaptime.social.data.domain.FriendShip;
 import me.snaptime.social.data.dto.req.AcceptFollowReqDto;
@@ -97,7 +98,7 @@ public class FriendShipService {
     }
     
     // 팔로워 or 팔로잉 친구리스트 조회
-    public Object findFollowerList(String loginId, String searchType){
+    public Object findFriendList(String loginId, FriendSearchType searchType, String searchKeyword){
         // user 조회
 
         // 나를 팔로우 or 팔로워하는 사람의 프로필과 이름 페이징조회
@@ -116,15 +117,6 @@ public class FriendShipService {
         Long followingCnt = friendShipRepository.countByFromUserAndFriendStatus(user,FriendStatus.FOLLOW);
 
         return FriendCntResDto.toDto(followerCnt,followingCnt);
-    }
-
-    // 팔로잉 or 팔로워 친구리스트에서 친구검색
-    public Object findFriendByName(String loginId, String searchKeyword, String searchType){
-        // user조회
-        
-        // 검색키워드로 친구검색
-
-        return null;
     }
 
     public User findUserByName(String fromUserName){

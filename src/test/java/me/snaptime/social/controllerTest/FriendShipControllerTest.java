@@ -5,7 +5,7 @@ import me.snaptime.common.config.SecurityConfig;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.common.jwt.JwtProvider;
-import me.snaptime.social.data.controller.FriendShipController;
+import me.snaptime.social.controller.FriendShipController;
 import me.snaptime.social.data.dto.req.AcceptFollowReqDto;
 import me.snaptime.social.service.FriendShipService;
 import me.snaptime.user.service.UserDetailsServiceImpl;

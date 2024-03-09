@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface FriendShipRepository extends JpaRepository<FriendShip,Long>{
+public interface FriendShipRepository extends JpaRepository<FriendShip,Long>, FriendListFindRepository{
     Optional<FriendShip> findByToUserAndFromUser(User toUser, User fromUser);
     
     // 내가 팔로우 하는 사람의 수
