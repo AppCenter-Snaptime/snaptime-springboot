@@ -59,19 +59,21 @@ public class FriendShipController {
         return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("팔로우삭제가 완료되었습니다.", null));
     }
 
-    @GetMapping
-    @Operation(summary = "팔로워/팔로잉 친구목록 조회", description = "팔로워와 팔로잉중 어느 친구목록을 조회할 것인지 + 검색키워드 정보를 입력해주세요.<br>검색키워드는 필수가 아니며 없으면 입력하지 않아도 됩니다.")
+    @GetMapping("/{pageNum}")
+    @Operation(summary = "팔로워/팔로잉 친구목록 조회(20개씩 반환)", description = "팔로워와 팔로잉중 어느 친구목록을 조회할 것인지 + 검색키워드 정보를 입력해주세요.<br>검색키워드는 필수가 아니며 없으면 입력하지 않아도 됩니다.")
     @Parameters({
             @Parameter(name = "searchKeyword", description = "친구 검색키워드", required = false, example = "홍길동"),
-            @Parameter(name = "friendSearchType", description = "검색 타입(팔로워 조회 시 FOLLOWER/팔로잉 조회 시 FOLLOWING)으로 입력해주세요.", required = true, example = "FOLLOWER")
+            @Parameter(name = "friendSearchType", description = "검색 타입(팔로워 조회 시 FOLLOWER/팔로잉 조회 시 FOLLOWING)으로 입력해주세요.", required = true, example = "FOLLOWER"),
+            @Parameter(name = "pageNum", description = "친구조회 페이지번호", required = true, example = "1")
     })
     public ResponseEntity<CommonResponseDto> findFriendList(
             @RequestParam(name = "friendSearchType") @NotEmpty(message = "팔로잉과 팔로워중 어느 친구목록을 조회할 지 입력해주세요.") FriendSearchType friendSearchType,
-            @RequestParam(name = "searchKeyword",required = false) String searchKeyword){
+            @RequestParam(name = "searchKeyword",required = false) String searchKeyword,
+            @PathVariable(name = "pageNum") final Long pageNum){
 
         String loginId = getLoginId();
-        friendShipService.findFriendList(loginId,friendSearchType,searchKeyword);
-        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("친구조회가 완료되었습니다.", null));
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("친구조회가 완료되었습니다.",
+                friendShipService.findFriendList(loginId,pageNum,friendSearchType,searchKeyword)));
     }
 
     private String getLoginId(){

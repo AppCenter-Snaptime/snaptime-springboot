@@ -1,15 +1,24 @@
 package me.snaptime.social.data.repository.impl;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import me.snaptime.common.exception.customs.CustomException;
+import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.social.common.FriendSearchType;
 import me.snaptime.social.data.repository.FriendListFindRepository;
 import me.snaptime.user.data.domain.User;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
+import static me.snaptime.social.data.domain.QFriendShip.friendShip;
+import static me.snaptime.user.data.domain.QUser.user;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,17 +27,55 @@ public class FriendListFindRepositoryImpl implements FriendListFindRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Object> findFriendList(User reqUser, FriendSearchType searchType, Long pageNum, String searchKeyword) {
-        return null;
+    public List<Tuple> findFriendList(User reqUser, FriendSearchType searchType, Long pageNum, String searchKeyword) {
+        Pageable pageable= PageRequest.of((int) (pageNum-1),20);
+
+        List<Tuple> result =  jpaQueryFactory.select(
+                        user.id,user.profilePhoto.id,user.name
+                )
+                .from(friendShip)
+                .join(user).on(friendShip.toUser.id.eq(user.id)).fetchJoin()
+                .where(getWhereBuilder(reqUser, searchType,searchKeyword))
+                .orderBy(createOrderSpecifier())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize()) //페이지의 크기
+                .fetch();
+
+        if(result.size() == 0)
+            throw new CustomException(ExceptionCode.PAGE_NOT_FOUND);
+
+        return result;
     }
 
     private OrderSpecifier createOrderSpecifier() {
-        return null;
+        return new OrderSpecifier(Order.ASC, user.name);
     }
 
-    // 쿼리의 WHERE절을 생성하는 메소드, where절이 길어져 가독성을 위해 분리했습니다.
-    private BooleanBuilder getBuilder(){
+    // WHERE절을 동적으로 만들기 위한 메소드
+    private BooleanBuilder getWhereBuilder(User reqUser, FriendSearchType friendSearchType, String searchKeyword){
         BooleanBuilder builder = new BooleanBuilder();
+
+        if(friendSearchType == FriendSearchType.FOLLOWING){
+            builder.and(friendShip.fromUser.id.eq(reqUser.getId()));
+        }
+        else{
+            builder.and(friendShip.toUser.id.eq(reqUser.getId()));
+        }
+        if(searchKeyword !=null){
+            builder.and(user.name.contains(searchKeyword));
+        }
+
         return builder;
+    }
+    
+    // 조인조건을 동적으로 만들기 위한 메소드
+    private BooleanBuilder getJoinBuilder(FriendSearchType friendSearchType){
+        BooleanBuilder builder = new BooleanBuilder();
+        if(friendSearchType == FriendSearchType.FOLLOWING){
+            return builder.and(friendShip.toUser.id.eq(user.id));
+        }
+        else{
+            return builder.and(friendShip.fromUser.id.eq(user.id));
+        }
     }
 }
