@@ -4,11 +4,9 @@ import me.snaptime.social.common.FriendStatus;
 import me.snaptime.social.data.domain.FriendShip;
 import me.snaptime.user.data.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
 public interface FriendShipRepository extends JpaRepository<FriendShip,Long>, FriendListFindRepository{
     Optional<FriendShip> findByToUserAndFromUser(User toUser, User fromUser);
     
