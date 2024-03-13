@@ -1,6 +1,5 @@
 package me.snaptime.common.exception.handler;
 
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
 import me.snaptime.common.dto.CommonResponseDto;
@@ -9,8 +8,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -19,7 +20,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 
 @RestControllerAdvice
@@ -37,6 +37,34 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler{
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponseDto("올바르지 않은 입력값입니다",errors));
     }
 
+    // 역직렬화 과정에서 dto필드의 타입이 맞지 않아 발생하는 예외, PathVariable이나 RequestParam으로 받을 때 타입이 맞지않은 경우와 다른 예외를 던지기 떄문에 분리
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        String errorMessage = ex.getMessage();
+        if(errorMessage.contains("java.lang.Long"))
+            errorMessage = ": Long타입 예외";
+        else if(errorMessage.contains("Enum"))
+            errorMessage = ": ENUM타입 예외";
+        else
+            errorMessage = ": 기타 타입예외";
+
+        String message = "올바른 요청타입이 아닙니다.";
+        log.error(message+errorMessage+" - "+ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponseDto(message+errorMessage,null));
+    }
+
+    //requestParam값이 존재하지 않는 경우
+    @Override
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        String msg;
+        if(ex.getParameterName().equals("friendSearchType"))
+            msg = "팔로잉과 팔로워중 어느 친구목록을 조회할 지 입력해주세요.";
+        else
+            msg = "입력 파라미터 공백";
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponseDto(ex.getParameterName()+":"+msg,null));
+    }
+
     // custom예외
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<CommonResponseDto> handleCustomException(CustomException ex){
@@ -47,18 +75,14 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler{
     // requestParam으로 입력받은 값의 유효성검사 실패
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<CommonResponseDto> handleContranintViolation(ConstraintViolationException ex){
-        Map<String, String> errors = new HashMap<>();
-        Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
+        String msg = ex.getMessage();
+        int index = msg.indexOf(":");
 
-        for (ConstraintViolation<?> violation : violations) {
-            String fieldName = violation.getPropertyPath().toString();
-            String message = violation.getMessage();
-
-            if(fieldName.contains("fromUserName"))
-                fieldName="fromUserName";
-            errors.put(fieldName,message);
+        if (index >= 0) {
+            msg = msg.substring(index + 1).trim();
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponseDto("올바르지 않은 입력값입니다.",errors));
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponseDto(msg,null));
     }
 
     // @PathVariable로 입력받은 값의 타입이 올바르지 않을 때

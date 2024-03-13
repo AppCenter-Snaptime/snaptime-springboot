@@ -38,8 +38,8 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
                         snap.id, snap.createdDate, snap.lastModifiedDate, snap.oneLineJournal, snap.photo.id
                 )
                 .from(friendShip)
-                .rightJoin(user).on(friendShip.toUser.id.eq(user.id)).fetchJoin()
-                .join(snap).on(snap.user.id.eq(user.id)).fetchJoin()
+                .rightJoin(user).on(friendShip.toUser.id.eq(user.id))
+                .join(snap).on(snap.user.id.eq(user.id))
                 .where(getBuilder(reqUser))
                 .orderBy(createOrderSpecifier())
                 .offset(pageable.getOffset())

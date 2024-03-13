@@ -9,7 +9,6 @@ import me.snaptime.snap.data.domain.Snap;
 import me.snaptime.snap.data.repository.AlbumRepository;
 import me.snaptime.snap.data.repository.PhotoRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
-import me.snaptime.snap.data.repository.impl.SnapPagingRepositoryImpl;
 import me.snaptime.social.common.FriendStatus;
 import me.snaptime.social.data.domain.FriendShip;
 import me.snaptime.social.data.repository.FriendShipRepository;
@@ -45,8 +44,6 @@ public class SnapPagingRepositoryImplTest {
     private FriendShipRepository friendShipRepository;
     @Autowired
     private AlbumRepository albumRepository;
-    @Autowired
-    private SnapPagingRepositoryImpl snapPagingRepository;
     @Autowired
     private PhotoRepository photoRepository;
     private User user1;
@@ -168,7 +165,7 @@ public class SnapPagingRepositoryImplTest {
         // given
 
         // when
-        List<Tuple> result = snapPagingRepository.findSnapPaging("testLoginId1",1L,user1);
+        List<Tuple> result = snapRepository.findSnapPaging("testLoginId1",1L,user1);
 
         // then
         assertThat(result.size()).isEqualTo(8);
