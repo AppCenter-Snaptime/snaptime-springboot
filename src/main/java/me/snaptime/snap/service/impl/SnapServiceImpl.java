@@ -1,5 +1,6 @@
 package me.snaptime.snap.service.impl;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.exception.customs.CustomException;
@@ -31,6 +32,7 @@ public class SnapServiceImpl implements SnapService {
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
     private final FileComponent fileComponent;
+    private final HttpServletRequest request;
     private final EncryptionComponent encryptionComponent;
 
     @Override
@@ -53,7 +55,8 @@ public class SnapServiceImpl implements SnapService {
     @Override
     public FindSnapResDto findSnap(Long id) {
         Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
-        return FindSnapResDto.entityToResDto(foundSnap);
+        String photoUrl = makePhotoURL(foundSnap.getFileName(), foundSnap.isEncrypted());
+        return FindSnapResDto.entityToResDto(foundSnap, photoUrl);
     }
 
     @Override
@@ -121,5 +124,9 @@ public class SnapServiceImpl implements SnapService {
             log.error(e.getMessage());
             throw new CustomException(ExceptionCode.FILE_READ_ERROR);
         }
+    }
+
+    private String makePhotoURL(String fileName, boolean isEncrypted) {
+        return request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort() + "/photo?fileName=" + fileName + "&isEncrypted=" + isEncrypted;
     }
 }

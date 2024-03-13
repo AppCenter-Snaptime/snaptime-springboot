@@ -7,11 +7,11 @@ import me.snaptime.snap.data.domain.Snap;
 public record FindSnapResDto(
         Long id,
         String oneLineJournal,
-        Long photoId,
+        String photoURL,
         String albumName,
         String userUid
 ) {
-    public static FindSnapResDto entityToResDto(Snap entity) {
+    public static FindSnapResDto entityToResDto(Snap entity, String photoURL) {
         String albumName = null;
         String userUid = null;
         if (entity.getAlbum() != null) {
@@ -23,6 +23,7 @@ public record FindSnapResDto(
         return FindSnapResDto.builder()
                 .id(entity.getId())
                 .oneLineJournal(entity.getOneLineJournal())
+                .photoURL(photoURL)
                 .albumName(albumName)
                 .userUid(userUid)
                 .build();
