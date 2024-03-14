@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/snap")
 @RequiredArgsConstructor
 @Tag(name = "[Snap] Snap API")
-@Slf4j
 public class SnapController {
     private final SnapService snapService;
 
