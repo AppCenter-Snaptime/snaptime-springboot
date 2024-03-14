@@ -280,6 +280,7 @@ public class FriendShipServiceTest {
         //when
         try{
             friendShipService.deleteFriendShip("loginId",1l);
+            fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIENDSHIP_NOT_FOUND);
@@ -294,15 +295,19 @@ public class FriendShipServiceTest {
     // 다른사람의 팔로우를 삭제하려고 할 경우 팔로우삭제권한이 없기때문에 예외를 발생시킵니다.
     public void deleteFollowTest3(){
         //given
-        User fromUser = this.user1;
+        User fromUser = spy(this.user1);
+        User reqUser = spy(this.user1);
         FriendShip friendShip = spy(this.friendShip);
+        given(fromUser.getId()).willReturn(2L);
+        given(reqUser.getId()).willReturn(1L);
         given(friendShip.getFromUser()).willReturn(fromUser);
         given(friendShipRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(friendShip));
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user1));
+        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(reqUser));
 
         //when
         try{
             friendShipService.deleteFriendShip("loginId",1l);
+            fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.ACCESS_FAIL_FRIENDSHIP);

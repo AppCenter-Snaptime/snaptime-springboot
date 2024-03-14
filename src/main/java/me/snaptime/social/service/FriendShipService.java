@@ -94,7 +94,7 @@ public class FriendShipService {
         User fromUser = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
 
-        if(!friendShip.getFromUser().equals(fromUser)){
+        if(friendShip.getFromUser().getId() != fromUser.getId()){
             throw new CustomException(ExceptionCode.ACCESS_FAIL_FRIENDSHIP);
         }
 

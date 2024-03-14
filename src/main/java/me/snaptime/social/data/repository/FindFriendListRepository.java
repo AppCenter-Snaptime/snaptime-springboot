@@ -6,7 +6,7 @@ import me.snaptime.user.data.domain.User;
 
 import java.util.List;
 
-public interface FriendListFindRepository {
+public interface FindFriendListRepository {
 
     List<Tuple> findFriendList(User reqUser, FriendSearchType searchType, Long pageNum , String searchKeyword);
 }

@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.social.common.FriendSearchType;
-import me.snaptime.social.data.repository.FriendListFindRepository;
+import me.snaptime.social.common.FriendStatus;
+import me.snaptime.social.data.repository.FindFriendListRepository;
 import me.snaptime.user.data.domain.User;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,19 +23,19 @@ import static me.snaptime.user.data.domain.QUser.user;
 
 @Repository
 @RequiredArgsConstructor
-public class FriendListFindRepositoryImpl implements FriendListFindRepository {
+public class FindFriendListRepositoryImpl implements FindFriendListRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
     public List<Tuple> findFriendList(User reqUser, FriendSearchType searchType, Long pageNum, String searchKeyword) {
-        Pageable pageable= PageRequest.of((int) (pageNum-1),20);
+        Pageable pageable= PageRequest.of((int) (pageNum-1),30);
 
         List<Tuple> result =  jpaQueryFactory.select(
                         user.id,user.profilePhoto.id,user.name
                 )
                 .from(friendShip)
-                .join(user).on(friendShip.toUser.id.eq(user.id)).fetchJoin()
+                .join(user).on(getJoinBuilder(searchType))
                 .where(getWhereBuilder(reqUser, searchType,searchKeyword))
                 .orderBy(createOrderSpecifier())
                 .offset(pageable.getOffset())
@@ -48,7 +49,7 @@ public class FriendListFindRepositoryImpl implements FriendListFindRepository {
     }
 
     private OrderSpecifier createOrderSpecifier() {
-        return new OrderSpecifier(Order.ASC, user.name);
+        return new OrderSpecifier(Order.ASC, user.id);
     }
 
     // WHERE절을 동적으로 만들기 위한 메소드
@@ -57,9 +58,11 @@ public class FriendListFindRepositoryImpl implements FriendListFindRepository {
 
         if(friendSearchType == FriendSearchType.FOLLOWING){
             builder.and(friendShip.fromUser.id.eq(reqUser.getId()));
+            builder.and(friendShip.friendStatus.eq(FriendStatus.FOLLOW));
         }
         else{
             builder.and(friendShip.toUser.id.eq(reqUser.getId()));
+            builder.and(friendShip.friendStatus.eq(FriendStatus.FOLLOW));
         }
         if(searchKeyword !=null){
             builder.and(user.name.contains(searchKeyword));

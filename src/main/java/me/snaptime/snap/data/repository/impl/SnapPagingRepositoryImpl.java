@@ -60,10 +60,12 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
     // 쿼리의 WHERE절을 생성하는 메소드, where절이 길어져 가독성을 위해 분리했습니다.
     private BooleanBuilder getBuilder(User reqUser){
         BooleanBuilder builder = new BooleanBuilder();
-        builder.and(user.id.eq(reqUser.getId()));
-        builder.or(friendShip.fromUser.eq(reqUser)
-                .and(friendShip.friendStatus.eq(FriendStatus.FOLLOW).or(friendShip.friendStatus.eq(FriendStatus.WAITING))));
-        builder.and(snap.isPrivate.isFalse());
+        builder.and(
+                friendShip.fromUser.id.eq(reqUser.getId())
+                        .and(friendShip.friendStatus.eq(FriendStatus.FOLLOW))
+                        .and(snap.isPrivate.isFalse())
+        );
+        builder.or(user.eq(reqUser));
         return builder;
     }
 

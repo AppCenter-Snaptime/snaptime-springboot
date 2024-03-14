@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface FriendShipRepository extends JpaRepository<FriendShip,Long>, FriendListFindRepository{
+public interface FriendShipRepository extends JpaRepository<FriendShip,Long>, FindFriendListRepository {
     Optional<FriendShip> findByToUserAndFromUser(User toUser, User fromUser);
     
     // 내가 팔로우 하는 사람의 수
