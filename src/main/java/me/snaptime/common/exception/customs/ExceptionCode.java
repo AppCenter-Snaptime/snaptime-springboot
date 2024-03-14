@@ -31,6 +31,7 @@ public enum ExceptionCode {
 
     // Snap Exception
     SNAP_NOT_EXIST(HttpStatus.BAD_REQUEST, "스냅이 존재하지 않습니다."),
+    SNAP_USER_IS_NOT_THE_SAME(HttpStatus.BAD_REQUEST, "스냅을 저장한 유저와 스냅을 요청한 유저가 일치하지 않습니다."),
 
     // Photo Exception
     PHOTO_NOT_EXIST(HttpStatus.BAD_REQUEST, "사진을 찾을 수 없습니다."),

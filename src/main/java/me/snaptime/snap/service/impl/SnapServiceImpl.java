@@ -19,6 +19,9 @@ import me.snaptime.snap.service.SnapService;
 import me.snaptime.snap.util.EncryptionUtil;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,7 +50,7 @@ public class SnapServiceImpl implements SnapService {
                         .fileType(createSnapReqDto.multipartFile().getContentType())
                         .user(foundUser)
                         .album(albumRepository.findByName(createSnapReqDto.album()))
-                        .isEncrypted(isPrivate)
+                        .isPrivate(isPrivate)
                         .build()
         );
     }
@@ -55,7 +58,16 @@ public class SnapServiceImpl implements SnapService {
     @Override
     public FindSnapResDto findSnap(Long id) {
         Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
-        String photoUrl = makePhotoURL(foundSnap.getFileName(), foundSnap.isEncrypted());
+        if(foundSnap.isPrivate()) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String uId = userDetails.getUsername();
+            User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+            if (foundUser != foundSnap.getUser()) {
+                throw new CustomException(ExceptionCode.SNAP_USER_IS_NOT_THE_SAME);
+            }
+        }
+        String photoUrl = makePhotoURL(foundSnap.getFileName(), foundSnap.isPrivate());
         return FindSnapResDto.entityToResDto(foundSnap, photoUrl);
     }
 
@@ -68,7 +80,7 @@ public class SnapServiceImpl implements SnapService {
         Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        if (foundSnap.isEncrypted() == isPrivate) {
+        if (foundSnap.isPrivate() == isPrivate) {
             throw new CustomException(ExceptionCode.CHANGE_SNAP_VISIBILITY_ERROR);
         }
 

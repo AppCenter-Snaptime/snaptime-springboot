@@ -37,7 +37,7 @@ public class QSnap extends EntityPathBase<Snap> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final BooleanPath isEncrypted = createBoolean("isEncrypted");
+    public final BooleanPath isPrivate = createBoolean("isPrivate");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;

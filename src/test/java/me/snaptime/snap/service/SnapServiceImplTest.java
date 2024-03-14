@@ -81,7 +81,7 @@ public class SnapServiceImplTest {
                 .name("김원정")
                 .build());
         Snap expectedSnap = spy(Snap.builder()
-                .isEncrypted(givenPrivate)
+                .isPrivate(givenPrivate)
                 .fileName(givenMultipartFile.getOriginalFilename())
                 .filePath(filePath)
                 .fileType(givenMultipartFile.getContentType())
