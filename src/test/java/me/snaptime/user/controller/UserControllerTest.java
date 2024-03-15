@@ -6,7 +6,6 @@ import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.user.data.controller.UserController;
 import me.snaptime.user.data.dto.request.UserRequestDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
-import me.snaptime.user.data.dto.response.UserResponseDto;
 import me.snaptime.user.service.UserDetailsServiceImpl;
 import me.snaptime.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;

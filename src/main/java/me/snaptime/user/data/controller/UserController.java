@@ -9,7 +9,6 @@ import me.snaptime.user.data.dto.request.SignInRequestDto;
 import me.snaptime.user.data.dto.request.UserRequestDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
 import me.snaptime.user.data.dto.response.SignInResponseDto;
-import me.snaptime.user.data.dto.response.UserResponseDto;
 import me.snaptime.user.data.dto.response.userprofile2.AlbumSnapResDto;
 import me.snaptime.user.data.dto.response.userprofile2.UserProfileResDto;
 import me.snaptime.user.service.UserService;

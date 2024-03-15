@@ -7,7 +7,6 @@ import me.snaptime.user.data.dto.request.SignInRequestDto;
 import me.snaptime.user.data.dto.request.UserRequestDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
 import me.snaptime.user.data.dto.response.SignInResponseDto;
-import me.snaptime.user.data.dto.response.UserResponseDto;
 import me.snaptime.user.data.repository.ProfilePhotoRepository;
 import me.snaptime.user.data.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -171,8 +170,6 @@ class UserServiceTest {
 
         Mockito.when(userRepository.findByLoginId("kang4746"))
                 .thenReturn(Optional.of(givenUser));
-        Mockito.when(userRepository.save(any(User.class)))
-                .then(returnsFirstArg());
 
         //when
         UserResponseDto userResponseDto = userService.updateUser("kang4746",userUpdateDto);
@@ -184,7 +181,6 @@ class UserServiceTest {
         Assertions.assertEquals("1999-10-29",userResponseDto.birthDay());
 
         verify(userRepository,times(1)).findByLoginId("kang4746");
-        verify(userRepository,times(1)).save(any());
     }
 
 //    @Test

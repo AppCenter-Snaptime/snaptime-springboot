@@ -48,7 +48,7 @@ public class ProfilePhotoService {
 
 
     //트랜잭션 어노테이션을 사용하면 upload -> delete -> update, 프로필을 삭제를 해도 수정에 성공함.
-    //@Transactional
+    @Transactional
     public ProfilePhotoResponseDto updatePhotoFromFileSystem(String loginId, MultipartFile updateFile) throws Exception{
         User updateUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
         ProfilePhoto profilePhoto = profilePhotoRepository.findById(updateUser.getProfilePhoto().getId()).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
