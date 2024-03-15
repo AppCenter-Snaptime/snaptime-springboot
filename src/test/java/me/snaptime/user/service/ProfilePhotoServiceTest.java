@@ -2,7 +2,7 @@ package me.snaptime.user.service;
 
 import me.snaptime.user.data.domain.ProfilePhoto;
 import me.snaptime.user.data.domain.User;
-import me.snaptime.user.data.dto.response.ProfilePhotoResponseDto;
+import me.snaptime.user.data.dto.response.ProfilePhotoResDto;
 import me.snaptime.user.data.repository.ProfilePhotoRepository;
 import me.snaptime.user.data.repository.UserRepository;
 import me.snaptime.user.util.ProfilePhotoNameGenerator;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,7 +36,7 @@ public class ProfilePhotoServiceTest {
     private User givenUser;
     private ProfilePhoto profilePhoto;
 
-    private String FOLDER_PATH = "C:\\Image\\";
+    private String FOLDER_PATH = "null";
 
     @BeforeEach
     public void setUpTest(){
@@ -91,7 +90,7 @@ public class ProfilePhotoServiceTest {
         Mockito.when(profilePhotoRepository.save(any(ProfilePhoto.class))).thenReturn(updateProfilePhoto);
 
         //when
-        ProfilePhotoResponseDto responseDto = profilePhotoService.updatePhotoFromFileSystem("kang4746", updateFile);
+        ProfilePhotoResDto responseDto = profilePhotoService.updatePhotoFromFileSystem("kang4746", updateFile);
 
         //then
         Assertions.assertEquals(updateProfilePhoto.getProfilePhotoName(),responseDto.profilePhotoName());

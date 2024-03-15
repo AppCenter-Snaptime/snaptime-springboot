@@ -4,8 +4,9 @@ import com.google.gson.Gson;
 import me.snaptime.common.config.SecurityConfig;
 import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.user.data.controller.UserController;
-import me.snaptime.user.data.dto.request.UserRequestDto;
+import me.snaptime.user.data.dto.request.UserReqDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
+import me.snaptime.user.data.dto.response.UserResDto;
 import me.snaptime.user.service.UserDetailsServiceImpl;
 import me.snaptime.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +49,7 @@ public class UserControllerTest {
 
         //given
         given(userService.getUser("kang4746")).willReturn(
-                UserResponseDto.builder()
+                UserResDto.builder()
                         .loginId("kang4746")
                         .password("test1234")
                         .email("strong@gmail.com")
@@ -75,7 +76,7 @@ public class UserControllerTest {
     void signUpTest() throws Exception{
 
         //given
-        UserRequestDto userRequestDto = UserRequestDto.builder()
+        UserReqDto userRequestDto = UserReqDto.builder()
                 .loginId("kang4746")
                 .password("test1234")
                 .name("홍길순")
@@ -83,8 +84,8 @@ public class UserControllerTest {
                 .birthDay("1999-10-29")
                 .build();
 
-        given(userService.signUp(any(UserRequestDto.class)))
-                .willReturn(UserResponseDto.builder()
+        given(userService.signUp(any(UserReqDto.class)))
+                .willReturn(UserResDto.builder()
                         .id(1L)
                         .loginId("kang4746")
                         .password("test1234")
@@ -108,7 +109,7 @@ public class UserControllerTest {
                 .andDo(print());
 
         //then
-        verify(userService,times(1)).signUp(any(UserRequestDto.class));
+        verify(userService,times(1)).signUp(any(UserReqDto.class));
     }
 
     @Test
@@ -125,7 +126,7 @@ public class UserControllerTest {
                 .build();
 
         given(userService.updateUser(eq("kang4746"),any(UserUpdateDto.class)))
-                .willReturn(UserResponseDto.builder()
+                .willReturn(UserResDto.builder()
                         .loginId("kang4746")
                         .password("test1234")
                         .name("홍길순")

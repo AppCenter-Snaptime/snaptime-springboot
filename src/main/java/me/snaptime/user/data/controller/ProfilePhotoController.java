@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.dto.CommonResponseDto;
-import me.snaptime.user.data.dto.response.ProfilePhotoResponseDto;
+import me.snaptime.user.data.dto.response.ProfilePhotoResDto;
 import me.snaptime.user.service.ProfilePhotoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -52,7 +52,7 @@ public class ProfilePhotoController {
         String loginId = userDetails.getUsername(); // 로그인한 사용자의 아이디
         log.info("[updateProfile] 유저의 프로필 사진을 수정합니다. loginId : {}", loginId);
 
-        ProfilePhotoResponseDto updateProfile = profilePhotoService.updatePhotoFromFileSystem(loginId, file);
+        ProfilePhotoResDto updateProfile = profilePhotoService.updatePhotoFromFileSystem(loginId, file);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(

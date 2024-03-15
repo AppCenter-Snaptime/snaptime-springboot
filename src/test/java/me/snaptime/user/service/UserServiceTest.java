@@ -3,10 +3,11 @@ package me.snaptime.user.service;
 import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.user.data.domain.ProfilePhoto;
 import me.snaptime.user.data.domain.User;
-import me.snaptime.user.data.dto.request.SignInRequestDto;
-import me.snaptime.user.data.dto.request.UserRequestDto;
+import me.snaptime.user.data.dto.request.SignInReqDto;
+import me.snaptime.user.data.dto.request.UserReqDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
-import me.snaptime.user.data.dto.response.SignInResponseDto;
+import me.snaptime.user.data.dto.response.SignInResDto;
+import me.snaptime.user.data.dto.response.UserResDto;
 import me.snaptime.user.data.repository.ProfilePhotoRepository;
 import me.snaptime.user.data.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -65,15 +66,15 @@ class UserServiceTest {
         Mockito.when(userRepository.findByLoginId("kang4746"))
                 .thenReturn(Optional.of(givenUser));
         //when
-        UserResponseDto userResponseDto = userService.getUser("kang4746");
+        UserResDto userResDto = userService.getUser("kang4746");
 
         //then
-        Assertions.assertEquals(givenUser.getId(),userResponseDto.id());
-        Assertions.assertEquals(givenUser.getName(),userResponseDto.name());
-        Assertions.assertEquals(givenUser.getLoginId(),userResponseDto.loginId());
-        Assertions.assertEquals(givenUser.getPassword(),userResponseDto.password());
-        Assertions.assertEquals(givenUser.getEmail(),userResponseDto.email());
-        Assertions.assertEquals(givenUser.getBirthDay(),userResponseDto.birthDay());
+        Assertions.assertEquals(givenUser.getId(),userResDto.id());
+        Assertions.assertEquals(givenUser.getName(),userResDto.name());
+        Assertions.assertEquals(givenUser.getLoginId(),userResDto.loginId());
+        Assertions.assertEquals(givenUser.getPassword(),userResDto.password());
+        Assertions.assertEquals(givenUser.getEmail(),userResDto.email());
+        Assertions.assertEquals(givenUser.getBirthDay(),userResDto.birthDay());
 
         verify(userRepository, times(1)).findByLoginId("kang4746");
     }
@@ -82,7 +83,7 @@ class UserServiceTest {
     @DisplayName("given_when_then 방식으로 signUp 서비스 성공 테스트")
     public void signUp() {
         //given
-        UserRequestDto givenRequest = UserRequestDto.builder()
+        UserReqDto givenRequest = UserReqDto.builder()
                 .name("홍길순")
                 .loginId("kang4746")
                 .password("test1234")
@@ -98,14 +99,14 @@ class UserServiceTest {
         Mockito.when(profilePhotoRepository.save(any(ProfilePhoto.class)))
                 .then(returnsFirstArg());
         //when
-        UserResponseDto userResponseDto = userService.signUp(givenRequest);
+        UserResDto userResDto = userService.signUp(givenRequest);
 
         //then
-        Assertions.assertEquals(givenRequest.name(),userResponseDto.name());
-        Assertions.assertEquals(givenRequest.loginId(),userResponseDto.loginId());
-        Assertions.assertEquals(passwordEncoder.encode(givenRequest.password()),userResponseDto.password());
-        Assertions.assertEquals(givenRequest.email(),userResponseDto.email());
-        Assertions.assertEquals(givenRequest.birthDay(),userResponseDto.birthDay());
+        Assertions.assertEquals(givenRequest.name(),userResDto.name());
+        Assertions.assertEquals(givenRequest.loginId(),userResDto.loginId());
+        Assertions.assertEquals(passwordEncoder.encode(givenRequest.password()),userResDto.password());
+        Assertions.assertEquals(givenRequest.email(),userResDto.email());
+        Assertions.assertEquals(givenRequest.birthDay(),userResDto.birthDay());
         verify(userRepository,times(1)).save(any());
     }
 
@@ -113,7 +114,7 @@ class UserServiceTest {
     @DisplayName("given_when_then 방식으로 signIn 서비스 성공 테스트")
     public void signIn(){
         //given
-        SignInRequestDto signInRequestDto = SignInRequestDto.builder()
+        SignInReqDto signInRequestDto = SignInReqDto.builder()
                 .loginId("kang4746")
                 .password("test1234")
                 .build();
@@ -126,7 +127,7 @@ class UserServiceTest {
                 .thenReturn("mockToken");
 
         //when
-        SignInResponseDto signInResponseDto = userService.signIn(signInRequestDto);
+        SignInResDto signInResponseDto = userService.signIn(signInRequestDto);
 
         //then
         Assertions.assertEquals("mockToken",signInResponseDto.accessToken());
@@ -172,7 +173,7 @@ class UserServiceTest {
                 .thenReturn(Optional.of(givenUser));
 
         //when
-        UserResponseDto userResponseDto = userService.updateUser("kang4746",userUpdateDto);
+        UserResDto userResponseDto = userService.updateUser("kang4746",userUpdateDto);
 
         //then
         Assertions.assertEquals("홍길순",userResponseDto.name());

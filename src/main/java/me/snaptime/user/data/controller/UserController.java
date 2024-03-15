@@ -5,10 +5,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.dto.CommonResponseDto;
-import me.snaptime.user.data.dto.request.SignInRequestDto;
-import me.snaptime.user.data.dto.request.UserRequestDto;
+import me.snaptime.user.data.dto.request.SignInReqDto;
+import me.snaptime.user.data.dto.request.UserReqDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
-import me.snaptime.user.data.dto.response.SignInResponseDto;
+import me.snaptime.user.data.dto.response.SignInResDto;
+import me.snaptime.user.data.dto.response.UserResDto;
 import me.snaptime.user.data.dto.response.userprofile2.AlbumSnapResDto;
 import me.snaptime.user.data.dto.response.userprofile2.UserProfileResDto;
 import me.snaptime.user.service.UserService;
@@ -33,31 +34,31 @@ public class UserController {
     @Operation(summary = "유저 정보 조회",description = "유저 번호로 유저를 조회합니다.")
     //@Parameter(name = "userId", description = "찾을 유저의 id")
     @GetMapping()
-    public ResponseEntity<CommonResponseDto<UserResponseDto>> getUser(){
+    public ResponseEntity<CommonResponseDto<UserResDto>> getUser(){
         String loginId = getLoginId(); // 로그인한 사용자의 아이디
 
-        UserResponseDto userResponseDto = userService.getUser(loginId);
+        UserResDto userResDto = userService.getUser(loginId);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 정보가 성공적으로 조회되었습니다.",
-                        userResponseDto));
+                        userResDto));
     }
 
 
     @Operation(summary = "유저 정보 수정",description = "유저 번호로 해당 유저의 정보를 수정합니다.")
     //@Parameter(name = "userId", description = "수정할 유저의 id")
     @PutMapping()
-    public ResponseEntity<CommonResponseDto<UserResponseDto>> changeUser(@RequestBody UserUpdateDto userUpdateDto){
+    public ResponseEntity<CommonResponseDto<UserResDto>> changeUser(@RequestBody UserUpdateDto userUpdateDto){
 
         String loginId = getLoginId(); // 로그인한 사용자의 아이디
 
-        UserResponseDto userResponseDto = userService.updateUser(loginId, userUpdateDto);
+        UserResDto userResDto = userService.updateUser(loginId, userUpdateDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 정보 수정이 성공적으로 완료되었습니다.",
-                        userResponseDto));
+                        userResDto));
     }
 
     @Operation(summary = "유저 삭제",description = "유저 번호로 유저를 삭제합니다.")
@@ -77,21 +78,21 @@ public class UserController {
 
     @Operation(summary = "회원가입", description = "회원 가입 할 유저의 정보를 입력합니다.")
     @PostMapping("/sign-up")
-    public ResponseEntity<CommonResponseDto<UserResponseDto>> signUp(@RequestBody UserRequestDto userRequestDto){
+    public ResponseEntity<CommonResponseDto<UserResDto>> signUp(@RequestBody UserReqDto userRequestDto){
         //String role = "USER";
-        UserResponseDto userResponseDto = userService.signUp(userRequestDto);
+        UserResDto userResDto = userService.signUp(userRequestDto);
 
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new CommonResponseDto<>(
                         "유저 회원가입을 성공적으로 완료하였습니다.",
-                        userResponseDto));
+                        userResDto));
     }
 
     @Operation(summary = "로그인", description = "회원 가입 한 유저의 loginId와 password를 입력합니다.")
     @PostMapping("/sign-in")
-    public ResponseEntity<CommonResponseDto<SignInResponseDto>> signIn(@RequestBody SignInRequestDto signInRequestDto){
-        SignInResponseDto signInResponseDto = userService.signIn(signInRequestDto);
+    public ResponseEntity<CommonResponseDto<SignInResDto>> signIn(@RequestBody SignInReqDto signInRequestDto){
+        SignInResDto signInResponseDto = userService.signIn(signInRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(

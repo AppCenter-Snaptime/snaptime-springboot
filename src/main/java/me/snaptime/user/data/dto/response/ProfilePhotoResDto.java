@@ -4,13 +4,13 @@ import lombok.Builder;
 import me.snaptime.user.data.domain.ProfilePhoto;
 
 @Builder
-public record ProfilePhotoResponseDto(
+public record ProfilePhotoResDto(
         Long id,
         String profilePhotoName,
         String profilePhotoPath
 ){
-    public static ProfilePhotoResponseDto toDto(ProfilePhoto profilePhoto){
-        return ProfilePhotoResponseDto.builder()
+    public static ProfilePhotoResDto toDto(ProfilePhoto profilePhoto){
+        return ProfilePhotoResDto.builder()
                 .id(profilePhoto.getId())
                 .profilePhotoName(profilePhoto.getProfilePhotoName())
                 .profilePhotoPath(profilePhoto.getProfilePhotoPath())

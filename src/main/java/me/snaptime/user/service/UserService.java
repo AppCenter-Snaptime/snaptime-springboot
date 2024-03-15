@@ -8,10 +8,11 @@ import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.user.data.domain.ProfilePhoto;
 import me.snaptime.user.data.domain.User;
-import me.snaptime.user.data.dto.request.SignInRequestDto;
-import me.snaptime.user.data.dto.request.UserRequestDto;
+import me.snaptime.user.data.dto.request.SignInReqDto;
+import me.snaptime.user.data.dto.request.UserReqDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
-import me.snaptime.user.data.dto.response.SignInResponseDto;
+import me.snaptime.user.data.dto.response.SignInResDto;
+import me.snaptime.user.data.dto.response.UserResDto;
 import me.snaptime.user.data.dto.response.userprofile2.AlbumSnapResDto;
 import me.snaptime.user.data.dto.response.userprofile2.UserProfileResDto;
 import me.snaptime.user.data.repository.ProfilePhotoRepository;
@@ -39,14 +40,14 @@ public class UserService {
     private String FOLDER_PATH;
 
     @Transactional(readOnly = true)
-    public UserResponseDto getUser(String loginId) {
+    public UserResDto getUser(String loginId) {
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
 
-        return UserResponseDto.toDto(user);
+        return UserResDto.toDto(user);
     }
 
     @Transactional
-    public UserResponseDto signUp(UserRequestDto userRequestDto) {
+    public UserResDto signUp(UserReqDto userRequestDto) {
 
 
         String fileName = "default.png";
@@ -70,11 +71,11 @@ public class UserService {
                 .profilePhoto(profilePhoto)
                 .build();
 
-        return UserResponseDto.toDto(userRepository.save(user));
+        return UserResDto.toDto(userRepository.save(user));
     }
 
     @Transactional(readOnly = true)
-    public SignInResponseDto signIn(SignInRequestDto signInRequestDto) {
+    public SignInResDto signIn(SignInReqDto signInRequestDto) {
         User user = userRepository.findByLoginId(signInRequestDto.loginId()).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(signInRequestDto.password(), user.getPassword())) {
@@ -82,7 +83,7 @@ public class UserService {
         }
         String accessToken = jwtProvider.createAccessToken(user.getLoginId(), user.getRoles());
 
-        SignInResponseDto signInResponseDto = SignInResponseDto.builder()
+        SignInResDto signInResponseDto = SignInResDto.builder()
                 .accessToken(accessToken)
                 .build();
 
@@ -96,7 +97,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto updateUser(String loginId, UserUpdateDto userUpdateDto) {
+    public UserResDto updateUser(String loginId, UserUpdateDto userUpdateDto) {
 
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
 
@@ -116,7 +117,7 @@ public class UserService {
             user.updateUserBirthDay(userUpdateDto.birthDay());
         }
 
-        return UserResponseDto.toDto(user);
+        return UserResDto.toDto(user);
     }
 
 
