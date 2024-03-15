@@ -1,6 +1,7 @@
 package me.snaptime.user.data.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,19 +29,12 @@ public class ProfilePhotoController {
     private final ProfilePhotoService profilePhotoService;
 
     @Operation(summary = "프로필 사진 조회",description = "유저의 프로필 사진을 조회 합니다.")
-    //@Parameter(name = "profilePhotoId", description = "조회 할 프로필 사진의 id")
-    @GetMapping()
-    public ResponseEntity<?> downloadProfileToFileSystem() {
-        log.info("[downloadProfile] 유저의 프로필 사진을 조회합니다.");
-        //SecurityContextHolder에서 현재 인증된 사용자의 정보를 담고 있는 Authentication 객체를 가져온다.
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        //Authentcation객체가 가지고 있는 Principal 객체가 반환됩니다. 이 객체는 UserDetails 인터페이스를 구현한 사용자 정보 객체입니다.
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        //UserDetails객체에서 인증된 사용자의 loginId를 getUsername()메서드로 가져옵니다.
-        String loginId = userDetails.getUsername(); // 로그인한 사용자의 아이디
+    @Parameter(name = "profilePhotoId", description = "조회 할 프로필 사진의 id")
+    @GetMapping("/{profilePhotoId}")
+    public ResponseEntity<?> downloadProfileToFileSystem(@PathVariable("profilePhotoId") Long profilePhotoId) {
+        log.info("[downloadProfile] 유저의 프로필 사진을 조회합니다. profilePhotoId : {}",profilePhotoId);
 
-        byte[] downloadProfile = profilePhotoService.downloadPhotoFromFileSystem(loginId);
-
+        byte[] downloadProfile = profilePhotoService.downloadPhotoFromFileSystem(profilePhotoId);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf("image/png"))
                 .body(downloadProfile);
@@ -66,6 +60,7 @@ public class ProfilePhotoController {
                         updateProfile)
         );
     }
+
 
     //    @Operation(summary = "프로필 사진 업로드",description = "유저의 프로필 사진을 업로드 합니다.")
 //    //@Parameter(name = "userId", description = "프로필 사진을 업로드 할 유저 id")
@@ -102,5 +97,7 @@ public class ProfilePhotoController {
 //                        null)
 //        );
 //    }
+
+
 
 }

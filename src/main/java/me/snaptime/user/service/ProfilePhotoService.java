@@ -33,11 +33,8 @@ public class ProfilePhotoService {
     private String FOLDER_PATH;
 
     @Transactional(readOnly = true)
-    public byte[] downloadPhotoFromFileSystem(String loginId){
-        log.info("[downloadPhoto] 유저의 로그인 아이디로 유저를 불러옵니다. loginId : {}",loginId);
-        User user = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
-        ProfilePhoto profilePhoto = profilePhotoRepository.findById(user.getProfilePhoto().getId()).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
-        log.info("[downloadPhoto] 해당 유저의 프로필 사진을 불러옵니다. profileId : {}",profilePhoto.getId());
+    public byte[] downloadPhotoFromFileSystem(Long profilePhotoId){
+        ProfilePhoto profilePhoto = profilePhotoRepository.findById(profilePhotoId).orElseThrow(()->new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
         String filePath = profilePhoto.getProfilePhotoPath();
 
         try{
@@ -60,8 +57,11 @@ public class ProfilePhotoService {
         String updateFilePath = FOLDER_PATH + updateFileName;
 
         try{
-            Path path = Paths.get(profilePhoto.getProfilePhotoPath());
-            Files.deleteIfExists(path);
+            if(!profilePhoto.getProfilePhotoName().equals("default.png"))
+            {
+                Path path = Paths.get(profilePhoto.getProfilePhotoPath());
+                Files.deleteIfExists(path);
+            }
             updateFile.transferTo(new File(updateFilePath));
         }catch (IOException e){
             log.error(e.getMessage());

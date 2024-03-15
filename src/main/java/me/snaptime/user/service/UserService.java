@@ -13,6 +13,8 @@ import me.snaptime.user.data.dto.request.UserRequestDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
 import me.snaptime.user.data.dto.response.SignInResponseDto;
 import me.snaptime.user.data.dto.response.UserResponseDto;
+import me.snaptime.user.data.dto.response.userprofile2.AlbumSnapResDto;
+import me.snaptime.user.data.dto.response.userprofile2.UserProfileResDto;
 import me.snaptime.user.data.repository.ProfilePhotoRepository;
 import me.snaptime.user.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.List;
 
 
 @Slf4j
@@ -45,8 +48,7 @@ public class UserService {
 
     @Transactional
     public UserResponseDto signUp(UserRequestDto userRequestDto) {
-        log.info("[signUp] 회원 가입 정보를 전달합니다.");
-        log.info("[signUp] 기본 프로필 사진을 설정합니다.");
+
 
         String fileName = "default.png";
         String filePath = FOLDER_PATH + fileName;
@@ -74,18 +76,13 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public SignInResponseDto signIn(SignInRequestDto signInRequestDto) {
-        log.info("[signIn] signDataHandler로 회원 정보 요청");
         User user = userRepository.findByLoginId(signInRequestDto.loginId()).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
-        log.info("[signIn] loginId : {}", signInRequestDto.loginId());
 
-        log.info("[signIn] loginId에 해당하는 유저의 비밀번호와 입력 한 비밀번호를 비교합니다.");
         if (!passwordEncoder.matches(signInRequestDto.password(), user.getPassword())) {
             throw new CustomException(ExceptionCode.PASSWORD_NOT_EQUAL);
         }
-        log.info("[signIn] 비밀번호가 일치합니다.");
         String accessToken = jwtProvider.createAccessToken(user.getLoginId(), user.getRoles());
 
-        log.info("[signIn] SignInResultDto 객체를 생성합니다.");
         SignInResponseDto signInResponseDto = SignInResponseDto.builder()
                 .accessToken(accessToken)
                 .build();
@@ -120,12 +117,36 @@ public class UserService {
             user.updateUserBirthDay(userUpdateDto.birthDay());
         }
 
-        return UserResponseDto.toDto(userRepository.save(user));
+        return UserResponseDto.toDto(user);
     }
 
+
+    @Transactional(readOnly = true)
+    public List<AlbumSnapResDto> getAlbumSnap(String loginId){
+        User reqUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+
+        List<AlbumSnapResDto> albumSnapResDtoList = userRepository.fidAlbumSnap(reqUser);
+
+        return albumSnapResDtoList;
+    }
+
+    @Transactional(readOnly = true)
+    public UserProfileResDto getUserProfile(String loginId){
+        User reqUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+
+        UserProfileResDto userProfileResDto = UserProfileResDto.toDto(reqUser);
+
+        return userProfileResDto;
+    }
+
+
 //    @Transactional
-//    public UserProfileResponseDto getUserProfile(Long userId) {
-//        UserProfileResponseDto userProfileResponseDto = userRepositoryCustom.findUserProfile(userId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
-//        return userProfileResponseDto;
+//    public UserProfileResDto getUserProfile(String loginId) {
+//        User reqUser = userRepository.findByLoginId(loginId).orElseThrow(()->new CustomException(ExceptionCode.USER_NOT_FOUND));
+//
+//        UserProfileResDto userProfileResDto = userRepository.findUserProfile1(reqUser);
+//
+//        return userProfileResDto;
 //    }
+
 }
