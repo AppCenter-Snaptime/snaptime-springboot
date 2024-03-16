@@ -10,6 +10,9 @@ import me.snaptime.common.dto.CommonResponseDto;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.service.SnapService;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +21,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+
 @RestController
 @RequestMapping("/snap")
 @RequiredArgsConstructor
 @Tag(name = "[Snap] Snap API")
+@Slf4j
 public class SnapController {
     private final SnapService snapService;
 
@@ -74,6 +83,20 @@ public class SnapController {
                         "게시글의 상태가 성공적으로 변경되었습니다.",
                         null
                 )
+        );
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test(
+            final @RequestParam("url") String url
+    ) throws IOException {
+        Document doc = Jsoup.connect(url).header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36").timeout(3000).get();
+        Elements image = doc.select("div.main_cont > img");
+        URL imageURL = new URL("http://haru9.mx2.co.kr" + image.attr("src"));
+        URLConnection connection = imageURL.openConnection();
+        InputStream inputStream = connection.getInputStream();
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(
+                inputStream.readAllBytes()
         );
     }
 
