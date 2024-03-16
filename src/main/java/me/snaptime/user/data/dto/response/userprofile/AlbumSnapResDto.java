@@ -1,7 +1,6 @@
-package me.snaptime.user.data.dto.response.userprofile2;
+package me.snaptime.user.data.dto.response.userprofile;
 
 import lombok.Builder;
-import me.snaptime.snap.data.domain.Snap;
 
 import java.util.List;
 

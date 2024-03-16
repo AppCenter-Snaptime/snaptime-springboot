@@ -14,15 +14,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
-//@ActiveProfiles("test") // 테스트 시에 어떤 profile로  설정할 지 구성한다.
 @DataJpaTest
 @Import({QueryDslConfig.class, JpaAuditingConfig.class})
 //왜인지는 모르겠으나, main의 applicaiton.yml 파일에 영향을 받아, mysql설정이 적용된 상태에서 h2에 접근하다가 에러가 발생한 듯 보인다. 그래서 test-app..yml 파일의 우선순위를 높였다.
 @TestPropertySource(properties = {"spring.config.location=classpath:application-test.yml"})
-//@DataJpaTest를 사용하면 자동으로 EmbededDatabase를 사용하기 떄문에 내가 설정한 설정값들을 사용 할 수 없다.
-//이 설정을 replace 해서 해당 설정이 동작하지 않고, 내가 설정한 설정파일대로 만들어진 DataSoruce가 Bean으로 등록된다.
-//yml이나 properties에서 내가 설정한 설정파일대로 사용하려면 (내가 설정한 H2, MySQL,Oracle 등) NONE 옵션을 사용해서 사용해야 한다
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) //그런데 내 main/resources/application.yml 에 설정한 내용이 실행된다...
 public class UserCustomRepositoryTest {
 
     @Autowired
