@@ -139,7 +139,7 @@ public class FindFriendListRepositoryTest {
         assertThat(result.size()).isEqualTo(20);
         int index = 1;
         for(Tuple tuple : result){
-            assertThat(tuple.get(user.id)).isEqualTo(index+1);
+            assertThat(tuple.get(user.loginId)).isEqualTo("testLoginId"+index);
             assertThat(tuple.get(user.profilePhoto.id)).isEqualTo(index+1);
             assertThat(tuple.get(user.name)).isEqualTo("testName"+index);
             index++;
@@ -158,7 +158,7 @@ public class FindFriendListRepositoryTest {
         assertThat(result.size()).isEqualTo(20);
         int index = 11;
         for(Tuple tuple : result){
-            assertThat(tuple.get(user.id)).isEqualTo(index+1+31);
+            assertThat(tuple.get(user.loginId)).isEqualTo("testLoginId"+index);
             assertThat(tuple.get(user.profilePhoto.id)).isEqualTo(index+1+31);
             assertThat(tuple.get(user.name)).isEqualTo("testName"+index);
             index++;
@@ -175,7 +175,7 @@ public class FindFriendListRepositoryTest {
 
         // then
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).get(user.id)).isEqualTo(20+62+1);
+        assertThat(result.get(0).get(user.loginId)).isEqualTo("testLoginId20");
         assertThat(result.get(0).get(user.profilePhoto.id)).isEqualTo(20+62+1);
         assertThat(result.get(0).get(user.name)).isEqualTo("testName"+20);
     }
@@ -187,7 +187,7 @@ public class FindFriendListRepositoryTest {
 
         // when
         try{
-            List<Tuple> result = friendShipRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,10L,"20");
+            friendShipRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,10L,"20");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.PAGE_NOT_FOUND);

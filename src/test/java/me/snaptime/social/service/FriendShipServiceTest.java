@@ -1,4 +1,4 @@
-package me.snaptime.social.serviceTest;
+package me.snaptime.social.service;
 
 import com.querydsl.core.Tuple;
 import me.snaptime.common.exception.customs.CustomException;
@@ -10,7 +10,6 @@ import me.snaptime.social.data.dto.req.AcceptFollowReqDto;
 import me.snaptime.social.data.dto.res.FindFriendResDto;
 import me.snaptime.social.data.dto.res.FriendCntResDto;
 import me.snaptime.social.data.repository.FriendShipRepository;
-import me.snaptime.social.service.FriendShipService;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -340,9 +339,9 @@ public class FriendShipServiceTest {
         Tuple tuple1 = mock(Tuple.class);
         Tuple tuple2 = mock(Tuple.class);
         Tuple tuple3 = mock(Tuple.class);
-        given(tuple1.get(user.id)).willReturn(1L);
-        given(tuple2.get(user.id)).willReturn(2L);
-        given(tuple3.get(user.id)).willReturn(3L);
+        given(tuple1.get(user.loginId)).willReturn("testLoginId1");
+        given(tuple2.get(user.loginId)).willReturn("testLoginId2");
+        given(tuple3.get(user.loginId)).willReturn("testLoginId3");
 
         given(tuple1.get(user.profilePhoto.id)).willReturn(4L);
         given(tuple2.get(user.profilePhoto.id)).willReturn(5L);
@@ -361,9 +360,9 @@ public class FriendShipServiceTest {
                 .findFriendList("loginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
 
         // then
-        assertThat(result.get(0).userId()).isEqualTo(1);
-        assertThat(result.get(1).userId()).isEqualTo(2);
-        assertThat(result.get(2).userId()).isEqualTo(3);
+        assertThat(result.get(0).loginId()).isEqualTo("testLoginId1");
+        assertThat(result.get(1).loginId()).isEqualTo("testLoginId2");
+        assertThat(result.get(2).loginId()).isEqualTo("testLoginId3");
         assertThat(result.get(0).profilePhotoId()).isEqualTo(4);
         assertThat(result.get(1).profilePhotoId()).isEqualTo(5);
         assertThat(result.get(2).profilePhotoId()).isEqualTo(6);

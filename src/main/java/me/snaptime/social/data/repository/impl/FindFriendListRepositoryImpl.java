@@ -32,7 +32,7 @@ public class FindFriendListRepositoryImpl implements FindFriendListRepository {
         Pageable pageable= PageRequest.of((int) (pageNum-1),30);
 
         List<Tuple> result =  jpaQueryFactory.select(
-                        user.id,user.profilePhoto.id,user.name
+                        user.loginId,user.profilePhoto.id,user.name
                 )
                 .from(friendShip)
                 .join(user).on(getJoinBuilder(searchType))

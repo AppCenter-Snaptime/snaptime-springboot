@@ -8,13 +8,13 @@ import static me.snaptime.user.data.domain.QUser.user;
 @Builder
 public record FindFriendResDto(
 
-        Long userId,
+        String loginId,
         Long profilePhotoId,
         String userName
 ) {
     public static FindFriendResDto toDto(Tuple result){
         return FindFriendResDto.builder()
-                .userId(result.get(user.id))
+                .loginId(result.get(user.loginId))
                 .profilePhotoId(result.get(user.profilePhoto.id))
                 .userName(result.get(user.name))
                 .build();
