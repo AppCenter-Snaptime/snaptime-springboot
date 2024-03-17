@@ -4,12 +4,10 @@ import me.snaptime.social.common.FriendStatus;
 import me.snaptime.social.data.domain.FriendShip;
 import me.snaptime.user.data.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
-public interface FriendShipRepository extends JpaRepository<FriendShip,Long>{
+public interface FriendShipRepository extends JpaRepository<FriendShip,Long>, FindFriendListRepository {
     Optional<FriendShip> findByToUserAndFromUser(User toUser, User fromUser);
     
     // 내가 팔로우 하는 사람의 수

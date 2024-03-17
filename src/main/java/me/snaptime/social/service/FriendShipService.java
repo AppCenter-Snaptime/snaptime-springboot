@@ -1,11 +1,14 @@
 package me.snaptime.social.service;
 
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
+import me.snaptime.social.common.FriendSearchType;
 import me.snaptime.social.common.FriendStatus;
 import me.snaptime.social.data.domain.FriendShip;
 import me.snaptime.social.data.dto.req.AcceptFollowReqDto;
+import me.snaptime.social.data.dto.res.FindFriendResDto;
 import me.snaptime.social.data.dto.res.FriendCntResDto;
 import me.snaptime.social.data.repository.FriendShipRepository;
 import me.snaptime.user.data.domain.User;
@@ -13,7 +16,9 @@ import me.snaptime.user.data.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -89,7 +94,7 @@ public class FriendShipService {
         User fromUser = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
 
-        if(!friendShip.getFromUser().equals(fromUser)){
+        if(friendShip.getFromUser().getId() != fromUser.getId()){
             throw new CustomException(ExceptionCode.ACCESS_FAIL_FRIENDSHIP);
         }
 
@@ -97,13 +102,15 @@ public class FriendShipService {
     }
     
     // 팔로워 or 팔로잉 친구리스트 조회
-    public Object findFollowerList(String loginId, String searchType){
-        // user 조회
+    public List<FindFriendResDto> findFriendList(String loginId, Long pageNum, FriendSearchType searchType, String searchKeyword){
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
 
-        // 나를 팔로우 or 팔로워하는 사람의 프로필과 이름 페이징조회
+        List<Tuple> result = friendShipRepository.findFriendList(user,searchType,pageNum,searchKeyword);
 
-        // dto 래핑 후 반환
-        return null;
+        return result.stream().map(entity -> {
+                    return FindFriendResDto.toDto(entity);
+                }).collect(Collectors.toList());
     }
 
     // 유저 프로필 조회 시 팔로잉,팔로워 수를 반환하는 메소드
@@ -118,21 +125,12 @@ public class FriendShipService {
         return FriendCntResDto.toDto(followerCnt,followingCnt);
     }
 
-    // 팔로잉 or 팔로워 친구리스트에서 친구검색
-    public Object findFriendByName(String loginId, String searchKeyword, String searchType){
-        // user조회
-        
-        // 검색키워드로 친구검색
-
-        return null;
-    }
-
-    public User findUserByName(String fromUserName){
+    private User findUserByName(String fromUserName){
         return userRepository.findUserByName(fromUserName)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
     }
 
-    public FriendShip findFriendShipByToUserAndFromUser(User toUser, User fromUser){
+    private FriendShip findFriendShipByToUserAndFromUser(User toUser, User fromUser){
         return friendShipRepository.findByToUserAndFromUser(toUser,fromUser)
                 .orElseThrow(() -> new CustomException(ExceptionCode.FRIENDSHIP_NOT_FOUND));
     }

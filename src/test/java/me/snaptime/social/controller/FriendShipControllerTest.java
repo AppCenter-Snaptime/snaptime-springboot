@@ -1,11 +1,11 @@
-package me.snaptime.social.controllerTest;
+package me.snaptime.social.controller;
 
 import com.google.gson.Gson;
 import me.snaptime.common.config.SecurityConfig;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.common.jwt.JwtProvider;
-import me.snaptime.social.data.controller.FriendShipController;
+import me.snaptime.social.common.FriendSearchType;
 import me.snaptime.social.data.dto.req.AcceptFollowReqDto;
 import me.snaptime.social.service.FriendShipService;
 import me.snaptime.user.service.UserDetailsServiceImpl;
@@ -22,8 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -144,8 +143,7 @@ public class FriendShipControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("fromUserName",""))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.msg").value("올바르지 않은 입력값입니다."))
-                .andExpect(jsonPath("$.result.fromUserName").value("팔로우요청을 보낼 유저의 이름을 입력해주세요."))
+                .andExpect(jsonPath("$.msg").value("팔로우요청을 보낼 유저의 이름을 입력해주세요."))
                 .andDo(print());
 
         verify(friendShipService,times(0)).sendFriendShipReq(any(String.class),any(String.class));
@@ -326,5 +324,138 @@ public class FriendShipControllerTest {
                 .andDo(print());
 
         verify(friendShipService,times(1)).deleteFriendShip(any(String.class),any(Long.class));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("친구목록 조회테스트 -> 성공(팔로잉 조회,검색키워드 없는경우)")
+    public void findFriendListTest1() throws Exception {
+        //given
+
+        //when, then
+        this.mockMvc.perform(get("/friends/{pageNum}",1L)
+                        .param("friendSearchType","FOLLOWING")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.msg").value("친구조회가 완료되었습니다."))
+                .andDo(print());
+
+        verify(friendShipService,times(1))
+                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq(null));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("친구목록 조회테스트 -> 성공(팔로워 조회,검색키워드 없는경우)")
+    public void findFriendListTest2() throws Exception {
+        //given
+
+        //when, then
+        this.mockMvc.perform(get("/friends/{pageNum}",1L)
+                        .param("friendSearchType","FOLLOWER")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.msg").value("친구조회가 완료되었습니다."))
+                .andDo(print());
+
+        verify(friendShipService,times(1))
+                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq(null));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("친구목록 조회테스트 -> 성공(검색키워드 있는경우)")
+    public void findFriendListTest3() throws Exception {
+        //given
+
+        //when, then
+        this.mockMvc.perform(get("/friends/{pageNum}",1L)
+                        .param("friendSearchType","FOLLOWING")
+                        .param("searchKeyword","박")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.msg").value("친구조회가 완료되었습니다."))
+                .andDo(print());
+
+        verify(friendShipService,times(1))
+                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("친구목록 조회테스트 -> 실패(ENUM타입 예외)")
+    public void findFriendListTest4() throws Exception {
+        //given
+
+        //when, then
+        this.mockMvc.perform(get("/friends/{pageNum}",1L)
+                        .param("friendSearchType","TEST")
+                        .param("searchKeyword","박")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.msg").value("friendSearchType이 FriendSearchType타입이여야 합니다."))
+                .andDo(print());
+
+        verify(friendShipService,times(0))
+                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("친구목록 조회테스트 -> 실패(PathVariable타입 예외)")
+    public void findFriendListTest5() throws Exception {
+        //given
+
+        //when, then
+        this.mockMvc.perform(get("/friends/{pageNum}","test")
+                        .param("friendSearchType","FOLLOWER")
+                        .param("searchKeyword","박")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.msg").value("pageNum이 Long타입이여야 합니다."))
+                .andDo(print());
+
+        verify(friendShipService,times(0))
+                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("친구목록 조회테스트 -> 실패(FriendSearchType값 null)")
+    public void findFriendListTest6() throws Exception {
+        //given
+
+        //when, then
+        this.mockMvc.perform(get("/friends/{pageNum}",1L)
+                        .param("friendSearchType","")
+                        .param("searchKeyword","박")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.msg").value("friendSearchType:팔로잉과 팔로워중 어느 친구목록을 조회할 지 입력해주세요."))
+                .andDo(print());
+
+        verify(friendShipService,times(0))
+                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("친구목록 조회테스트 -> 실패(존재하지 않는 페이지)")
+    public void findFriendListTest7() throws Exception {
+        //given
+        doThrow(new CustomException(ExceptionCode.PAGE_NOT_FOUND))
+                .when(friendShipService).findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+
+        //when, then
+        this.mockMvc.perform(get("/friends/{pageNum}",1L)
+                        .param("friendSearchType","FOLLOWER")
+                        .param("searchKeyword","박")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.msg").value("존재하지 않는 페이지입니다."))
+                .andDo(print());
+
+        verify(friendShipService,times(1))
+                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 }
