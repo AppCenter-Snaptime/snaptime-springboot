@@ -139,6 +139,7 @@ public class SnapServiceImpl implements SnapService {
     }
 
     private String makePhotoURL(String fileName, boolean isEncrypted) {
-        return request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort() + "/photo?fileName=" + fileName + "&isEncrypted=" + isEncrypted;
+        return request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort() +
+                "/photo?fileName=" + fileName + "&isEncrypted=" + isEncrypted;
     }
 }
