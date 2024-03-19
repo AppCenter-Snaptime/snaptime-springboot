@@ -12,10 +12,10 @@ import static me.snaptime.user.data.domain.QUser.user;
 public record FindSnapPagingResDto(
         Long snapId,
         String oneLineJournal,
-        Long photoId,
+        String fileName,
         LocalDateTime snapCreatedDate,
         LocalDateTime snapModifiedDate,
-        Long userId,
+        String loginId,
         Long profilePhotoId,
         String userName
 
@@ -24,10 +24,10 @@ public record FindSnapPagingResDto(
         return FindSnapPagingResDto.builder()
                 .snapId(result.get(snap.id))
                 .oneLineJournal(String.valueOf(result.get(snap.oneLineJournal)))
-                .photoId(result.get(snap.photo.id))
+                .fileName(result.get(snap.fileName))
                 .snapCreatedDate(result.get(snap.createdDate))
                 .snapModifiedDate(result.get(snap.lastModifiedDate))
-                .userId(result.get(user.id))
+                .loginId(result.get(user.loginId))
                 .profilePhotoId(result.get(user.profilePhoto.id))
                 .userName(result.get(user.name))
                 .build();

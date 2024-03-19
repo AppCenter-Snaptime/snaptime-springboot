@@ -15,7 +15,12 @@ public class ReplyService {
     private final SnapRepository snapRepository;
 
     @Transactional
-    public void addReply(Long userId, Long snapId){
+    public void addReply(Long loginId, Long snapId){
+
+    }
+
+    @Transactional
+    public void readReply(Long replyId, Long loginId, String content){
 
     }
 }
