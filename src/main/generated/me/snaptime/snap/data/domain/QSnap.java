@@ -29,6 +29,12 @@ public class QSnap extends EntityPathBase<Snap> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
 
+    public final StringPath fileName = createString("fileName");
+
+    public final StringPath filePath = createString("filePath");
+
+    public final StringPath fileType = createString("fileType");
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final BooleanPath isPrivate = createBoolean("isPrivate");
@@ -37,8 +43,6 @@ public class QSnap extends EntityPathBase<Snap> {
     public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
 
     public final StringPath oneLineJournal = createString("oneLineJournal");
-
-    public final QPhoto photo;
 
     public final ListPath<me.snaptime.social.data.domain.Reply, me.snaptime.social.data.domain.QReply> replyList = this.<me.snaptime.social.data.domain.Reply, me.snaptime.social.data.domain.QReply>createList("replyList", me.snaptime.social.data.domain.Reply.class, me.snaptime.social.data.domain.QReply.class, PathInits.DIRECT2);
 
@@ -63,7 +67,6 @@ public class QSnap extends EntityPathBase<Snap> {
     public QSnap(Class<? extends Snap> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.album = inits.isInitialized("album") ? new QAlbum(forProperty("album")) : null;
-        this.photo = inits.isInitialized("photo") ? new QPhoto(forProperty("photo")) : null;
         this.user = inits.isInitialized("user") ? new me.snaptime.user.data.domain.QUser(forProperty("user"), inits.get("user")) : null;
     }
 

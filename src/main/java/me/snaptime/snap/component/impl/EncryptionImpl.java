@@ -17,13 +17,13 @@ import javax.crypto.SecretKey;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class EncryptionKeyImpl implements EncryptionComponent {
+public class EncryptionImpl implements EncryptionComponent {
     private final UserRepository userRepository;
     private final EncryptionRepository encryptionRepository;
 
     @Override
     public SecretKey getSecretKey(String uId) {
-        User foundUser = userRepository.findUserByName(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         Encryption foundSecretKey = encryptionRepository.findByUser(foundUser);
         return foundSecretKey.getSecretKey();
     }
