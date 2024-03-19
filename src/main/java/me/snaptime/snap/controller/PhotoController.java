@@ -9,8 +9,7 @@ import me.snaptime.snap.service.SnapService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,10 +27,9 @@ public class PhotoController {
     @GetMapping
     public ResponseEntity<byte[]> findPhoto(
             final @RequestParam("fileName") String fileName,
-            final @RequestParam("isEncrypted") boolean isEncrypted
+            final @RequestParam("isEncrypted") boolean isEncrypted,
+            final @AuthenticationPrincipal UserDetails userDetails
     ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String uId = userDetails.getUsername();
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(
                 snapService.downloadPhotoFromFileSystem(fileName, uId, isEncrypted)

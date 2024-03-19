@@ -16,8 +16,7 @@ import org.jsoup.select.Elements;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,10 +37,9 @@ public class SnapController {
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CommonResponseDto<Void>> createSnap(
             final @RequestParam("isPrivate") boolean isPrivate,
-            final @ModelAttribute CreateSnapReqDto createSnapReqDto
+            final @ModelAttribute CreateSnapReqDto createSnapReqDto,
+            final @AuthenticationPrincipal UserDetails userDetails
     ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String uId = userDetails.getUsername();
         snapService.createSnap(createSnapReqDto, uId, isPrivate);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -65,6 +63,7 @@ public class SnapController {
         );
     }
 
+    @Operation(summary = "Snap 공개상태 변경", description = "Snap 공개 상태를 변경합니다.")
     @PostMapping("/visibility")
     @Parameters({
             @Parameter(name = "snapId", description = "변경할 Snap id"),
@@ -72,10 +71,9 @@ public class SnapController {
     })
     public ResponseEntity<CommonResponseDto<Void>> changeVisibility(
             final @RequestParam("snapId") Long snapId,
-            final @RequestParam("isPrivate") boolean isPrivate
+            final @RequestParam("isPrivate") boolean isPrivate,
+            final @AuthenticationPrincipal UserDetails userDetails
     ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String uId = userDetails.getUsername();
         snapService.changeVisibility(snapId, uId, isPrivate);
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -86,9 +84,11 @@ public class SnapController {
         );
     }
 
+    @Operation(summary = "하루필름 크롤링 테스트 API", description = "하루필름 크롤링 테스트 API입니다.")
     @GetMapping("/test")
     public ResponseEntity<?> test(
-            final @RequestParam("url") String url
+            final @RequestParam("url") String url,
+            final @AuthenticationPrincipal UserDetails userDetails
     ) throws IOException {
         Document doc = Jsoup.connect(url).header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36").timeout(3000).get();
         Elements image = doc.select("div.main_cont > img");
