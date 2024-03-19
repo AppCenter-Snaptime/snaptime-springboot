@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import me.snaptime.common.config.SecurityConfig;
 import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.user.data.controller.UserController;
-import me.snaptime.user.data.dto.request.UserRequestDto;
+import me.snaptime.user.data.dto.request.UserReqDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
-import me.snaptime.user.data.dto.response.UserResponseDto;
+import me.snaptime.user.data.dto.response.UserResDto;
 import me.snaptime.user.service.UserDetailsServiceImpl;
 import me.snaptime.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -48,7 +49,7 @@ public class UserControllerTest {
 
         //given
         given(userService.getUser("kang4746")).willReturn(
-                UserResponseDto.builder()
+                UserResDto.builder()
                         .loginId("kang4746")
                         .password("test1234")
                         .email("strong@gmail.com")
@@ -67,7 +68,7 @@ public class UserControllerTest {
                 .andDo(print());
 
         //then
-        verify(userService).getUser("kang4746");
+        verify(userService,times(1)).getUser("kang4746");
     }
 
     @Test
@@ -75,7 +76,7 @@ public class UserControllerTest {
     void signUpTest() throws Exception{
 
         //given
-        UserRequestDto userRequestDto = UserRequestDto.builder()
+        UserReqDto userRequestDto = UserReqDto.builder()
                 .loginId("kang4746")
                 .password("test1234")
                 .name("홍길순")
@@ -83,8 +84,8 @@ public class UserControllerTest {
                 .birthDay("1999-10-29")
                 .build();
 
-        given(userService.signUp(any(UserRequestDto.class)))
-                .willReturn(UserResponseDto.builder()
+        given(userService.signUp(any(UserReqDto.class)))
+                .willReturn(UserResDto.builder()
                         .id(1L)
                         .loginId("kang4746")
                         .password("test1234")
@@ -108,7 +109,7 @@ public class UserControllerTest {
                 .andDo(print());
 
         //then
-        verify(userService).signUp(any(UserRequestDto.class));
+        verify(userService,times(1)).signUp(any(UserReqDto.class));
     }
 
     @Test
@@ -125,7 +126,7 @@ public class UserControllerTest {
                 .build();
 
         given(userService.updateUser(eq("kang4746"),any(UserUpdateDto.class)))
-                .willReturn(UserResponseDto.builder()
+                .willReturn(UserResDto.builder()
                         .loginId("kang4746")
                         .password("test1234")
                         .name("홍길순")
@@ -147,7 +148,7 @@ public class UserControllerTest {
                 .andDo(print());
 
         //then
-        verify(userService).updateUser(eq("kang4746"),any(UserUpdateDto.class));
+        verify(userService,times(1)).updateUser(eq("kang4746"),any(UserUpdateDto.class));
     }
 
     @Test
@@ -160,7 +161,42 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(userService).deleteUser("kang4746");
+        verify(userService,times(1)).deleteUser("kang4746");
     }
 
+//    @Test
+//    @WithMockUser(username = "kang4746",password = "test1234",roles = "USER")
+//    @DisplayName("유저 프로필 조회 컨트롤러 테스트")
+//    void getUserProfile() throws Exception{
+//        //given
+//        AlbumAndPhotosResDto albumAndPhotosResDto = AlbumAndPhotosResDto.builder()
+//                .albumId(1L)
+//                .albumName("test1")
+//                .photoIdList(List.of(1L,2L))
+//                .build();
+//
+//        UserProfileResDto userProfileResDto = UserProfileResDto.builder()
+//                .userId(1L)
+//                .userName("홍길순")
+//                .profilePhotoId(1L)
+//                .albumAndPhotos(Collections.singletonList(albumAndPhotosResDto))
+//                .build();
+//
+//        given(userService.getUserProfile("kang4746")).willReturn(userProfileResDto);
+//
+//        //when
+//        mockMvc.perform(get("/users/profile").param("loginId","kang4746"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.msg").exists())
+//                .andExpect(jsonPath("$.result.userId").exists())
+//                .andExpect(jsonPath("$.result.userName").exists())
+//                .andExpect(jsonPath("$.result.profilePhotoId").exists())
+//                .andExpect(jsonPath("$.result.albumAndPhotos[0].albumId").exists())
+//                .andExpect(jsonPath("$.result.albumAndPhotos[0].albumName").exists())
+//                .andExpect(jsonPath("$.result.albumAndPhotos[0].photoIdList[0]").exists())
+//                .andExpect(jsonPath("$.result.albumAndPhotos[0].photoIdList[1]").exists())
+//                .andDo(print());
+//        //then
+//        verify(userService,times(1)).getUserProfile("kang4746");
+//    }
 }

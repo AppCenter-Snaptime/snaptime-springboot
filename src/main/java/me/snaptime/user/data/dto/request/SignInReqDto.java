@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
-public record SignInRequestDto(
+public record SignInReqDto(
         @Schema(
                 example = "kang4746",
                 description = "유저의 loginId를 입력해주세요"
