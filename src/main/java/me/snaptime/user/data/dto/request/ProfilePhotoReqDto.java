@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Builder
-public record ProfilePhotoRequestDto(
+public record ProfilePhotoReqDto(
         @Schema(
                 example = "형준프로필",
                 description = "프로필 사진 이름을 입력해주세요"

@@ -5,7 +5,7 @@ import lombok.Builder;
 import me.snaptime.user.data.domain.User;
 
 @Builder
-public record UserResponseDto (
+public record UserResDto(
     Long id,
     String name,
     String loginId,
@@ -13,8 +13,8 @@ public record UserResponseDto (
     String email,
     String birthDay
 ){
-    public static UserResponseDto toDto(User user){
-        return UserResponseDto.builder()
+    public static UserResDto toDto(User user){
+        return UserResDto.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .loginId(user.getLoginId())
