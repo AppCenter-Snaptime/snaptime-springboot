@@ -1,7 +1,7 @@
 package me.snaptime.snap.controller;
 
 import me.snaptime.snap.service.impl.SnapServiceImpl;
-import me.snaptime.user.data.dto.request.UserRequestDto;
+import me.snaptime.user.data.dto.request.UserReqDto;
 import me.snaptime.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ public class PhotoControllerTest {
     @Test
     public void findPhotoTest() throws Exception {
         // given
-        userService.signUp(new UserRequestDto(
+        userService.signUp(new UserReqDto(
                 "김원정", "mockUid", "test1234", "test@test.com", "990303"
         ));
         byte[] emptyByte = {};
