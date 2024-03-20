@@ -1,16 +1,18 @@
 package me.snaptime.snap.service;
 
+import me.snaptime.common.component.UrlComponent;
 import me.snaptime.snap.component.EncryptionComponent;
+import me.snaptime.snap.component.FileComponent;
 import me.snaptime.snap.data.domain.Encryption;
-import me.snaptime.snap.data.domain.Photo;
 import me.snaptime.snap.data.domain.Snap;
+import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.data.repository.AlbumRepository;
-import me.snaptime.snap.data.repository.EncryptionRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.impl.SnapServiceImpl;
 import me.snaptime.snap.util.EncryptionUtil;
+import me.snaptime.snap.util.FileNameGenerator;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +27,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,10 +37,13 @@ import static org.mockito.Mockito.spy;
 @ExtendWith(MockitoExtension.class)
 public class SnapServiceImplTest {
     @Mock
-    private PhotoService photoService;
+    private FileComponent fileComponent;
 
     @Mock
     private SnapRepository snapRepository;
+
+    @Mock
+    private AlbumRepository albumRepository;
 
     @Mock
     private EncryptionComponent encryptionComponent;
@@ -46,14 +52,12 @@ public class SnapServiceImplTest {
     private UserRepository userRepository;
 
     @Mock
-    private AlbumRepository albumRepository;
-
-    @Mock
-    private EncryptionRepository encryptionRepository;
+    private UrlComponent urlComponent;
 
     @InjectMocks
     private SnapServiceImpl snapServiceImpl;
 
+    String testPath = "test_resource/";
     String testImagePath = "test_resource/image.jpg";
     ClassPathResource resource = new ClassPathResource(testImagePath);
 
@@ -68,6 +72,7 @@ public class SnapServiceImplTest {
         CreateSnapReqDto givenCreateSnapReqDto = new CreateSnapReqDto(
             "한 줄 일기", givenMultipartFile, ""
         );
+        String filePath = testPath + FileNameGenerator.generatorName(givenMultipartFile.getOriginalFilename());
         boolean givenPrivate = true;
         User expectedUser = spy(User.builder()
                 .loginId("abcd")
@@ -76,27 +81,31 @@ public class SnapServiceImplTest {
                 .password("1234")
                 .name("김원정")
                 .build());
-        Photo expectedPhoto = spy(Photo.builder()
-                .filePath("/image/image.png")
-                .fileName("image")
-                .fileType("image/jpeg")
-                .build());
         Snap expectedSnap = spy(Snap.builder()
                 .isPrivate(givenPrivate)
+                .fileName(givenMultipartFile.getOriginalFilename())
+                .filePath(filePath)
+                .fileType(givenMultipartFile.getContentType())
                 .album(null)
-                .photo(expectedPhoto)
                 .oneLineJournal(givenCreateSnapReqDto.oneLineJournal())
                 .build());
         Encryption expectedEncryption = spy(Encryption.builder()
                 .user(expectedUser)
                 .secretKey(EncryptionUtil.generateAESKey())
                 .build());
+        byte[] encryptData = encryptionComponent.encryptData(expectedEncryption, givenMultipartFile.getInputStream().readAllBytes());
+        WritePhotoToFileSystemResult expectedWritePhotoToFileSystemResult = new WritePhotoToFileSystemResult(
+                filePath, givenMultipartFile.getOriginalFilename()
+        );
+
+        given(albumRepository.findByName("")).willReturn(null);
         given(userRepository.findByLoginId("abcd")).willReturn(Optional.ofNullable(expectedUser));
         given(snapRepository.save(Mockito.any(Snap.class))).willReturn(expectedSnap);
         given(encryptionComponent.setEncryption(expectedUser)).willReturn(expectedEncryption);
+        given(encryptionComponent.encryptData(expectedEncryption, givenMultipartFile.getInputStream().readAllBytes())).willReturn(encryptData);
+        given(fileComponent.writePhotoToFileSystem(givenMultipartFile.getOriginalFilename(), givenMultipartFile.getContentType(), encryptData)).willReturn(expectedWritePhotoToFileSystemResult);
         // when
         snapServiceImpl.createSnap(givenCreateSnapReqDto, "abcd", givenPrivate);
-        // then
     }
 
     @DisplayName("스냅 가져오기 테스트")
@@ -105,34 +114,26 @@ public class SnapServiceImplTest {
     public void findSnapTest() {
         // given
         Long givenId = 1L;
-        Photo expectedPhoto = Photo.builder()
-                .id(1L)
-                        .filePath(null)
-                        .fileName("fileName")
-                        .fileType(null)
-                        .build();
         Snap expectedSnap = Snap.builder()
                 .id(1L)
                 .oneLineJournal("한줄일기")
                 .user(null)
-                .photo(expectedPhoto)
                 .album(null)
                 .build();
         FindSnapResDto expectedDto = FindSnapResDto.builder()
                 .id(1L)
                 .oneLineJournal("한줄일기")
                 .userUid(null)
-                .photoId(1L)
                 .albumName(null)
                 .build();
         given(snapRepository.findById(givenId)).willReturn(Optional.ofNullable(expectedSnap));
+        given(urlComponent.makePhotoURL(Objects.requireNonNull(expectedSnap).getFileName(), expectedSnap.isPrivate())).willReturn("http://localhost:8080/photo?fileName=0320101910716_-1821615424_download.png&isEncrypted=false");
         // when
         FindSnapResDto result = snapServiceImpl.findSnap(1L);
         // then
         assertEquals(expectedDto.id(), result.id());
         assertEquals(expectedDto.albumName(), result.albumName());
         assertEquals(expectedDto.userUid(), result.userUid());
-        assertEquals(expectedDto.photoId(), result.photoId());
         assertEquals(expectedDto.oneLineJournal(), result.oneLineJournal());
     }
 }

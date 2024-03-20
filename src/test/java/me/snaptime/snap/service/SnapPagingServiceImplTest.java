@@ -53,9 +53,9 @@ public class SnapPagingServiceImplTest {
         given(tuple1.get(snap.oneLineJournal)).willReturn("일기1");
         given(tuple2.get(snap.oneLineJournal)).willReturn("일기2");
         given(tuple3.get(snap.oneLineJournal)).willReturn("일기3");
-        given(tuple1.get(snap.photo.id)).willReturn(1L);
-        given(tuple2.get(snap.photo.id)).willReturn(2L);
-        given(tuple3.get(snap.photo.id)).willReturn(3L);
+        given(tuple1.get(snap.fileName)).willReturn("fileName1");
+        given(tuple2.get(snap.fileName)).willReturn("fileName2");
+        given(tuple3.get(snap.fileName)).willReturn("fileName3");
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(reqUser));
         given(snapRepository.findSnapPaging(any(String.class),any(Long.class),any(User.class))).willReturn(List.of(tuple1,tuple2,tuple3));
 
@@ -72,9 +72,9 @@ public class SnapPagingServiceImplTest {
         assertThat(result.get(1).oneLineJournal()).isEqualTo("일기2");
         assertThat(result.get(2).oneLineJournal()).isEqualTo("일기3");
 
-        assertThat(result.get(0).photoId()).isEqualTo(1);
-        assertThat(result.get(1).photoId()).isEqualTo(2);
-        assertThat(result.get(2).photoId()).isEqualTo(3);
+        assertThat(result.get(0).fileName()).isEqualTo("fileName1");
+        assertThat(result.get(1).fileName()).isEqualTo("fileName2");
+        assertThat(result.get(2).fileName()).isEqualTo("fileName3");
 
         verify(snapRepository,times(1)).findSnapPaging(any(String.class),any(Long.class),any(User.class));
         verify(userRepository,times(1)).findByLoginId(any(String.class));

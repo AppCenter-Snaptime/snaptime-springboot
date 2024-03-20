@@ -6,10 +6,8 @@ import me.snaptime.common.config.QueryDslConfig;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.domain.Album;
-import me.snaptime.snap.data.domain.Photo;
 import me.snaptime.snap.data.domain.Snap;
 import me.snaptime.snap.data.repository.AlbumRepository;
-import me.snaptime.snap.data.repository.PhotoRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.social.common.FriendStatus;
 import me.snaptime.social.data.domain.FriendShip;
@@ -49,8 +47,6 @@ public class SnapPagingRepositoryImplTest {
     private FriendShipRepository friendShipRepository;
     @Autowired
     private AlbumRepository albumRepository;
-    @Autowired
-    private PhotoRepository photoRepository;
     private User reqUser;
 
     @BeforeEach
@@ -131,24 +127,20 @@ public class SnapPagingRepositoryImplTest {
                 .fromUser(user3)
                 .toUser(reqUser)
                 .build();
-        friendShipRepository.saveAll(List.of(friendShip1,friendShip2,friendShip3));
+        friendShipRepository.saveAll(List.of(friendShip1,friendShip2,friendShip3,friendShip4));
 
         List<Snap> snaps = new ArrayList<>();
         List<User> users = new ArrayList<>(List.of(reqUser,reqUser,user2,user2,user4,user2,user3,user3,user3,user3,user4));
         for (int i = 1; i <= 11; i++) {
-            Photo photo = Photo.builder()
-                    .fileName("testFileName"+i)
-                    .filePath("testFilePath"+i)
-                    .fileType("testType")
-                    .build();
-            photoRepository.save(photo);
             if(i==6){
                 Snap snap = Snap.builder()
                         .album(album)
                         .isPrivate(true)
                         .oneLineJournal("snap" + i + " 1줄일기")
                         .user(users.get(i-1))
-                        .photo(photo)
+                        .fileName("fileName"+i)
+                        .filePath("testPath")
+                        .fileType("testType")
                         .build();
                 snaps.add(snap);
             }
@@ -158,7 +150,9 @@ public class SnapPagingRepositoryImplTest {
                         .isPrivate(false)
                         .oneLineJournal("snap" + i + " 1줄일기")
                         .user(users.get(i-1))
-                        .photo(photo)
+                        .fileName("fileName"+i)
+                        .filePath("testPath")
+                        .fileType("testType")
                         .build();
                 snaps.add(snap);
             }
@@ -179,7 +173,7 @@ public class SnapPagingRepositoryImplTest {
         int index=4;
         for(Tuple tuple:result){
             assertThat(tuple.get(snap.id)).isEqualTo(index);
-            assertThat(tuple.get(snap.photo.id)).isEqualTo(index);
+            assertThat(tuple.get(snap.fileName)).isEqualTo("fileName"+index);
             if(index > 2){
                 assertThat(tuple.get(user.name)).isEqualTo("testName2");
             }
