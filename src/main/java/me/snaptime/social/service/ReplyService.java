@@ -2,7 +2,8 @@ package me.snaptime.social.service;
 
 import lombok.RequiredArgsConstructor;
 import me.snaptime.snap.data.repository.SnapRepository;
-import me.snaptime.social.data.repository.ReplyRepository;
+import me.snaptime.social.data.repository.ChildrenReplyRepository;
+import me.snaptime.social.data.repository.ParentReplyRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,7 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ReplyService {
 
-    private final ReplyRepository replyRepository;
+    private final ParentReplyRepository parentReplyRepository;
+    private final ChildrenReplyRepository childrenReplyRepository;
     private final SnapRepository snapRepository;
 
     @Transactional

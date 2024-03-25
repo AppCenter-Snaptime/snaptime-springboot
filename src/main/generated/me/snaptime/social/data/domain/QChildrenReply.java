@@ -11,16 +11,16 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QReply is a Querydsl query type for Reply
+ * QChildrenReply is a Querydsl query type for ChildrenReply
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QReply extends EntityPathBase<Reply> {
+public class QChildrenReply extends EntityPathBase<ChildrenReply> {
 
-    private static final long serialVersionUID = -1403621820L;
+    private static final long serialVersionUID = -2092757627L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QReply reply = new QReply("reply");
+    public static final QChildrenReply childrenReply = new QChildrenReply("childrenReply");
 
     public final me.snaptime.common.domain.QBaseTimeEntity _super = new me.snaptime.common.domain.QBaseTimeEntity(this);
 
@@ -34,29 +34,32 @@ public class QReply extends EntityPathBase<Reply> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
 
-    public final me.snaptime.snap.data.domain.QSnap snap;
+    public final QParentReply parentReply;
+
+    public final me.snaptime.user.data.domain.QUser tagUser;
 
     public final me.snaptime.user.data.domain.QUser user;
 
-    public QReply(String variable) {
-        this(Reply.class, forVariable(variable), INITS);
+    public QChildrenReply(String variable) {
+        this(ChildrenReply.class, forVariable(variable), INITS);
     }
 
-    public QReply(Path<? extends Reply> path) {
+    public QChildrenReply(Path<? extends ChildrenReply> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QReply(PathMetadata metadata) {
+    public QChildrenReply(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QReply(PathMetadata metadata, PathInits inits) {
-        this(Reply.class, metadata, inits);
+    public QChildrenReply(PathMetadata metadata, PathInits inits) {
+        this(ChildrenReply.class, metadata, inits);
     }
 
-    public QReply(Class<? extends Reply> type, PathMetadata metadata, PathInits inits) {
+    public QChildrenReply(Class<? extends ChildrenReply> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.snap = inits.isInitialized("snap") ? new me.snaptime.snap.data.domain.QSnap(forProperty("snap"), inits.get("snap")) : null;
+        this.parentReply = inits.isInitialized("parentReply") ? new QParentReply(forProperty("parentReply"), inits.get("parentReply")) : null;
+        this.tagUser = inits.isInitialized("tagUser") ? new me.snaptime.user.data.domain.QUser(forProperty("tagUser"), inits.get("tagUser")) : null;
         this.user = inits.isInitialized("user") ? new me.snaptime.user.data.domain.QUser(forProperty("user"), inits.get("user")) : null;
     }
 
