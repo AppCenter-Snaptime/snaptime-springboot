@@ -2,6 +2,7 @@ package me.snaptime.social.data.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.snaptime.common.domain.BaseTimeEntity;
@@ -12,7 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChildrenReply extends BaseTimeEntity {
+public class ChildReply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,4 +35,16 @@ public class ChildrenReply extends BaseTimeEntity {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "tag_user_id")
     private User tagUser;
+
+    @Builder
+    protected ChildReply(String content, User user, User tagUser, ParentReply parentReply){
+        this.content=content;
+        this.user=user;
+        this.tagUser=tagUser;
+        this.parentReply=parentReply;
+    }
+
+    public void updateReply(String content){
+        this.content=content;
+    }
 }

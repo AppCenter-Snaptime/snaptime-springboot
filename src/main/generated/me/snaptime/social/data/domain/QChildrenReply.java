@@ -14,7 +14,7 @@ import com.querydsl.core.types.dsl.PathInits;
  * QChildrenReply is a Querydsl query type for ChildrenReply
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QChildrenReply extends EntityPathBase<ChildrenReply> {
+public class QChildrenReply extends EntityPathBase<ChildReply> {
 
     private static final long serialVersionUID = -2092757627L;
 
@@ -41,10 +41,10 @@ public class QChildrenReply extends EntityPathBase<ChildrenReply> {
     public final me.snaptime.user.data.domain.QUser user;
 
     public QChildrenReply(String variable) {
-        this(ChildrenReply.class, forVariable(variable), INITS);
+        this(ChildReply.class, forVariable(variable), INITS);
     }
 
-    public QChildrenReply(Path<? extends ChildrenReply> path) {
+    public QChildrenReply(Path<? extends ChildReply> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
@@ -53,10 +53,10 @@ public class QChildrenReply extends EntityPathBase<ChildrenReply> {
     }
 
     public QChildrenReply(PathMetadata metadata, PathInits inits) {
-        this(ChildrenReply.class, metadata, inits);
+        this(ChildReply.class, metadata, inits);
     }
 
-    public QChildrenReply(Class<? extends ChildrenReply> type, PathMetadata metadata, PathInits inits) {
+    public QChildrenReply(Class<? extends ChildReply> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.parentReply = inits.isInitialized("parentReply") ? new QParentReply(forProperty("parentReply"), inits.get("parentReply")) : null;
         this.tagUser = inits.isInitialized("tagUser") ? new me.snaptime.user.data.domain.QUser(forProperty("tagUser"), inits.get("tagUser")) : null;

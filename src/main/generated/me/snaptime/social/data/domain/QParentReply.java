@@ -24,7 +24,7 @@ public class QParentReply extends EntityPathBase<ParentReply> {
 
     public final me.snaptime.common.domain.QBaseTimeEntity _super = new me.snaptime.common.domain.QBaseTimeEntity(this);
 
-    public final ListPath<ChildrenReply, QChildrenReply> childrenReplyList = this.<ChildrenReply, QChildrenReply>createList("childrenReplyList", ChildrenReply.class, QChildrenReply.class, PathInits.DIRECT2);
+    public final ListPath<ChildReply, QChildrenReply> childrenReplyList = this.<ChildReply, QChildrenReply>createList("childrenReplyList", ChildReply.class, QChildrenReply.class, PathInits.DIRECT2);
 
     public final StringPath content = createString("content");
 

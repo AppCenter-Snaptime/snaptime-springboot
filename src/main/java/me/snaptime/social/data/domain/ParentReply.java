@@ -35,7 +35,7 @@ public class ParentReply extends BaseTimeEntity {
     private User user;
 
     @OneToMany(mappedBy = "parentReply",cascade = CascadeType.REMOVE)
-    private List<ChildrenReply> childrenReplyList;
+    private List<ChildReply> childReplyList;
 
     @Builder
     protected ParentReply(String content, Snap snap, User user){

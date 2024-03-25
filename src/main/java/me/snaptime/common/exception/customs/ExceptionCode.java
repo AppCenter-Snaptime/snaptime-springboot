@@ -15,6 +15,9 @@ public enum ExceptionCode {
     ACCESS_FAIL_FRIENDSHIP(HttpStatus.FORBIDDEN,"해당 친구에 대한 권한이 없습니다."),
     PAGE_NOT_FOUND(HttpStatus.BAD_REQUEST,"존재하지 않는 페이지입니다."),
 
+    // Reply Exception
+    REPLY_NOT_FOUND(HttpStatus.BAD_REQUEST,"존재하지 않는 댓글입니다."),
+
     // SignIn Exception
     PASSWORD_NOT_EQUAL(HttpStatus.BAD_REQUEST,"잘못된 비밀번호를 입력하셨습니다."),
 
