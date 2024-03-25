@@ -1,6 +1,6 @@
 package me.snaptime.snap.service;
 
-import jakarta.servlet.http.HttpServletRequest;
+import me.snaptime.common.component.UrlComponent;
 import me.snaptime.snap.component.EncryptionComponent;
 import me.snaptime.snap.component.FileComponent;
 import me.snaptime.snap.data.domain.Encryption;
@@ -27,6 +27,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,10 +49,10 @@ public class SnapServiceImplTest {
     private EncryptionComponent encryptionComponent;
 
     @Mock
-    private HttpServletRequest request;
+    private UserRepository userRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private UrlComponent urlComponent;
 
     @InjectMocks
     private SnapServiceImpl snapServiceImpl;
@@ -125,10 +126,8 @@ public class SnapServiceImplTest {
                 .userUid(null)
                 .albumName(null)
                 .build();
-        given(request.getScheme()).willReturn("http");
-        given(request.getServerName()).willReturn("localhost");
-        given(request.getServerPort()).willReturn(8080);
         given(snapRepository.findById(givenId)).willReturn(Optional.ofNullable(expectedSnap));
+        given(urlComponent.makePhotoURL(Objects.requireNonNull(expectedSnap).getFileName(), expectedSnap.isPrivate())).willReturn("http://localhost:8080/photo?fileName=0320101910716_-1821615424_download.png&isEncrypted=false");
         // when
         FindSnapResDto result = snapServiceImpl.findSnap(1L);
         // then

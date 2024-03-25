@@ -1,12 +1,12 @@
 package me.snaptime.snap.service.impl;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.component.EncryptionComponent;
 import me.snaptime.snap.component.FileComponent;
+import me.snaptime.common.component.UrlComponent;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.domain.Snap;
 import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;
@@ -35,8 +35,8 @@ public class SnapServiceImpl implements SnapService {
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
     private final FileComponent fileComponent;
-    private final HttpServletRequest request;
     private final EncryptionComponent encryptionComponent;
+    private final UrlComponent urlComponent;
 
     @Override
     public void createSnap(CreateSnapReqDto createSnapReqDto, String userUid, boolean isPrivate) {
@@ -67,7 +67,7 @@ public class SnapServiceImpl implements SnapService {
                 throw new CustomException(ExceptionCode.SNAP_USER_IS_NOT_THE_SAME);
             }
         }
-        String photoUrl = makePhotoURL(foundSnap.getFileName(), foundSnap.isPrivate());
+        String photoUrl = urlComponent.makePhotoURL(foundSnap.getFileName(), foundSnap.isPrivate());
         return FindSnapResDto.entityToResDto(foundSnap, photoUrl);
     }
 
@@ -138,7 +138,4 @@ public class SnapServiceImpl implements SnapService {
         }
     }
 
-    private String makePhotoURL(String fileName, boolean isEncrypted) {
-        return request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort() + "/photo?fileName=" + fileName + "&isEncrypted=" + isEncrypted;
-    }
 }
