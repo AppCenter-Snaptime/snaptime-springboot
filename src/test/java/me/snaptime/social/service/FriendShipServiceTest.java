@@ -90,7 +90,7 @@ public class FriendShipServiceTest {
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
-            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.USER_NOT_FOUND);
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.USER_NOT_EXIST);
             verify(userRepository,times(1)).findUserByName("testName");
             verify(userRepository,times(1)).findByLoginId("loginId");
             verify(friendShipRepository,times(0)).findByToUserAndFromUser(any(User.class),any(User.class));

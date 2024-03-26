@@ -32,7 +32,7 @@ public class FriendShipService {
     @Transactional
     public void sendFriendShipReq(String loginId, String fromUserName){
         User fromUser = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         User toUser = findUserByName(fromUserName);
 
         Optional<FriendShip> friendShip = friendShipRepository.findByToUserAndFromUser(toUser,fromUser);
@@ -65,7 +65,7 @@ public class FriendShipService {
     @Transactional
     public String acceptFriendShipReq(String loginId, AcceptFollowReqDto acceptFollowReqDto){
         User fromUser = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         User toUser = findUserByName(acceptFollowReqDto.fromUserName());
 
@@ -92,7 +92,7 @@ public class FriendShipService {
                 .orElseThrow(() -> new CustomException(ExceptionCode.FRIENDSHIP_NOT_FOUND));
 
         User fromUser = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         if(friendShip.getFromUser().getId() != fromUser.getId()){
             throw new CustomException(ExceptionCode.ACCESS_FAIL_FRIENDSHIP);
@@ -104,7 +104,7 @@ public class FriendShipService {
     // 팔로워 or 팔로잉 친구리스트 조회
     public List<FindFriendResDto> findFriendList(String loginId, Long pageNum, FriendSearchType searchType, String searchKeyword){
         User user = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         List<Tuple> result = friendShipRepository.findFriendList(user,searchType,pageNum,searchKeyword);
 
@@ -116,7 +116,7 @@ public class FriendShipService {
     // 유저 프로필 조회 시 팔로잉,팔로워 수를 반환하는 메소드
     public FriendCntResDto findFriendShipCnt(String loginId){
         User user = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         // 나를 팔로우하는 사람의 수, 내가 팔로우하는 사람의 수 조회
         Long followerCnt = friendShipRepository.countByToUserAndFriendStatus(user,FriendStatus.FOLLOW);
@@ -127,7 +127,7 @@ public class FriendShipService {
 
     private User findUserByName(String fromUserName){
         return userRepository.findUserByName(fromUserName)
-                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
     }
 
     private FriendShip findFriendShipByToUserAndFromUser(User toUser, User fromUser){

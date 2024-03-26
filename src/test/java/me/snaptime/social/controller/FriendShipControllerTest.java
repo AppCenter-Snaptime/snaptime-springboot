@@ -65,14 +65,14 @@ public class FriendShipControllerTest {
     @DisplayName("팔로우 요청테스트 -> (실패 : 존재하지 않는 유저)")
     public void sendFollowReq2() throws Exception {
         //given
-        doThrow(new CustomException(ExceptionCode.USER_NOT_FOUND)).when(friendShipService).sendFriendShipReq(any(String.class),any(String.class));
+        doThrow(new CustomException(ExceptionCode.USER_NOT_EXIST)).when(friendShipService).sendFriendShipReq(any(String.class),any(String.class));
 
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("fromUserName","followName"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.msg").value("존재하지 않는 유저입니다."))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.msg").value("사용자가 존재하지 않습니다."))
                 .andDo(print());
 
         verify(friendShipService,times(1)).sendFriendShipReq(any(String.class),any(String.class));
@@ -224,14 +224,14 @@ public class FriendShipControllerTest {
         Gson gson = new Gson();
         String requestBody = gson.toJson(acceptFollowReqDto);
         given(friendShipService.acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class)))
-                .willThrow(new CustomException(ExceptionCode.USER_NOT_FOUND));
+                .willThrow(new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         //when, then
         this.mockMvc.perform(post("/friends/accept")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.msg").value("존재하지 않는 유저입니다."))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.msg").value("사용자가 존재하지 않습니다."))
                 .andDo(print());
 
         verify(friendShipService,times(1)).acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class));
@@ -251,7 +251,7 @@ public class FriendShipControllerTest {
         this.mockMvc.perform(post("/friends/accept")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("존재하지 않는 친구입니다."))
                 .andDo(print());
 
@@ -301,7 +301,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(delete("/friends/{friendShipId}","1")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("존재하지 않는 친구입니다."))
                 .andDo(print());
 

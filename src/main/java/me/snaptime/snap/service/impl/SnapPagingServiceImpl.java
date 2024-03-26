@@ -25,7 +25,7 @@ public class SnapPagingServiceImpl {
     // snap 페이징 조회
     public List<FindSnapPagingResDto> findSnapPaging(String loginId, Long pageNum){
         User reqUser = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         List<Tuple> result = snapRepository.findSnapPaging(loginId,pageNum,reqUser);
 

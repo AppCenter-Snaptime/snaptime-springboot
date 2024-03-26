@@ -65,6 +65,6 @@ public class ReplyService {
 
     private User findUserByLoginId(String loginId){
         return userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
     }
 }
