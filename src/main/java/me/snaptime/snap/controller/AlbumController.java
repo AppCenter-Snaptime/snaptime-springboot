@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.dto.CommonResponseDto;
 import me.snaptime.snap.data.dto.req.CreateAlbumReqDto;
+import me.snaptime.snap.data.dto.res.FindAlbumInfoResDto;
 import me.snaptime.snap.data.dto.res.FindAlbumResDto;
 import me.snaptime.snap.service.AlbumService;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,21 @@ public class AlbumController {
                 new CommonResponseDto<>(
                         "사용자의 앨범을 정상적으로 생성했습니다.",
                         null
+                )
+        );
+    }
+
+
+    @Operation(summary = "Album 목록 불러오기", description = "사용자의 Album 목록을 불러옵니다.")
+    @GetMapping(path = "/albumList")
+    public ResponseEntity<CommonResponseDto<List<FindAlbumInfoResDto>>> findAlbumList(
+            final @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String uId = userDetails.getUsername();
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "사용자의 앨범 목록을 정상적으로 가져왔습니다.",
+                        albumService.findAlbumListByLoginId(uId)
                 )
         );
     }
