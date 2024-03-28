@@ -49,7 +49,7 @@ public class SnapServiceImpl implements SnapService {
                         .filePath(writePhotoToFileSystemResult.filePath())
                         .fileType(createSnapReqDto.multipartFile().getContentType())
                         .user(foundUser)
-                        .album(albumRepository.findByName(createSnapReqDto.album()))
+                        .album(albumRepository.findById(createSnapReqDto.album_id()).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST)))
                         .isPrivate(isPrivate)
                         .build()
         );

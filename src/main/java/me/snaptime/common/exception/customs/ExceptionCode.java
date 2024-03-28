@@ -43,7 +43,10 @@ public enum ExceptionCode {
     FILE_READ_ERROR(HttpStatus.BAD_REQUEST, "파일을 시스템에서 읽어오던 중 문제가 발생했습니다."),
 
     // Change Snap Visibility
-    CHANGE_SNAP_VISIBILITY_ERROR(HttpStatus.BAD_REQUEST, "이미 설정되어 있습니다");
+    CHANGE_SNAP_VISIBILITY_ERROR(HttpStatus.BAD_REQUEST, "이미 설정되어 있습니다"),
+
+    // Album Exception
+    ALBUM_NOT_EXIST(HttpStatus.BAD_REQUEST, "앨범이 존재하지 않습니다.");
 
     private final HttpStatus status;
     private final String message;
