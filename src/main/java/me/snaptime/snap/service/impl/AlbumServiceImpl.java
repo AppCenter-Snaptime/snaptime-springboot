@@ -8,7 +8,6 @@ import me.snaptime.snap.data.domain.Album;
 import me.snaptime.snap.data.dto.req.CreateAlbumReqDto;
 import me.snaptime.snap.data.dto.res.FindAlbumInfoResDto;
 import me.snaptime.snap.data.dto.res.FindAlbumResDto;
-import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.data.repository.AlbumRepository;
 import me.snaptime.snap.service.AlbumService;
 import me.snaptime.user.data.domain.User;
@@ -33,8 +32,8 @@ public class AlbumServiceImpl implements AlbumService {
         return foundAlbums.stream().map(album -> FindAlbumResDto.builder()
                 .id(album.getId())
                 .name(album.getName())
-                .snapList(
-                        album.getSnap().stream().map(snap -> FindSnapResDto.entityToResDto(snap, urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate()))).collect(Collectors.toList())
+                .photoUrl(
+                        album.getSnap().stream().map(snap -> urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate())).collect(Collectors.toList())
                 ).build()
         ).toList();
     }
@@ -46,7 +45,7 @@ public class AlbumServiceImpl implements AlbumService {
         return FindAlbumResDto.builder()
                 .id(foundAlbum.getId())
                 .name(foundAlbum.getName())
-                .snapList(foundAlbum.getSnap().stream().map(snap -> FindSnapResDto.entityToResDto(snap, urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate()))).collect(Collectors.toList()))
+                .photoUrl(foundAlbum.getSnap().stream().map(snap -> urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate())).collect(Collectors.toList()))
                 .build();
     }
 

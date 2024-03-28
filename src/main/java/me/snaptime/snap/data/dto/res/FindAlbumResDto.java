@@ -8,6 +8,6 @@ import java.util.List;
 public record FindAlbumResDto(
         Long id,
         String name,
-        List<FindSnapResDto> snapList
+        List<String> photoUrl
 ) {
 }
