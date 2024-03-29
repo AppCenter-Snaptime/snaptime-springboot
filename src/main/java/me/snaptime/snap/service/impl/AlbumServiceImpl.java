@@ -54,6 +54,18 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(readOnly = true)
+    public boolean isAlbumExistById(Long album_id) {
+       return albumRepository.findById(album_id).isPresent();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Album findAlbumById(Long album_id) {
+        return albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<GetAllAlbumListResDto> getAlbumListByLoginId(String uid) {
         User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         return albumRepository.findAlbumsByUser(foundUser).stream().map(album -> GetAllAlbumListResDto.builder().id(album.getId()).name(album.getName()).build()).toList();
@@ -64,6 +76,13 @@ public class AlbumServiceImpl implements AlbumService {
     public void createAlbum(CreateAlbumReqDto createAlbumReqDto, String uid) {
         User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         albumRepository.save(Album.builder().name(createAlbumReqDto.name()).user(foundUser).build());
+    }
+
+    @Override
+    public Long createNonClassificationAlbum(String uid) {
+        User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        Album result = albumRepository.save(Album.builder().name("Non-Classification").user(foundUser).build());
+        return result.getId();
     }
 
     @Override

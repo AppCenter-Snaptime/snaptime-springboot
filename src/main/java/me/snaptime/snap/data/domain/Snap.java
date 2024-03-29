@@ -64,5 +64,9 @@ public class Snap extends BaseTimeEntity {
         this.isPrivate = state;
     }
 
+    public void updateAlbum(Album album) {
+        this.album = album;
+    }
+
 
 }

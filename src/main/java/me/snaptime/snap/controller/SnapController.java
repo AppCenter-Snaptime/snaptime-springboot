@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.dto.CommonResponseDto;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
+import me.snaptime.snap.service.AlbumService;
 import me.snaptime.snap.service.SnapService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,16 +33,39 @@ import java.net.URLConnection;
 @Slf4j
 public class SnapController {
     private final SnapService snapService;
+    private final AlbumService albumService;
 
     @Operation(summary = "Snap 생성", description = "Empty Value를 보내지마세요")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CommonResponseDto<Void>> createSnap(
-            final @RequestParam("isPrivate") boolean isPrivate,
+            final @RequestParam(value = "isPrivate") boolean isPrivate,
+            final @RequestParam(value = "nonClassification") boolean nonClassification,
+            final @RequestParam(value = "albumId", required = false) Long album_id,
             final @ModelAttribute CreateSnapReqDto createSnapReqDto,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uId = userDetails.getUsername();
-        snapService.createSnap(createSnapReqDto, uId, isPrivate);
+        // Snap 저장
+        Long snapId = snapService.createSnap(createSnapReqDto, uId, isPrivate);
+
+        // 사용자가 앨범 선택을 하지 않고 요청을 보낼 경우
+        if (nonClassification) {
+            // 분류되지 않은 앨범에 snap을 추가함
+            Long nonClassificationAlbumId = albumService.createNonClassificationAlbum(uId);
+            snapService.makeRelationSnapAndAlbum(snapId, albumService.findAlbumById(nonClassificationAlbumId));
+        } else {
+            // 사용자가 앨범 선택을 하고 요청을 보낼 경우
+            // 사용자가 보낸 앨범 id가 유효한지 확인
+            if (albumService.isAlbumExistById(album_id)) {
+                // 유효하다면 앨범 id를 Snap과 연관관계 맺어줌
+                snapService.makeRelationSnapAndAlbum(snapId, albumService.findAlbumById(album_id));
+            } else {
+                // 사용자가 앨범 선택을 하고 요청을 보냈으나 이 요청이 유효하지 않다면 이를 분류되지 않은 앨범에 추가함
+                Long nonClassificationAlbumId = albumService.createNonClassificationAlbum(uId);
+                snapService.makeRelationSnapAndAlbum(snapId, albumService.findAlbumById(nonClassificationAlbumId));
+            }
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CommonResponseDto<>(
                 "스냅이 정상적으로 저장되었습니다.",

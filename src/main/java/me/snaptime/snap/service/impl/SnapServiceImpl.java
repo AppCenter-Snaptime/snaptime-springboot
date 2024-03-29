@@ -7,6 +7,7 @@ import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.component.EncryptionComponent;
 import me.snaptime.snap.component.FileComponent;
 import me.snaptime.common.component.UrlComponent;
+import me.snaptime.snap.data.domain.Album;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.domain.Snap;
 import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;
@@ -23,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
@@ -39,20 +41,21 @@ public class SnapServiceImpl implements SnapService {
     private final UrlComponent urlComponent;
 
     @Override
-    public void createSnap(CreateSnapReqDto createSnapReqDto, String userUid, boolean isPrivate) {
+    public Long createSnap(CreateSnapReqDto createSnapReqDto, String userUid, boolean isPrivate) {
         User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         WritePhotoToFileSystemResult writePhotoToFileSystemResult = savePhotoToFileSystem(foundUser, createSnapReqDto.multipartFile(), isPrivate);
-        snapRepository.save(
+        Snap result = snapRepository.save(
                 Snap.builder()
                         .oneLineJournal(createSnapReqDto.oneLineJournal())
                         .fileName(writePhotoToFileSystemResult.fileName())
                         .filePath(writePhotoToFileSystemResult.filePath())
                         .fileType(createSnapReqDto.multipartFile().getContentType())
                         .user(foundUser)
-                        .album(albumRepository.findById(createSnapReqDto.album_id()).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST)))
                         .isPrivate(isPrivate)
                         .build()
         );
+
+        return result.getId();
     }
 
     @Override
@@ -73,6 +76,14 @@ public class SnapServiceImpl implements SnapService {
 
     @Override
     public void modifySnap(ModifySnapReqDto modifySnapReqDto, String userUid, boolean isPrivate) {
+    }
+
+    @Override
+    @Transactional
+    public void makeRelationSnapAndAlbum(Long snap_id, Album album) {
+        Snap foundSnap = snapRepository.findById(snap_id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
+        foundSnap.updateAlbum(album);
+        snapRepository.save(foundSnap);
     }
 
     @Override
