@@ -130,7 +130,7 @@ public class SnapController {
 
     private void processSnapForNonClassification(Long snapId, String uId){
         // 분류되지 않은 앨범이 사용자에게 이미 존재하는지 확인함
-        if(albumService.isNonClassificationExist()) {
+        if(albumService.isNonClassificationExist(uId)) {
             // 존재한다면 분류되지 않은 앨범에 추가함
             Long nonClassificationAlbumId = albumService.findUserNonClassificationId(uId);
             snapService.makeRelationSnapAndAlbum(snapId, albumService.findAlbumById(nonClassificationAlbumId));

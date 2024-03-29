@@ -17,7 +17,7 @@ public interface AlbumService {
     Long createNonClassificationAlbum(String uid);
     boolean isAlbumExistById(Long album_id);
     Album findAlbumById(Long album_id);
-    boolean isNonClassificationExist();
+    boolean isNonClassificationExist(String uid);
     Long findUserNonClassificationId(String uid);
     void modifyAlbumName(Long album_id, String album_name);
     void removeAlbum(Long album_id);

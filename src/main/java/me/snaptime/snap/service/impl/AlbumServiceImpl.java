@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,15 +66,17 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public boolean isNonClassificationExist() {
-        return false;
+    public boolean isNonClassificationExist(String uId) {
+        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        List<Album> foundAlbums = albumRepository.findAlbumsByUser(foundUser);
+        return foundAlbums.stream().anyMatch(album -> Objects.equals(album.getName(), "Non-Classification"));
     }
 
     @Override
     public Long findUserNonClassificationId(String uid) {
         User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-        Album result = albumRepository.findAlbumsByName("Non-Classification");
-        return result.getId();
+        List<Album> foundAlbums = albumRepository.findAlbumsByUser(foundUser);
+        return foundAlbums.stream().filter(album -> Objects.equals(album.getName(), "Non-Classification")).findFirst().map(Album::getId).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
     }
 
     @Override
