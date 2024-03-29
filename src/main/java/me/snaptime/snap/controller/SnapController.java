@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.dto.CommonResponseDto;
+import me.snaptime.common.exception.customs.CustomException;
+import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.service.AlbumService;
@@ -50,19 +52,21 @@ public class SnapController {
 
         // 사용자가 앨범 선택을 하지 않고 요청을 보낼 경우
         if (nonClassification) {
-            // 분류되지 않은 앨범에 snap을 추가함
-            Long nonClassificationAlbumId = albumService.createNonClassificationAlbum(uId);
-            snapService.makeRelationSnapAndAlbum(snapId, albumService.findAlbumById(nonClassificationAlbumId));
+            // non-classification 앨범에 스냅을 추가함
+            processSnapForNonClassification(snapId, uId);
         } else {
+            if(album_id == null) {
+                throw new CustomException(ExceptionCode.ALBUM_ID_IS_NOT_GIVEN);
+            }
             // 사용자가 앨범 선택을 하고 요청을 보낼 경우
             // 사용자가 보낸 앨범 id가 유효한지 확인
             if (albumService.isAlbumExistById(album_id)) {
                 // 유효하다면 앨범 id를 Snap과 연관관계 맺어줌
                 snapService.makeRelationSnapAndAlbum(snapId, albumService.findAlbumById(album_id));
             } else {
-                // 사용자가 앨범 선택을 하고 요청을 보냈으나 이 요청이 유효하지 않다면 이를 분류되지 않은 앨범에 추가함
-                Long nonClassificationAlbumId = albumService.createNonClassificationAlbum(uId);
-                snapService.makeRelationSnapAndAlbum(snapId, albumService.findAlbumById(nonClassificationAlbumId));
+                // 사용자가 앨범이 존재한다고 하고, 이를 요청에 포함시켰으나, 앨범이 유효하지 않을경우
+                // non-classification에 스냅을 추가함
+                processSnapForNonClassification(snapId, uId);
             }
         }
 
@@ -122,6 +126,19 @@ public class SnapController {
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(
                 inputStream.readAllBytes()
         );
+    }
+
+    private void processSnapForNonClassification(Long snapId, String uId){
+        // 분류되지 않은 앨범이 사용자에게 이미 존재하는지 확인함
+        if(albumService.isNonClassificationExist()) {
+            // 존재한다면 분류되지 않은 앨범에 추가함
+            Long nonClassificationAlbumId = albumService.findUserNonClassificationId(uId);
+            snapService.makeRelationSnapAndAlbum(snapId, albumService.findAlbumById(nonClassificationAlbumId));
+        } else {
+            // 존재하지 않는다면 분류되지 않은 앨범을 생성하고 앨범에 추가함
+            Long nonClassificationAlbumId = albumService.createNonClassificationAlbum(uId);
+            snapService.makeRelationSnapAndAlbum(snapId, albumService.findAlbumById(nonClassificationAlbumId));
+        }
     }
 
 }

@@ -46,7 +46,8 @@ public enum ExceptionCode {
     CHANGE_SNAP_VISIBILITY_ERROR(HttpStatus.BAD_REQUEST, "이미 설정되어 있습니다"),
 
     // Album Exception
-    ALBUM_NOT_EXIST(HttpStatus.BAD_REQUEST, "앨범이 존재하지 않습니다.");
+    ALBUM_NOT_EXIST(HttpStatus.BAD_REQUEST, "앨범이 존재하지 않습니다."),
+    ALBUM_ID_IS_NOT_GIVEN(HttpStatus.BAD_REQUEST, "앨범 id가 주어지지 않았습니다.");
 
     private final HttpStatus status;
     private final String message;

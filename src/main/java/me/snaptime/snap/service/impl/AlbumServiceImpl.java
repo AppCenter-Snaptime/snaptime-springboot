@@ -65,6 +65,18 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    public boolean isNonClassificationExist() {
+        return false;
+    }
+
+    @Override
+    public Long findUserNonClassificationId(String uid) {
+        User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        Album result = albumRepository.findAlbumsByName("Non-Classification");
+        return result.getId();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<GetAllAlbumListResDto> getAlbumListByLoginId(String uid) {
         User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));

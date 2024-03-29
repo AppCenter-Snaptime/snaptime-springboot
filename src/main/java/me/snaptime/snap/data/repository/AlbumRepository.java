@@ -11,4 +11,5 @@ import java.util.List;
 public interface AlbumRepository extends JpaRepository<Album, Long> {
     Album findByName(String name);
     List<Album> findAlbumsByUser(User user);
+    Album findAlbumsByName(String album_name);
 }
