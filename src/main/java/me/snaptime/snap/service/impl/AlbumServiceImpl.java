@@ -6,8 +6,10 @@ import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.domain.Album;
 import me.snaptime.snap.data.dto.req.CreateAlbumReqDto;
-import me.snaptime.snap.data.dto.res.FindAlbumInfoResDto;
+import me.snaptime.snap.data.dto.res.GetAllAlbumListResDto;
 import me.snaptime.snap.data.dto.res.FindAlbumResDto;
+import me.snaptime.snap.data.dto.res.FindAllAlbumsResDto;
+import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.data.repository.AlbumRepository;
 import me.snaptime.snap.service.AlbumService;
 import me.snaptime.user.data.domain.User;
@@ -24,16 +26,17 @@ public class AlbumServiceImpl implements AlbumService {
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
     private final UrlComponent urlComponent;
+
     @Override
     @Transactional(readOnly = true)
-    public List<FindAlbumResDto> findAllAlbumsByLoginId(String uid) {
+    public List<FindAllAlbumsResDto> findAllAlbumsByLoginId(String uid) {
         User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         List<Album> foundAlbums = albumRepository.findAlbumsByUser(foundUser);
-        return foundAlbums.stream().map(album -> FindAlbumResDto.builder()
+        return foundAlbums.stream().map(album -> FindAllAlbumsResDto.builder()
                 .id(album.getId())
                 .name(album.getName())
                 .photoUrl(
-                        album.getSnap().stream().map(snap -> urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate())).collect(Collectors.toList())
+                        urlComponent.makePhotoURL(album.getSnap().getFirst().getFileName(), album.getSnap().getFirst().isPrivate())
                 ).build()
         ).toList();
     }
@@ -45,15 +48,15 @@ public class AlbumServiceImpl implements AlbumService {
         return FindAlbumResDto.builder()
                 .id(foundAlbum.getId())
                 .name(foundAlbum.getName())
-                .photoUrl(foundAlbum.getSnap().stream().map(snap -> urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate())).collect(Collectors.toList()))
+                .snap(foundAlbum.getSnap().stream().map(snap -> FindSnapResDto.entityToResDto(snap, urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate()))).collect(Collectors.toList()))
                 .build();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<FindAlbumInfoResDto> findAlbumListByLoginId(String uid) {
+    public List<GetAllAlbumListResDto> getAlbumListByLoginId(String uid) {
         User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-        return albumRepository.findAlbumsByUser(foundUser).stream().map(album -> FindAlbumInfoResDto.builder().id(album.getId()).name(album.getName()).build()).toList();
+        return albumRepository.findAlbumsByUser(foundUser).stream().map(album -> GetAllAlbumListResDto.builder().id(album.getId()).name(album.getName()).build()).toList();
     }
 
     @Override
@@ -66,7 +69,8 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     @Transactional
     public void modifyAlbumName(Long album_id, String album_name) {
-
+        Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
+        foundAlbum.updateAlbumNameByString(album_name);
     }
 
     @Override

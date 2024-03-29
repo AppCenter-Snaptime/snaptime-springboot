@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.dto.CommonResponseDto;
 import me.snaptime.snap.data.dto.req.CreateAlbumReqDto;
-import me.snaptime.snap.data.dto.res.FindAlbumInfoResDto;
-import me.snaptime.snap.data.dto.res.FindAlbumResDto;
+import me.snaptime.snap.data.dto.res.GetAllAlbumListResDto;
+import me.snaptime.snap.data.dto.res.FindAllAlbumsResDto;
 import me.snaptime.snap.service.AlbumService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +23,16 @@ import java.util.List;
 public class AlbumController {
     private final AlbumService albumService;
 
-    @Operation(summary = "Album List 조회", description = "사용자의 Album List를 조회합니다.")
+    @Operation(summary = "Album 목록(썸네일 포함) 조회", description = "사용자의 Album 목록(썸네일 포함)을 조회합니다.")
     @GetMapping
-    public ResponseEntity<CommonResponseDto<List<FindAlbumResDto>>> findAllAlbumsByLoginId(
+    public ResponseEntity<CommonResponseDto<List<FindAllAlbumsResDto>>> findAllAlbumsByLoginId(
             final @AuthenticationPrincipal UserDetails userDetails
             ) {
         String uId = userDetails.getUsername();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(
                         new CommonResponseDto<>(
-                                "사용자의 앨범 목록이 정상적으로 불러와졌습니다.",
+                                "사용자의 앨범 목록(썸네일 포함)이 정상적으로 불러와졌습니다.",
                                 albumService.findAllAlbumsByLoginId(uId)
                         )
                 );
@@ -54,17 +54,16 @@ public class AlbumController {
         );
     }
 
-
     @Operation(summary = "Album 목록 불러오기", description = "사용자의 Album 목록을 불러옵니다.")
-    @GetMapping(path = "/albumList")
-    public ResponseEntity<CommonResponseDto<List<FindAlbumInfoResDto>>> findAlbumList(
+    @GetMapping(path = "/albumLists")
+    public ResponseEntity<CommonResponseDto<List<GetAllAlbumListResDto>>> findAlbumList(
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uId = userDetails.getUsername();
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
-                        "사용자의 앨범 목록을 정상적으로 가져왔습니다.",
-                        albumService.findAlbumListByLoginId(uId)
+                        "사용자의 앨범 목록(앨범의 이름들)을 정상적으로 가져왔습니다.",
+                        albumService.getAlbumListByLoginId(uId)
                 )
         );
     }

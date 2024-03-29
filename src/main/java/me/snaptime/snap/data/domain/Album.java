@@ -35,4 +35,8 @@ public class Album extends BaseTimeEntity {
         this.name = name;
         this.user = user;
     }
+
+    public void updateAlbumNameByString(String name) {
+        this.name = name;
+    }
 }
