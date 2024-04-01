@@ -47,7 +47,7 @@ public class SnapController {
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uId = userDetails.getUsername();
-        // Snap 저장
+        // 먼저 Snap 저장
         Long snapId = snapService.createSnap(createSnapReqDto, uId, isPrivate);
 
         // 사용자가 앨범 선택을 하지 않고 요청을 보낼 경우
@@ -62,7 +62,7 @@ public class SnapController {
             // 사용자가 보낸 앨범 id가 유효한지 확인
             if (albumService.isAlbumExistById(album_id)) {
                 // 유효하다면 앨범 id를 Snap과 연관관계 맺어줌
-                snapService.makeRelationSnapAndAlbum(snapId, albumService.findAlbumById(album_id));
+                snapService.makeRelationSnapAndAlbum(snapId, album_id);
             } else {
                 // 사용자가 앨범이 존재한다고 하고, 이를 요청에 포함시켰으나, 앨범이 유효하지 않을경우
                 // non-classification에 스냅을 추가함
@@ -132,12 +132,12 @@ public class SnapController {
         // 분류되지 않은 앨범이 사용자에게 이미 존재하는지 확인함
         if(albumService.isNonClassificationExist(uId)) {
             // 존재한다면 분류되지 않은 앨범에 추가함
-            Long nonClassificationAlbumId = albumService.findUserNonClassificationId(uId);
-            snapService.makeRelationSnapAndAlbum(snapId, albumService.findAlbumById(nonClassificationAlbumId));
+            Long foundNonClassificationAlbumId = albumService.findUserNonClassificationId(uId);
+            snapService.makeRelationSnapAndAlbum(snapId, foundNonClassificationAlbumId);
         } else {
             // 존재하지 않는다면 분류되지 않은 앨범을 생성하고 앨범에 추가함
-            Long nonClassificationAlbumId = albumService.createNonClassificationAlbum(uId);
-            snapService.makeRelationSnapAndAlbum(snapId, albumService.findAlbumById(nonClassificationAlbumId));
+            Long createdNonClassificationAlbumId = albumService.createNonClassificationAlbum(uId);
+            snapService.makeRelationSnapAndAlbum(snapId, createdNonClassificationAlbumId);
         }
     }
 

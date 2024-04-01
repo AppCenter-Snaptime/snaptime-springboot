@@ -65,12 +65,6 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Album findAlbumById(Long album_id) {
-        return albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
-    }
-
-    @Override
     public boolean isNonClassificationExist(String uId) {
         User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         List<Album> foundAlbums = albumRepository.findAlbumsByUser(foundUser);
@@ -114,10 +108,15 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional
-    public void removeAlbum(Long album_id) {
-        
+    public void removeAlbum(String uId, Long album_id) {
+        Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
+        haveAuthority(uId, foundAlbum);
+
     }
 
+    /*
+    * 인자로 uId와 album을 받아 album을 생성한 사용자가 현재 요청을 보낸 사용자와 일치하는지 확인하는 메소드입니다.
+    * */
     private void haveAuthority(String uId, Album album) {
         User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         if(!(album.getUser() == foundUser)){

@@ -80,9 +80,10 @@ public class SnapServiceImpl implements SnapService {
 
     @Override
     @Transactional
-    public void makeRelationSnapAndAlbum(Long snap_id, Album album) {
+    public void makeRelationSnapAndAlbum(Long snap_id, Long album_id) {
         Snap foundSnap = snapRepository.findById(snap_id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
-        foundSnap.updateAlbum(album);
+        Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
+        foundSnap.updateAlbum(foundAlbum);
         snapRepository.save(foundSnap);
     }
 
