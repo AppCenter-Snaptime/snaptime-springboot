@@ -52,7 +52,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("fromUserName","followName"))
+                        .param("fromUserLoginId","followName"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.msg").value("팔로우가 완료되었습니다."))
                 .andDo(print());
@@ -70,7 +70,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("fromUserName","followName"))
+                        .param("fromUserLoginId","followName"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("사용자가 존재하지 않습니다."))
                 .andDo(print());
@@ -88,7 +88,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("fromUserName","followName"))
+                        .param("fromUserLoginId","followName"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("이미 팔로우관계입니다."))
                 .andDo(print());
@@ -106,7 +106,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("fromUserName","followName"))
+                        .param("fromUserLoginId","followName"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("팔로우요청이 거절되었습니다."))
                 .andDo(print());
@@ -124,7 +124,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("fromUserName","followName"))
+                        .param("fromUserLoginId","followName"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("자신에게 친구추가 요청을 보낼 수 없습니다."))
                 .andDo(print());
@@ -141,7 +141,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("fromUserName",""))
+                        .param("fromUserLoginId",""))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("팔로우요청을 보낼 유저의 이름을 입력해주세요."))
                 .andDo(print());
@@ -207,7 +207,7 @@ public class FriendShipControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("올바르지 않은 입력값입니다"))
-                .andExpect(jsonPath("$.result.fromUserName").value("유저 이름을 입력해주세요."))
+                .andExpect(jsonPath("$.result.fromUserLoginId").value("유저의 LoginId를 입력해주세요."))
                 .andExpect(jsonPath("$.result.isAccept").value("수락여부를 보내주세요."))
                 .andDo(print());
 

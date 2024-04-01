@@ -33,7 +33,7 @@ public class ChildReply extends BaseTimeEntity {
 
     @OneToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "tag_user_id")
+    @JoinColumn(name = "tag_user_id", nullable = true)
     private User tagUser;
 
     @Builder

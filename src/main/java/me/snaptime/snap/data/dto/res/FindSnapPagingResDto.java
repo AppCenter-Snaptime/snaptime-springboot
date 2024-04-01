@@ -12,23 +12,23 @@ import static me.snaptime.user.data.domain.QUser.user;
 public record FindSnapPagingResDto(
         Long snapId,
         String oneLineJournal,
-        String fileName,
+        String snapPhotoURL,
         LocalDateTime snapCreatedDate,
         LocalDateTime snapModifiedDate,
         String loginId,
-        Long profilePhotoId,
+        String profilePhotoURL,
         String userName
 
 ) {
-    public static FindSnapPagingResDto toDto(Tuple result){
+    public static FindSnapPagingResDto toDto(Tuple result, String profilePhotoURL, String snapPhotoURL){
         return FindSnapPagingResDto.builder()
                 .snapId(result.get(snap.id))
                 .oneLineJournal(String.valueOf(result.get(snap.oneLineJournal)))
-                .fileName(result.get(snap.fileName))
+                .snapPhotoURL(snapPhotoURL)
                 .snapCreatedDate(result.get(snap.createdDate))
                 .snapModifiedDate(result.get(snap.lastModifiedDate))
                 .loginId(result.get(user.loginId))
-                .profilePhotoId(result.get(user.profilePhoto.id))
+                .profilePhotoURL(profilePhotoURL)
                 .userName(result.get(user.name))
                 .build();
     }
