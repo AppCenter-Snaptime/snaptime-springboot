@@ -1,4 +1,4 @@
-package me.snaptime.social.data.repository.impl;
+package me.snaptime.social.data.repository.friendShip.impl;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -10,7 +10,7 @@ import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.social.common.FriendSearchType;
 import me.snaptime.social.common.FriendStatus;
-import me.snaptime.social.data.repository.FindFriendListRepository;
+import me.snaptime.social.data.repository.friendShip.FriendShipPagingRepository;
 import me.snaptime.user.data.domain.User;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +23,7 @@ import static me.snaptime.user.data.domain.QUser.user;
 
 @Repository
 @RequiredArgsConstructor
-public class FindFriendListRepositoryImpl implements FindFriendListRepository {
+public class FriendShipPagingRepositoryImpl implements FriendShipPagingRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 

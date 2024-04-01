@@ -8,7 +8,7 @@ import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.social.common.FriendSearchType;
 import me.snaptime.social.common.FriendStatus;
 import me.snaptime.social.data.domain.FriendShip;
-import me.snaptime.social.data.repository.FriendShipRepository;
+import me.snaptime.social.data.repository.friendShip.FriendShipRepository;
 import me.snaptime.user.data.domain.ProfilePhoto;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
@@ -31,7 +31,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.fail;
 @DataJpaTest
 @Import({QueryDslConfig.class, JpaAuditingConfig.class})
 @TestPropertySource(locations = "classpath:application-test.yml")
-public class FindFriendListRepositoryTest {
+public class FriendShipPagingRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;

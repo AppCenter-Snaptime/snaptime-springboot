@@ -11,7 +11,7 @@ import me.snaptime.social.data.domain.FriendShip;
 import me.snaptime.social.data.dto.req.AcceptFollowReqDto;
 import me.snaptime.social.data.dto.res.FindFriendResDto;
 import me.snaptime.social.data.dto.res.FriendCntResDto;
-import me.snaptime.social.data.repository.FriendShipRepository;
+import me.snaptime.social.data.repository.friendShip.FriendShipRepository;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
 import org.springframework.stereotype.Service;
