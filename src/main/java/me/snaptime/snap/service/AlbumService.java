@@ -11,7 +11,7 @@ import java.util.List;
 public interface AlbumService {
 
     List<FindAllAlbumsResDto> findAllAlbumsByLoginId(String uid);
-    FindAlbumResDto findAlbum(Long album_id);
+    FindAlbumResDto findAlbum(String uId, Long album_id);
     List<GetAllAlbumListResDto> getAlbumListByLoginId(String uid);
     void createAlbum(CreateAlbumReqDto createAlbumReqDto, String uid);
     Long createNonClassificationAlbum(String uid);
