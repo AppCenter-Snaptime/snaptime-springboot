@@ -116,6 +116,7 @@ public class UserService {
 
     public void deleteUser(String loginId) {
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+
         userRepository.deleteById(user.getId());
     }
 

@@ -164,9 +164,9 @@ class UserServiceTest {
         //given
         UserUpdateDto userUpdateDto = UserUpdateDto.builder()
                 .loginId("jun4746")
-                .name("string")
+                .name("")
                 .email("strong@naver.com")
-                .birthDay("string")
+                .birthDay("")
                 .build();
 
         Mockito.when(userRepository.findByLoginId("kang4746"))
