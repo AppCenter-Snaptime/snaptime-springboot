@@ -3,7 +3,6 @@ package me.snaptime.user.controller;
 import com.google.gson.Gson;
 import me.snaptime.common.config.SecurityConfig;
 import me.snaptime.common.jwt.JwtProvider;
-import me.snaptime.user.data.controller.UserController;
 import me.snaptime.user.data.dto.request.UserReqDto;
 import me.snaptime.user.data.dto.request.UserUpdateDto;
 import me.snaptime.user.data.dto.response.UserResDto;
