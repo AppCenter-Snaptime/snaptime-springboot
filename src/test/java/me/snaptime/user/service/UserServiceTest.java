@@ -183,41 +183,4 @@ class UserServiceTest {
 
         verify(userRepository,times(1)).findByLoginId("kang4746");
     }
-
-//    @Test
-//    @DisplayName("given_when_then 방식으로 유저 프로필 조회 서비스 성공 테스트")
-//    public void getUserProfileTest()
-//    {
-//        //given
-//        AlbumAndPhotosResDto albumAndPhotosResDto = AlbumAndPhotosResDto.builder()
-//                .albumId(1L)
-//                .albumName("test1")
-//                .photoIdList(List.of(1L,2L))
-//                .build();
-//
-//        UserProfileResDto userProfileResDto = UserProfileResDto.builder()
-//                .userId(1L)
-//                .userName("홍길순")
-//                .profilePhotoId(1L)
-//                .albumAndPhotos(Collections.singletonList(albumAndPhotosResDto))
-//                .build();
-//
-//        Mockito.when(userRepository.findByLoginId("kang4746")).thenReturn(Optional.ofNullable(givenUser));
-//        Mockito.when(userRepository.findUserProfile1(givenUser)).thenReturn(userProfileResDto);
-//
-//        //when
-//        UserProfileResDto userProfileResDtoResult = userService.getUserProfile("kang4746");
-//
-//        //then
-//        Assertions.assertEquals("홍길순",userProfileResDtoResult.userName());
-//        Assertions.assertEquals(1L,userProfileResDtoResult.userId());
-//        Assertions.assertEquals(1L,userProfileResDtoResult.profilePhotoId());
-//        Assertions.assertEquals("test1",userProfileResDtoResult.albumAndPhotos().get(0).albumName());
-//        Assertions.assertEquals(1L,userProfileResDtoResult.albumAndPhotos().get(0).albumId());
-//        Assertions.assertEquals(1L,userProfileResDtoResult.albumAndPhotos().get(0).photoIdList().get(0));
-//        Assertions.assertEquals(2L,userProfileResDtoResult.albumAndPhotos().get(0).photoIdList().get(1));
-//
-//        verify(userRepository,times(1)).findByLoginId("kang4746");
-//        verify(userRepository,times(1)).findUserProfile1(givenUser);
-//    }
 }

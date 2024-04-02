@@ -8,5 +8,5 @@ import java.util.List;
 public record AlbumSnapResDto(
         Long albumId,
         String albumName,
-        List<Long> snapIdList
+        List<String> snapUrlList
 ){}

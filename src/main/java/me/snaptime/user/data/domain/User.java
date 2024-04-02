@@ -70,6 +70,7 @@ public class User extends BaseTimeEntity implements UserDetails{
     public void updateUserLoginId(String loginId) { this.loginId = loginId;}
     public void updateUserEmail(String email) { this.email = email;}
     public void updateUserBirthDay(String birthDay) { this.birthDay = birthDay;}
+    public void updateUserPassword(String password){this.password = password;}
 
 
     //UserDetails 인터페이스를 구현한 클래스에서 사용자의 권한을 반환하는 메서드
