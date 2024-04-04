@@ -1,6 +1,7 @@
 package me.snaptime.social.service;
 
 import com.querydsl.core.Tuple;
+import me.snaptime.common.component.UrlComponent;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.social.common.FriendSearchType;
@@ -9,7 +10,7 @@ import me.snaptime.social.data.domain.FriendShip;
 import me.snaptime.social.data.dto.req.AcceptFollowReqDto;
 import me.snaptime.social.data.dto.res.FindFriendResDto;
 import me.snaptime.social.data.dto.res.FriendCntResDto;
-import me.snaptime.social.data.repository.FriendShipRepository;
+import me.snaptime.social.data.repository.friendShip.FriendShipRepository;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +40,8 @@ public class FriendShipServiceTest {
     private FriendShipRepository friendShipRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private UrlComponent urlComponent;
 
     private FriendShip friendShip;
     private User user1;
@@ -61,16 +64,16 @@ public class FriendShipServiceTest {
         User toUser = spy(user1);
         given(fromUser.getId()).willReturn(1L);
         given(toUser.getId()).willReturn(2L);
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.of(fromUser));
-        given(userRepository.findUserByName(any(String.class))).willReturn(Optional.ofNullable(toUser));
+        given(userRepository.findByLoginId(any(String.class)))
+                .willReturn(Optional.of(fromUser))
+                .willReturn(Optional.ofNullable(toUser));
         given(friendShipRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.empty());
 
         //when
         friendShipService.sendFriendShipReq("loginId","testName");
 
         //then
-        verify(userRepository,times(1)).findUserByName("testName");
-        verify(userRepository,times(1)).findByLoginId("loginId");
+        verify(userRepository,times(2)).findByLoginId(any(String.class));
         verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
         verify(friendShipRepository,times(2)).save(any(FriendShip.class));
     }
@@ -81,8 +84,9 @@ public class FriendShipServiceTest {
         //given
         User fromUser = spy(user1);
         User toUser = spy(user1);
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(fromUser));
-        given(userRepository.findUserByName(any(String.class))).willReturn(Optional.empty());
+        given(userRepository.findByLoginId(any(String.class)))
+                .willReturn(Optional.ofNullable(fromUser))
+                .willReturn(Optional.empty());
 
         //when
         try{
@@ -90,16 +94,14 @@ public class FriendShipServiceTest {
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
-            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.USER_NOT_FOUND);
-            verify(userRepository,times(1)).findUserByName("testName");
-            verify(userRepository,times(1)).findByLoginId("loginId");
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.USER_NOT_EXIST);
+            verify(userRepository,times(2)).findByLoginId(any(String.class));
             verify(friendShipRepository,times(0)).findByToUserAndFromUser(any(User.class),any(User.class));
             verify(friendShipRepository,times(0)).save(any(FriendShip.class));
         }
     }
 
     @Test
-    // 친구요청이 거절되면 일정 기간동안 친구요청을 다시보내는 것이 차단됨
     @DisplayName("친구추가 요청 테스트 : 실패(친구요청 거절됨)")
     public void sendFriendReqTest3(){
         //given
@@ -107,8 +109,9 @@ public class FriendShipServiceTest {
         User toUser = spy(user1);
         FriendShip friendShip = spy(this.friendShip);
         given(friendShip.getFriendStatus()).willReturn(FriendStatus.REJECTED);
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(fromUser));
-        given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
+        given(userRepository.findByLoginId(any(String.class)))
+                .willReturn(Optional.ofNullable(fromUser))
+                .willReturn(Optional.of(toUser));
         given(friendShipRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friendShip));
 
         //when
@@ -118,8 +121,7 @@ public class FriendShipServiceTest {
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.REJECT_FRIEND_REQ);
-            verify(userRepository,times(1)).findUserByName("testName");
-            verify(userRepository,times(1)).findByLoginId("loginId");
+            verify(userRepository,times(2)).findByLoginId(any(String.class));
             verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
             verify(friendShipRepository,times(0)).save(any(FriendShip.class));
         }
@@ -133,8 +135,9 @@ public class FriendShipServiceTest {
         User toUser = spy(user1);
         FriendShip friendShip = spy(this.friendShip);
         given(friendShip.getFriendStatus()).willReturn(FriendStatus.FOLLOW);
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(fromUser));
-        given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
+        given(userRepository.findByLoginId(any(String.class)))
+                .willReturn(Optional.ofNullable(fromUser))
+                .willReturn(Optional.of(toUser));
         given(friendShipRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friendShip));
 
         //when
@@ -144,8 +147,7 @@ public class FriendShipServiceTest {
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.ALREADY_FOLLOW);
-            verify(userRepository,times(1)).findUserByName("testName");
-            verify(userRepository,times(1)).findByLoginId("loginId");
+            verify(userRepository,times(2)).findByLoginId(any(String.class));
             verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
             verify(friendShipRepository,times(0)).save(any(FriendShip.class));
         }
@@ -160,8 +162,9 @@ public class FriendShipServiceTest {
         User toUser = spy(user1);
         given(fromUser.getId()).willReturn(1L);
         given(toUser.getId()).willReturn(1L);
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.of(fromUser));
-        given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
+        given(userRepository.findByLoginId(any(String.class)))
+                .willReturn(Optional.of(fromUser))
+                .willReturn(Optional.of(toUser));
         given(friendShipRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.empty());
 
         //when
@@ -171,8 +174,7 @@ public class FriendShipServiceTest {
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.SELF_FRIEND_REQ);
-            verify(userRepository,times(1)).findUserByName("testName");
-            verify(userRepository,times(1)).findByLoginId("loginId");
+            verify(userRepository,times(2)).findByLoginId(any(String.class));
             verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
             verify(friendShipRepository,times(0)).save(any(FriendShip.class));
         }
@@ -184,8 +186,9 @@ public class FriendShipServiceTest {
         //given
         User fromUser = spy(user1);
         User toUser = spy(user1);
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(fromUser));
-        given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
+        given(userRepository.findByLoginId(any(String.class)))
+                .willReturn(Optional.ofNullable(fromUser))
+                .willReturn(Optional.of(toUser));
         given(friendShipRepository.findByToUserAndFromUser(toUser,fromUser)).willReturn(Optional.ofNullable(friendShip));
 
         //when
@@ -195,8 +198,7 @@ public class FriendShipServiceTest {
         assertThat(msg).isEqualTo("팔로우 수락을 완료했습니다.");
         assertThat(friendShip.getFriendStatus()).isEqualTo(FriendStatus.FOLLOW);
         verify(friendShipRepository,times(1)).save(any(FriendShip.class));
-        verify(userRepository,times(1)).findUserByName("testName");
-        verify(userRepository,times(1)).findByLoginId("loginId");
+        verify(userRepository,times(2)).findByLoginId(any(String.class));
         verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
     }
 
@@ -208,8 +210,9 @@ public class FriendShipServiceTest {
         User toUser = spy(user1);
         FriendShip friendShip = spy(this.friendShip);
         FriendShip rejectedfriendShip = spy(this.friendShip);
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(fromUser));
-        given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
+        given(userRepository.findByLoginId(any(String.class)))
+                .willReturn(Optional.ofNullable(fromUser))
+                .willReturn(Optional.of(toUser));
         given(friendShipRepository.findByToUserAndFromUser(toUser,fromUser)).willReturn(Optional.ofNullable(friendShip));
         given(friendShipRepository.findByToUserAndFromUser(fromUser,toUser)).willReturn(Optional.ofNullable(rejectedfriendShip));
 
@@ -222,8 +225,7 @@ public class FriendShipServiceTest {
         assertThat(friendShip.getFriendStatus()).isEqualTo(FriendStatus.WAITING);
         verify(friendShipRepository,times(1)).save(any(FriendShip.class));
         verify(friendShipRepository,times(1)).delete(any(FriendShip.class));
-        verify(userRepository,times(1)).findUserByName("testName");
-        verify(userRepository,times(1)).findByLoginId("loginId");
+        verify(userRepository,times(2)).findByLoginId(any(String.class));
         verify(friendShipRepository,times(2)).findByToUserAndFromUser(any(User.class),any(User.class));
     }
 
@@ -233,8 +235,9 @@ public class FriendShipServiceTest {
         //given
         User fromUser = spy(user1);
         User toUser = spy(user1);
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(fromUser));
-        given(userRepository.findUserByName(any(String.class))).willReturn(Optional.of(toUser));
+        given(userRepository.findByLoginId(any(String.class)))
+                .willReturn(Optional.ofNullable(fromUser))
+                .willReturn(Optional.of(toUser));
         given(friendShipRepository.findByToUserAndFromUser(toUser,fromUser)).willReturn(Optional.empty());
 
         //when
@@ -246,8 +249,7 @@ public class FriendShipServiceTest {
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIENDSHIP_NOT_FOUND);
             verify(friendShipRepository,times(0)).save(any(FriendShip.class));
             verify(friendShipRepository,times(0)).delete(any(FriendShip.class));
-            verify(userRepository,times(1)).findUserByName("testName");
-            verify(userRepository,times(1)).findByLoginId("loginId");
+            verify(userRepository,times(2)).findByLoginId(any(String.class));
             verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
         }
     }
@@ -339,6 +341,10 @@ public class FriendShipServiceTest {
         Tuple tuple1 = mock(Tuple.class);
         Tuple tuple2 = mock(Tuple.class);
         Tuple tuple3 = mock(Tuple.class);
+        given(urlComponent.makeProfileURL(any(Long.class)))
+                .willReturn("profile1")
+                .willReturn("profile2")
+                .willReturn("profile3");
         given(tuple1.get(user.loginId)).willReturn("testLoginId1");
         given(tuple2.get(user.loginId)).willReturn("testLoginId2");
         given(tuple3.get(user.loginId)).willReturn("testLoginId3");
@@ -363,13 +369,17 @@ public class FriendShipServiceTest {
         assertThat(result.get(0).loginId()).isEqualTo("testLoginId1");
         assertThat(result.get(1).loginId()).isEqualTo("testLoginId2");
         assertThat(result.get(2).loginId()).isEqualTo("testLoginId3");
-        assertThat(result.get(0).profilePhotoId()).isEqualTo(4);
-        assertThat(result.get(1).profilePhotoId()).isEqualTo(5);
-        assertThat(result.get(2).profilePhotoId()).isEqualTo(6);
+
         assertThat(result.get(0).userName()).isEqualTo("name1");
         assertThat(result.get(1).userName()).isEqualTo("name2");
         assertThat(result.get(2).userName()).isEqualTo("name3");
+
+        assertThat(result.get(0).profilePhotoURL()).isEqualTo("profile1");
+        assertThat(result.get(1).profilePhotoURL()).isEqualTo("profile2");
+        assertThat(result.get(2).profilePhotoURL()).isEqualTo("profile3");
+
         verify(userRepository,times(1)).findByLoginId(any(String.class));
+        verify(urlComponent,times(3)).makeProfileURL(any(Long.class));
         verify(friendShipRepository,times(1))
                 .findFriendList(any(User.class),any(FriendSearchType.class),any(Long.class),any(String.class));
 

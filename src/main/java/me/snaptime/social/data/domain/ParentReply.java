@@ -11,10 +11,12 @@ import me.snaptime.user.data.domain.User;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Reply extends BaseTimeEntity {
+public class ParentReply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,8 +34,11 @@ public class Reply extends BaseTimeEntity {
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
+    @OneToMany(mappedBy = "parentReply",cascade = CascadeType.REMOVE)
+    private List<ChildReply> childReplyList;
+
     @Builder
-    protected Reply(String content, Snap snap, User user){
+    protected ParentReply(String content, Snap snap, User user){
         this.content=content;
         this.snap=snap;
         this.user=user;

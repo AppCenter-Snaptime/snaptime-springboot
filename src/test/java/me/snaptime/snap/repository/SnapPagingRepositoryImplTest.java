@@ -11,7 +11,7 @@ import me.snaptime.snap.data.repository.AlbumRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.social.common.FriendStatus;
 import me.snaptime.social.data.domain.FriendShip;
-import me.snaptime.social.data.repository.FriendShipRepository;
+import me.snaptime.social.data.repository.friendShip.FriendShipRepository;
 import me.snaptime.user.data.domain.ProfilePhoto;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;

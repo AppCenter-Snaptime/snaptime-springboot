@@ -10,8 +10,8 @@ public record AcceptFollowReqDto(
                 example = "홍길동",
                 description = "팔로우 수락을 받을 유저의 이름을 입력해주세요"
         )
-        @NotBlank(message = "유저 이름을 입력해주세요.")
-        String fromUserName,
+        @NotBlank(message = "유저의 LoginId를 입력해주세요.")
+        String fromUserLoginId,
         @Schema(
                 example = "true",
                 description = "팔로우 수락여부를 보내주세요."

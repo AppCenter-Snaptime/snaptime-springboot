@@ -28,14 +28,14 @@ public class FriendShipController {
     private final FriendShipService friendShipService;
 
     @PostMapping
-    @Operation(summary = "팔로우 요청", description = "팔로우할 유저의 이름을 입력해주세요.<br>fromUser(요청자)의 팔로잉 +1, toUser의 팔로워 +1")
-    @Parameter(name = "fromUserName", description = "팔로우할 유저의 이름", required = true, example = "seyong")
+    @Operation(summary = "팔로우 요청", description = "팔로우할 유저의 loginId를 입력해주세요.<br>fromUser(요청자)의 팔로잉 +1, toUser의 팔로워 +1")
+    @Parameter(name = "fromUserLoginId", description = "팔로우할 유저의 loginId", required = true, example = "seyong")
     public ResponseEntity<CommonResponseDto> sendFollowReq(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam(name = "fromUserName") @NotBlank(message = "팔로우요청을 보낼 유저의 이름을 입력해주세요.")String fromUserName) {
+            @RequestParam(name = "fromUserLoginId") @NotBlank(message = "팔로우요청을 보낼 유저의 이름을 입력해주세요.")String fromUserLoginId) {
 
         String loginId = userDetails.getUsername();
-        friendShipService.sendFriendShipReq(loginId,fromUserName);
+        friendShipService.sendFriendShipReq(loginId,fromUserLoginId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto("팔로우가 완료되었습니다.", null));
     }
 

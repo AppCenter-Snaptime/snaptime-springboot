@@ -41,7 +41,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserResDto getUser(String loginId) {
-        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         return UserResDto.toDto(user);
     }
@@ -76,7 +76,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public SignInResDto signIn(SignInReqDto signInRequestDto) {
-        User user = userRepository.findByLoginId(signInRequestDto.loginId()).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+        User user = userRepository.findByLoginId(signInRequestDto.loginId()).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         if (!passwordEncoder.matches(signInRequestDto.password(), user.getPassword())) {
             throw new CustomException(ExceptionCode.PASSWORD_NOT_EQUAL);
@@ -92,14 +92,14 @@ public class UserService {
 
     @Transactional
     public void deleteUser(String loginId) {
-        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         userRepository.deleteById(user.getId());
     }
 
     @Transactional
     public UserResDto updateUser(String loginId, UserUpdateDto userUpdateDto) {
 
-        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         if (userUpdateDto.name() != null && !userUpdateDto.name().isEmpty() && !userUpdateDto.name().equals("string")) {
             user.updateUserName(userUpdateDto.name());
@@ -123,7 +123,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<AlbumSnapResDto> getAlbumSnap(String loginId){
-        User reqUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+        User reqUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         List<AlbumSnapResDto> albumSnapResDtoList = userRepository.fidAlbumSnap(reqUser);
 
@@ -132,7 +132,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserProfileResDto getUserProfile(String loginId){
-        User reqUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_FOUND));
+        User reqUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         UserProfileResDto userProfileResDto = UserProfileResDto.toDto(reqUser);
 
