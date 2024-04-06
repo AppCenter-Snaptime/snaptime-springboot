@@ -84,6 +84,23 @@ public class AlbumController {
         );
     }
 
+    @Operation(summary = "Album의 이름을 변경합니다.")
+    @PatchMapping("/")
+    public ResponseEntity<CommonResponseDto<Void>> modifyAlbumName(
+            final @RequestParam("album_name") String name,
+            final @RequestParam("album_id") Long id
+    ) {
+        albumService.modifyAlbumName(id, name);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "앨범의 이름을 수정했습니다.",
+                        null
+                )
+        );
+    }
+
+
+
 
 
 
