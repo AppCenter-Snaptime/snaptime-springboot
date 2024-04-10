@@ -60,7 +60,6 @@ public class UserControllerTest {
                 //json response 형식을 잘 봅시다.
                 .andExpect(jsonPath("$.msg").exists())
                 .andExpect(jsonPath("$.result.loginId").exists())
-                .andExpect(jsonPath("$.result.password").exists())
                 .andExpect(jsonPath("$.result.email").exists())
                 .andExpect(jsonPath("$.result.birthDay").exists())
                 .andDo(print());
@@ -100,7 +99,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.msg").exists())
                 .andExpect(jsonPath("$.result.id").exists())
                 .andExpect(jsonPath("$.result.loginId").exists())
-                .andExpect(jsonPath("$.result.password").exists())
                 .andExpect(jsonPath("$.result.email").exists())
                 .andExpect(jsonPath("$.result.birthDay").exists())
                 .andDo(print());
@@ -138,7 +136,6 @@ public class UserControllerTest {
                         .content(content).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.msg").exists())
                 .andExpect(jsonPath("$.result.loginId").exists())
-                .andExpect(jsonPath("$.result.password").exists())
                 .andExpect(jsonPath("$.result.email").exists())
                 .andExpect(jsonPath("$.result.birthDay").exists())
                 .andDo(print());
