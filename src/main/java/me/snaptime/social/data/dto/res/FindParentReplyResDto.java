@@ -3,23 +3,25 @@ package me.snaptime.social.data.dto.res;
 import com.querydsl.core.Tuple;
 import lombok.Builder;
 
-import static me.snaptime.social.data.domain.QFriendShip.friendShip;
+import static me.snaptime.social.data.domain.QParentReply.parentReply;
 import static me.snaptime.user.data.domain.QUser.user;
 
 @Builder
-public record FindFriendResDto(
+public record FindParentReplyResDto(
 
         String loginId,
         String profilePhotoURL,
         String userName,
-        Long friendShipId
+        String content,
+        Long replyId
 ) {
-    public static FindFriendResDto toDto(Tuple result,String profilePhotoURL){
-        return FindFriendResDto.builder()
+    public static FindParentReplyResDto toDto(Tuple result, String profilePhotoURL){
+        return FindParentReplyResDto.builder()
                 .loginId(result.get(user.loginId))
                 .profilePhotoURL(profilePhotoURL)
                 .userName(result.get(user.name))
-                .friendShipId(result.get(friendShip.id))
+                .content(result.get(parentReply.content))
+                .replyId(result.get(parentReply.id))
                 .build();
     }
 }

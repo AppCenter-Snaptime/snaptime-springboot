@@ -1,6 +1,7 @@
 package me.snaptime.snap.service;
 
 import com.querydsl.core.Tuple;
+import me.snaptime.common.component.UrlComponent;
 import me.snaptime.snap.data.dto.res.FindSnapPagingResDto;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.impl.SnapPagingServiceImpl;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.snaptime.snap.data.domain.QSnap.snap;
+import static me.snaptime.user.data.domain.QUser.user;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -32,6 +34,8 @@ public class SnapPagingServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private SnapRepository snapRepository;
+    @Mock
+    private UrlComponent urlComponent;
     private User reqUser;
 
     @BeforeEach
@@ -47,9 +51,20 @@ public class SnapPagingServiceImplTest {
         Tuple tuple1 = mock(Tuple.class);
         Tuple tuple2 = mock(Tuple.class);
         Tuple tuple3 = mock(Tuple.class);
+        given(urlComponent.makeProfileURL(any(Long.class)))
+                .willReturn("profile1")
+                .willReturn("profile2")
+                .willReturn("profile3");
+        given(urlComponent.makePhotoURL(any(String.class),any(Boolean.class)))
+                .willReturn("photoURL1")
+                .willReturn("photoURL2")
+                .willReturn("photoURL3");
         given(tuple1.get(snap.id)).willReturn(1L);
         given(tuple2.get(snap.id)).willReturn(2L);
         given(tuple3.get(snap.id)).willReturn(3L);
+        given(tuple1.get(user.profilePhoto.id)).willReturn(1L);
+        given(tuple2.get(user.profilePhoto.id)).willReturn(2L);
+        given(tuple3.get(user.profilePhoto.id)).willReturn(3L);
         given(tuple1.get(snap.oneLineJournal)).willReturn("일기1");
         given(tuple2.get(snap.oneLineJournal)).willReturn("일기2");
         given(tuple3.get(snap.oneLineJournal)).willReturn("일기3");
@@ -72,9 +87,9 @@ public class SnapPagingServiceImplTest {
         assertThat(result.get(1).oneLineJournal()).isEqualTo("일기2");
         assertThat(result.get(2).oneLineJournal()).isEqualTo("일기3");
 
-        assertThat(result.get(0).fileName()).isEqualTo("fileName1");
-        assertThat(result.get(1).fileName()).isEqualTo("fileName2");
-        assertThat(result.get(2).fileName()).isEqualTo("fileName3");
+        assertThat(result.get(0).snapPhotoURL()).isEqualTo("photoURL1");
+        assertThat(result.get(1).snapPhotoURL()).isEqualTo("photoURL2");
+        assertThat(result.get(2).snapPhotoURL()).isEqualTo("photoURL3");
 
         verify(snapRepository,times(1)).findSnapPaging(any(String.class),any(Long.class),any(User.class));
         verify(userRepository,times(1)).findByLoginId(any(String.class));
