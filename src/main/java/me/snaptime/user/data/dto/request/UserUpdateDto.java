@@ -30,5 +30,4 @@ public record UserUpdateDto(
         )
         @NotBlank(message = "유저 생년월일 입력은 필수입니다.")
         String birthDay
-
 ){}
