@@ -2,11 +2,11 @@ package me.snaptime.snap.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.snaptime.common.component.UrlComponent;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.component.EncryptionComponent;
 import me.snaptime.snap.component.FileComponent;
-import me.snaptime.common.component.UrlComponent;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.domain.Snap;
 import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;
@@ -62,7 +62,7 @@ public class SnapServiceImpl implements SnapService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String uId = userDetails.getUsername();
-            User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
+            User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
             if (foundUser != foundSnap.getUser()) {
                 throw new CustomException(ExceptionCode.SNAP_USER_IS_NOT_THE_SAME);
             }

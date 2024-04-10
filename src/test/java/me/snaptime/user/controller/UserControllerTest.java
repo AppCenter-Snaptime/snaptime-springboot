@@ -50,7 +50,6 @@ public class UserControllerTest {
         given(userService.getUser("kang4746")).willReturn(
                 UserResDto.builder()
                         .loginId("kang4746")
-                        .password("test1234")
                         .email("strong@gmail.com")
                         .birthDay("1999-10-29")
                         .build());
@@ -87,7 +86,6 @@ public class UserControllerTest {
                 .willReturn(UserResDto.builder()
                         .id(1L)
                         .loginId("kang4746")
-                        .password("test1234")
                         .name("홍길순")
                         .email("strong@gmail.com")
                         .birthDay("1999-10-29")
@@ -127,7 +125,6 @@ public class UserControllerTest {
         given(userService.updateUser(eq("kang4746"),any(UserUpdateDto.class)))
                 .willReturn(UserResDto.builder()
                         .loginId("kang4746")
-                        .password("test1234")
                         .name("홍길순")
                         .email("strong@gmail.com")
                         .birthDay("1999-10-29")
