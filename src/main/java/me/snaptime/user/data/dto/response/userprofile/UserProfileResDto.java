@@ -7,14 +7,14 @@ import me.snaptime.user.data.domain.User;
 public record UserProfileResDto(
         Long userId,
         String userName,
-        Long profileId
+        String profileURL
 ){
-    public static UserProfileResDto toDto(User user)
+    public static UserProfileResDto toDto(User user, String profileURL)
     {
         return UserProfileResDto.builder()
                 .userId(user.getId())
                 .userName(user.getName())
-                .profileId(user.getProfilePhoto().getId())
+                .profileURL(profileURL)
                 .build();
     }
 }
