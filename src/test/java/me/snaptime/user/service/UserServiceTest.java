@@ -72,7 +72,6 @@ class UserServiceTest {
         Assertions.assertEquals(givenUser.getId(),userResDto.id());
         Assertions.assertEquals(givenUser.getName(),userResDto.name());
         Assertions.assertEquals(givenUser.getLoginId(),userResDto.loginId());
-        Assertions.assertEquals(givenUser.getPassword(),userResDto.password());
         Assertions.assertEquals(givenUser.getEmail(),userResDto.email());
         Assertions.assertEquals(givenUser.getBirthDay(),userResDto.birthDay());
 
@@ -104,7 +103,6 @@ class UserServiceTest {
         //then
         Assertions.assertEquals(givenRequest.name(),userResDto.name());
         Assertions.assertEquals(givenRequest.loginId(),userResDto.loginId());
-        Assertions.assertEquals(passwordEncoder.encode(givenRequest.password()),userResDto.password());
         Assertions.assertEquals(givenRequest.email(),userResDto.email());
         Assertions.assertEquals(givenRequest.birthDay(),userResDto.birthDay());
         verify(userRepository,times(1)).save(any());
