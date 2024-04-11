@@ -41,7 +41,7 @@ public class AlbumServiceImpl implements AlbumService {
                 .id(album.getId())
                 .name(album.getName())
                 .photoUrl(
-                        urlComponent.makePhotoURL(album.getSnap().getFirst().getFileName(), album.getSnap().getFirst().isPrivate())
+                        urlComponent.makePhotoURL(album.getSnap().get(0).getFileName(), album.getSnap().get(0).isPrivate())
                 ).build()
         ).toList();
     }
