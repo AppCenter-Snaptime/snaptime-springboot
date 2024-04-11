@@ -4,7 +4,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public record CreateSnapReqDto(
         String oneLineJournal,
-        MultipartFile multipartFile,
-        String album
+        MultipartFile multipartFile
 ) {
 }
