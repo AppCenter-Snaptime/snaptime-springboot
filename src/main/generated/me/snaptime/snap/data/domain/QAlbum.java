@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -16,6 +17,8 @@ import com.querydsl.core.types.Path;
 public class QAlbum extends EntityPathBase<Album> {
 
     private static final long serialVersionUID = 294791462L;
+
+    private static final PathInits INITS = PathInits.DIRECT2;
 
     public static final QAlbum album = new QAlbum("album");
 
@@ -31,16 +34,29 @@ public class QAlbum extends EntityPathBase<Album> {
 
     public final StringPath name = createString("name");
 
+    public final ListPath<Snap, QSnap> snap = this.<Snap, QSnap>createList("snap", Snap.class, QSnap.class, PathInits.DIRECT2);
+
+    public final me.snaptime.user.data.domain.QUser user;
+
     public QAlbum(String variable) {
-        super(Album.class, forVariable(variable));
+        this(Album.class, forVariable(variable), INITS);
     }
 
     public QAlbum(Path<? extends Album> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QAlbum(PathMetadata metadata) {
-        super(Album.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QAlbum(PathMetadata metadata, PathInits inits) {
+        this(Album.class, metadata, inits);
+    }
+
+    public QAlbum(Class<? extends Album> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.user = inits.isInitialized("user") ? new me.snaptime.user.data.domain.QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }

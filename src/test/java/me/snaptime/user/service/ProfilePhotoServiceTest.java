@@ -93,98 +93,15 @@ public class ProfilePhotoServiceTest {
         ProfilePhotoResDto responseDto = profilePhotoService.updatePhotoFromFileSystem("kang4746", updateFile);
 
         //then
-        Assertions.assertEquals(updateProfilePhoto.getProfilePhotoName(),responseDto.profilePhotoName());
-        Assertions.assertEquals(updateProfilePhoto.getProfilePhotoPath(),responseDto.profilePhotoPath());
+        Assertions.assertEquals(updateProfilePhoto.getProfilePhotoName(), responseDto.profilePhotoName());
+        Assertions.assertEquals(updateProfilePhoto.getProfilePhotoPath(), responseDto.profilePhotoPath());
 
-        verify(userRepository,times(1)).findByLoginId("kang4746");
-        verify(profilePhotoRepository,times(1)).findById(1L);
-        verify(profilePhotoRepository,times(1)).save(any());
+        verify(userRepository, times(1)).findByLoginId("kang4746");
+        verify(profilePhotoRepository, times(1)).findById(1L);
+        verify(profilePhotoRepository, times(1)).save(any());
 
         //생성된 null 파일을 지우기 위해 경로를 저장
         //after
         deleteFilePath = responseDto.profilePhotoPath();
     }
-
-
-//    @Test
-//    @DisplayName("given_when_then 방식으로 프로필 사진 upload 서비스 성공 테스트")
-//    void uploadPhotoToFileSystemTest() throws Exception {
-//        //given
-//        /*mock객체로 upload할 파일 생성*/
-//        MultipartFile uploadFile = new MockMultipartFile(
-//                "profile",
-//                "profile",
-//                "profile/jpeg",
-//                new byte[]{});
-//
-//        String fileName = ProfilePhotoNameGenerator.generatorProfilePhotoName(uploadFile.getOriginalFilename());
-//        String filePath = FOLDER_PATH + fileName;
-//
-//        ProfilePhoto givenProfilePhoto = ProfilePhoto.builder()
-//                .user(givenUser)
-//                .profilePhotoName(uploadFile.getOriginalFilename())
-//                .profilePhotoPath(filePath)
-//                .build();
-//
-//        Long uploadUserId = 1L;
-//        /*업로드를 위한 유저 조회*/
-//        Mockito.when(userRepository.findById(uploadUserId))
-//                .thenReturn(Optional.of(givenUser));
-//        /*프로필 저장*/
-//        Mockito.when(profilePhotoRepository.save(any(ProfilePhoto.class)))
-//                .thenReturn(givenProfilePhoto);
-//
-//        //when
-//        ProfilePhotoResponseDto responseDto = profilePhotoService.uploadPhotoToFileSystem(uploadUserId, uploadFile);
-//
-//        //then
-//        Assertions.assertEquals(givenProfilePhoto.getProfilePhotoName(),responseDto.profilePhotoName());
-//        Assertions.assertEquals(givenProfilePhoto.getProfilePhotoPath(),responseDto.profilePhotoPath());
-//        Assertions.assertEquals(givenProfilePhoto.getUser().getId(),responseDto.userId());
-//
-//        verify(userRepository, times(1)).findById(uploadUserId);
-//        verify(profilePhotoRepository,times(1)).save(any());
-//
-//        //생성된 null 파일을 지우기 위해 경로를 저장
-//        //after
-//        deleteFilePath = responseDto.profilePhotoPath();
-//    }
-
-    /* 구현 실패 */
-//    @Test
-//    @DisplayName("given_when_then 방식으로 프로필 사진 삭제 서비스 성공 테스트")
-//    void deletePhotoFromFileSystem() throws Exception {
-//        //given
-//        MultipartFile deleteFile = new MockMultipartFile(
-//                "profile",
-//                "profile",
-//                "profile/jpeg",
-//                resource.getInputStream().readAllBytes());
-//
-//        String fileName = FileNameGenerator.generatorName(deleteFile.getOriginalFilename());
-//        //FOLDER_PATH 가 Null이다.
-//        String filePath = FOLDER_PATH + fileName;
-//        deleteFile.transferTo(new File(filePath));
-//
-//        /*삭제 할 프로필 사진*/
-//        ProfilePhoto deleteProfilePhoto = ProfilePhoto.builder()
-//                .Id(1L)
-//                .user(givenUser)
-//                .profilePhotoName(deleteFile.getOriginalFilename())
-//                .profilePhotoPath(filePath)
-//                .build();
-//
-//        Mockito.when(userRepository.findById(1L))
-//                .thenReturn(Optional.of(givenUser));
-//        Mockito.when(profilePhotoRepository.findProfilePhotoByUser(givenUser)).thenReturn(Optional.of(deleteProfilePhoto));
-//
-//        //when
-//        profilePhotoService.deletePhotoFromFileSystem(1L);
-//
-//        //then
-//
-//        verify(userRepository,times(1)).findById(1L);
-//        verify(profilePhotoRepository,times(1)).findProfilePhotoByUser(givenUser);
-//        verify(profilePhotoRepository,times(1)).deleteById(1L);
-//    }
 }

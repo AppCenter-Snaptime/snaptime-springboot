@@ -1,6 +1,7 @@
 package me.snaptime.social.repository;
 
 import com.querydsl.core.Tuple;
+import me.snaptime.common.component.impl.UrlComponentImpl;
 import me.snaptime.common.config.JpaAuditingConfig;
 import me.snaptime.common.config.QueryDslConfig;
 import me.snaptime.common.exception.customs.CustomException;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
@@ -38,6 +40,9 @@ public class FriendShipPagingRepositoryTest {
     @Autowired
     private FriendShipRepository friendShipRepository;
     private User reqUser;
+
+    @MockBean
+    private UrlComponentImpl urlComponent;
 
     @BeforeEach
     void init(){

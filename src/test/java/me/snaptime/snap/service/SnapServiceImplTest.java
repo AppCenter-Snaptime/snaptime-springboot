@@ -70,7 +70,7 @@ public class SnapServiceImplTest {
                 "image", "image", "image/jpeg", resource.getInputStream().readAllBytes()
         );
         CreateSnapReqDto givenCreateSnapReqDto = new CreateSnapReqDto(
-            "한 줄 일기", givenMultipartFile, ""
+            "한 줄 일기", givenMultipartFile
         );
         String filePath = testPath + FileNameGenerator.generatorName(givenMultipartFile.getOriginalFilename());
         boolean givenPrivate = true;
@@ -98,7 +98,6 @@ public class SnapServiceImplTest {
                 filePath, givenMultipartFile.getOriginalFilename()
         );
 
-        given(albumRepository.findByName("")).willReturn(null);
         given(userRepository.findByLoginId("abcd")).willReturn(Optional.ofNullable(expectedUser));
         given(snapRepository.save(Mockito.any(Snap.class))).willReturn(expectedSnap);
         given(encryptionComponent.setEncryption(expectedUser)).willReturn(expectedEncryption);
