@@ -6,8 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(servers =
-        {@Server(url = "https://na2ru2.me/", description = "Default Server URL"),
-                @Server(url = "/", description = "Development Server URL")})
+        {@Server(url = "/", description = "Development Server URL")})
 @SpringBootApplication
 public class SnaptimeApplication {
 
