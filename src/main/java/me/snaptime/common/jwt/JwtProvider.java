@@ -1,15 +1,13 @@
 package me.snaptime.common.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.user.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,12 +21,13 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtProvider {
+
     private final UserDetailsServiceImpl userDetailsService;
 
     private Key secretKey;
 
-    private final long accessTokenValidTime = 1000L*60*60*24;
-    //private final long refreshTokenValidTime = 1000L*60*60*24*3;
+    @Value("${spring.jwt.access-token-valid-time}")
+    private Long accessTokenValidTime;
 
     @PostConstruct
     protected void init(){
@@ -37,22 +36,21 @@ public class JwtProvider {
         log.info("[init] JwtTokenProvider 내 secretKey 초기화 완료");
     }
 
-
     public String createAccessToken(String loginId, List<String> roles){
         log.info("[createToken] 토큰 생성 시작");
 
         Claims claims = Jwts.claims().setSubject(loginId);
+        claims.put("type","access");
         claims.put("roles",roles);
         Date now = new Date();
-
         String token = Jwts.builder()
-                .signWith(secretKey)
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + accessTokenValidTime))
+                .signWith(secretKey)
                 .compact();
 
-        log.info("[createToken] 토큰 생성 완료");
+        log.info("[createAccessToken] 엑세스 토큰 생성 완료");
         return token;
     }
 
@@ -71,18 +69,18 @@ public class JwtProvider {
     public String getUsername(String token)
     {
         log.info("[getUsername] 토큰 기반 회원 구별 정보 추출");
-        String info = Jwts.parserBuilder()
+        String loginId = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
-        log.info("[getUsername] 토큰 기반 회원 구별 정보 추출 완료, info : {}",info);
-        return info;
+        log.info("[getUsername] 토큰 기반 회원 구별 정보 추출 완료, loginId : {}",loginId);
+        return loginId;
     }
 
-    public String resolveToken(HttpServletRequest request){
-        log.info("[resolveToken] HTTP 헤더에서 Token 값 추출");
+    public String getAuthorizationToken(HttpServletRequest request){
+        log.info("[getAuthorizationToken] HTTP 헤더에서 Token 값 추출");
         String token = request.getHeader("Authorization");
         try{
             if(!token.substring(0,"BEARER ".length()).equalsIgnoreCase("Bearer ")){
@@ -100,14 +98,17 @@ public class JwtProvider {
     */
     public boolean validateToken(String token) {
         log.info("[validateToken] 토큰 유효 체크 시작");
-        log.info("[validateToken] 해당 토큰 검사 token : {}",token);
         try{
             //복잡한 설정일 떈, Jwts.parserBuilder()를 이용
             Jws<Claims> claims = Jwts.parser()
                     .setSigningKey(secretKey)
                     .parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
-        }catch (Exception e){
+        }catch (ExpiredJwtException ex){
+            log.error("[validateToken] 토큰 만료됨: {}", ex.getMessage());
+            throw ex;
+        }
+        catch (Exception e){
             log.info("[validateToken] 토큰 유효 체크 예외 발생");
             return false;
         }

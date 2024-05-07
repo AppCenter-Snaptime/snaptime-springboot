@@ -52,7 +52,15 @@ public enum ExceptionCode {
     // Album Exception
     ALBUM_NOT_EXIST(HttpStatus.BAD_REQUEST, "앨범이 존재하지 않습니다."),
     ALBUM_ID_IS_NOT_GIVEN(HttpStatus.BAD_REQUEST, "앨범 id가 주어지지 않았습니다."),
-    ALBUM_USER_NOT_MATCH(HttpStatus.BAD_REQUEST, "앨범을 만든 사용자와 일치하지 않습니다.");
+    ALBUM_USER_NOT_MATCH(HttpStatus.BAD_REQUEST, "앨범을 만든 사용자와 일치하지 않습니다."),
+
+    // Jwt Exception
+    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED,  "토큰이 만료되었습니다."),
+    TOKEN_NOT_AUTHORIZED(HttpStatus.FORBIDDEN, "권한이 없습니다"),
+    TOKEN_UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "인증되지 않은 토큰입니다."),
+    TOKEN_INVALID_FORMAT(HttpStatus.UNAUTHORIZED, "잘못된 형식의 토큰입니다."),
+    TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "토큰이 비었거나 null입니다");
+
 
     private final HttpStatus status;
     private final String message;

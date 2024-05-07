@@ -25,7 +25,8 @@ public class SwaggerConfig {
     //Bearer 토큰을 사용하는 API 키 스키마를 생성하고 설정
     private SecurityScheme createAPIKeyScheme(){
         //SecurityScheme 객체를 생성하고 구성, Bearer 토큰을 사용하는 HTTP 스키마로 설정
-        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+        return new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
                 //토큰의 형식을 설정, JWT(JSON Web Token)를 사용하도록 설정
                 .bearerFormat("JWT")
                 //스키마의 이름을 설정, "bearer"로 설정

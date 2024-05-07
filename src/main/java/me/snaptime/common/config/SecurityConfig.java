@@ -1,9 +1,10 @@
 package me.snaptime.common.config;
 
 import lombok.RequiredArgsConstructor;
+import me.snaptime.common.exception.handler.JwtExceptionHandlerFilter;
 import me.snaptime.common.exception.security.CustomAccessDeniedHandler;
 import me.snaptime.common.exception.security.CustomAuthenticationEntryPoint;
-import me.snaptime.common.jwt.JwtAuthenticationFilter;
+import me.snaptime.common.jwt.JwtAuthFilter;
 import me.snaptime.common.jwt.JwtProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 @Configuration
 @RequiredArgsConstructor
@@ -28,23 +30,28 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         //UI를 사용하는 것을 기본값으로 가진 시큐리티 설정을 비활성화
         httpSecurity
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests ->
                         requests
                                 .requestMatchers("/swagger-resources/**", "/swagger-ui/index.html", "/webjars/**", "/swagger/**", "/users/exception", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                                 .requestMatchers("/users/sign-in", "/users/sign-up").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/users","/profilePhotos/**","/snap/**","/friends/**","/photo").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/users","/profilePhotos/**","/snap/**","/friends/**").permitAll()
                                 .requestMatchers("**exception**").permitAll()
                                 .anyRequest().hasRole("USER")
                 )
+                .addFilterBefore(new JwtExceptionHandlerFilter(),
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthFilter(jwtProvider),
+                        UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
                                 .accessDeniedHandler(new CustomAccessDeniedHandler())
-                                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+                                .authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
 
         return httpSecurity.build();
     }
+
 }
