@@ -22,7 +22,6 @@ import me.snaptime.user.data.dto.response.userprofile.ProfileCntResDto;
 import me.snaptime.user.data.dto.response.userprofile.UserProfileResDto;
 import me.snaptime.user.data.repository.ProfilePhotoRepository;
 import me.snaptime.user.data.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +44,6 @@ public class UserService {
     private final FriendShipRepository friendShipRepository;
     private final SnapRepository snapRepository;
 
-    @Value("${defaultFileSystemPath}")
-    private String DEFAULT_FOLDER_PATH;
 
     @Transactional(readOnly = true)
     public UserResDto getUser(String loginId) {
@@ -58,7 +55,7 @@ public class UserService {
     public UserResDto signUp(UserReqDto userRequestDto) {
 
         String fileName = "default.png";
-        String filePath =  DEFAULT_FOLDER_PATH + fileName;
+        String filePath =  "/test_resource/" + fileName;
 
         ProfilePhoto profilePhoto = ProfilePhoto.builder()
                 .profilePhotoName(fileName)
