@@ -28,7 +28,7 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
         } catch (DecodingException e) { //jwt 디코딩 중 발생할 수 있는 예외. Base64 형식이 아닌경우, 헤더,페이로드,서명이 유효하지 않은경우, 페이로드 파싱에 문제가 있는경우
             setErrorResponse(response, ExceptionCode.TOKEN_INVALID_FORMAT);
             log.info("[JwtExceptionHandlerFilter] error name = DecodingException");
-        } catch (MalformedJwtException e) { //jwt 형식이 잘못되었을 때 발생, 헤더,페이로드,서명 누락 잘못되 형식.
+        } catch (MalformedJwtException e) { //jwt 형식이 잘못되었을 때 발생, 헤더,페이로드,서명 누락 또는 잘못된 형식.
             setErrorResponse(response, ExceptionCode.TOKEN_UNAUTHENTICATED);
             log.info("[JwtExceptionHandlerFilter] error name = MalformedJwtException");
         } catch (ExpiredJwtException e) { //jwt 만료되었을 때 발생하는 예외

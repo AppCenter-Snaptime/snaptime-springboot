@@ -36,7 +36,7 @@ public class JwtProvider {
     }
 
     public String createAccessToken(String loginId, List<String> roles){
-        log.info("[createToken] 토큰 생성 시작");
+        log.info("[createAccessToken] 엑세스 토큰 생성 시작");
 
         Claims claims = Jwts.claims().setSubject(loginId);
         claims.put("type","access");
