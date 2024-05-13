@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import me.snaptime.common.component.UrlComponent;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.dto.response.userprofile.AlbumSnapResDto;
+import me.snaptime.user.data.dto.response.userprofile.ProfileCntResDto;
 import me.snaptime.user.data.repository.UserCustomRepository;
 import org.springframework.stereotype.Repository;
 
@@ -46,14 +47,15 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                     .limit(2) // 최근 생성된 사진 2개만 선택
                     .fetch();
 
-            List<String> snapUrlList = new ArrayList<>();
 
-            albumSnapTwo.forEach(tuple -> {
-                String fileName = tuple.get(snap.fileName);
-                Boolean isPrivate = tuple.get(snap.isPrivate);
-                snapUrlList.add(urlComponent.makePhotoURL(fileName, isPrivate));
-            });
-
+            //stream 사용하는 걸로 수정
+            List<String> snapUrlList = albumSnapTwo.stream()
+                    .map(tuple -> {
+                        String fileName = tuple.get(snap.fileName);
+                        Boolean isPrivate = tuple.get(snap.isPrivate);
+                        return urlComponent.makePhotoURL(fileName, isPrivate);
+                    })
+                    .toList();
 
             String albumName = albumSnapTwo.get(0).get(album.name);
 
