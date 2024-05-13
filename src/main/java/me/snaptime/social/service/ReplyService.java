@@ -55,31 +55,21 @@ public class ReplyService {
     @Transactional
     public void addChildReply(String loginId, AddChildReplyReqDto addChildReplyReqDto){
         User user = findUserByLoginId(loginId);
-        Optional<User> tagUser = userRepository.findByLoginId(addChildReplyReqDto.tagLoginId());
+        User tagUser = userRepository.findByLoginId(addChildReplyReqDto.tagLoginId())
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         ParentReply parentReply = parentReplyRepository.findById(addChildReplyReqDto.parentReplyId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
 
-        if(tagUser.isEmpty()){
-            childReplyRepository.save(
-                    ChildReply.builder()
-                            .parentReply(parentReply)
-                            .user(user)
-                            .content(addChildReplyReqDto.content())
-                            .build()
-            );
-        }
-        else{
-            childReplyRepository.save(
-                    ChildReply.builder()
-                            .parentReply(parentReply)
-                            .tagUser(tagUser.get())
-                            .user(user)
-                            .content(addChildReplyReqDto.content())
-                            .build()
-            );
-        }
 
+        childReplyRepository.save(
+                ChildReply.builder()
+                        .parentReply(parentReply)
+                        .tagUser(tagUser)
+                        .user(user)
+                        .content(addChildReplyReqDto.content())
+                        .build()
+        );
     }
 
     public List<FindParentReplyResDto> readParentReply(String loginId, Long snapId, Long pageNum){
@@ -100,6 +90,52 @@ public class ReplyService {
             String profilePhotoURL = urlComponent.makeProfileURL(entity.get(writerUser.profilePhoto.id));
             return FindChildReplyResDto.toDto(entity,profilePhotoURL);
         }).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updateParentReply(String loginId ,Long parentReplyId, String newContent){
+        ParentReply parentReply = parentReplyRepository.findById(parentReplyId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
+
+        if(!parentReply.getUser().getLoginId().equals(loginId))
+            throw new CustomException(ExceptionCode.ACCESS_FAIL_REPLY);
+
+        parentReply.updateReply(newContent);
+        parentReplyRepository.save(parentReply);
+    }
+
+    @Transactional
+    public void updateChildReply(String loginId, Long childReplyId, String newContent){
+        ChildReply childReply = childReplyRepository.findById(childReplyId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
+
+        if(!childReply.getUser().getLoginId().equals(loginId))
+            throw new CustomException(ExceptionCode.ACCESS_FAIL_REPLY);
+
+        childReply.updateReply(newContent);
+        childReplyRepository.save(childReply);
+    }
+
+    @Transactional
+    public void deleteParentReply(String loginId, Long parentReplyId){
+        ParentReply parentReply = parentReplyRepository.findById(parentReplyId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
+
+        if(!parentReply.getUser().getLoginId().equals(loginId))
+            throw new CustomException(ExceptionCode.ACCESS_FAIL_REPLY);
+
+        parentReplyRepository.delete(parentReply);
+    }
+
+    @Transactional
+    public void deleteChildReply(String loginId, Long childReplyId){
+        ChildReply childReply = childReplyRepository.findById(childReplyId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
+
+        if(!childReply.getUser().getLoginId().equals(loginId))
+            throw new CustomException(ExceptionCode.ACCESS_FAIL_REPLY);
+
+        childReplyRepository.delete(childReply);
     }
 
     private User findUserByLoginId(String loginId){

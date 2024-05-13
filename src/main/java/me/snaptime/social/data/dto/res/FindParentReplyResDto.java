@@ -9,17 +9,17 @@ import static me.snaptime.user.data.domain.QUser.user;
 @Builder
 public record FindParentReplyResDto(
 
-        String loginId,
-        String profilePhotoURL,
-        String userName,
+        String writerLoginId,
+        String writerProfilePhotoURL,
+        String writerUserName,
         String content,
         Long replyId
 ) {
     public static FindParentReplyResDto toDto(Tuple result, String profilePhotoURL){
         return FindParentReplyResDto.builder()
-                .loginId(result.get(user.loginId))
-                .profilePhotoURL(profilePhotoURL)
-                .userName(result.get(user.name))
+                .writerLoginId(result.get(user.loginId))
+                .writerProfilePhotoURL(profilePhotoURL)
+                .writerUserName(result.get(user.name))
                 .content(result.get(parentReply.content))
                 .replyId(result.get(parentReply.id))
                 .build();
