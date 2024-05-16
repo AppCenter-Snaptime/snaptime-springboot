@@ -9,9 +9,9 @@ import static me.snaptime.social.data.domain.QChildReply.childReply;
 @Builder
 public record FindChildReplyResDto(
 
-        String loginId,
-        String userName,
-        String profilePhotoURL,
+        String writerLoginId,
+        String writerUserName,
+        String writerProfilePhotoURL,
         String content,
         String tagUserLoginId,
         String tagUserName,
@@ -24,9 +24,9 @@ public record FindChildReplyResDto(
         QUser writerUser = new QUser("writerUser");
 
         return FindChildReplyResDto.builder()
-                .loginId(result.get(writerUser.loginId))
-                .profilePhotoURL(profilePhotoURL)
-                .userName(result.get(writerUser.name))
+                .writerLoginId(result.get(writerUser.loginId))
+                .writerProfilePhotoURL(profilePhotoURL)
+                .writerUserName(result.get(writerUser.name))
                 .content(result.get(childReply.content))
                 .tagUserLoginId(result.get(tagUser.loginId))
                 .tagUserName(result.get(tagUser.name))
