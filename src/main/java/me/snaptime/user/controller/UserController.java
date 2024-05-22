@@ -54,7 +54,7 @@ public class UserController {
                         userResDto));
     }
     @Operation(summary = "유저 비밀번호 수정",description = "해당 유저의 비밀번호를 수정합니다.")
-    @PutMapping("/updatePassword")
+    @PutMapping("/password")
     public ResponseEntity<CommonResponseDto<Void>> changeUser(@AuthenticationPrincipal UserDetails principal,
                                                               @RequestParam("password") String password){
         userService.updatePassword(principal.getUsername(), password);
@@ -98,9 +98,9 @@ public class UserController {
     }
 
     @Operation(summary = "유저 앨범, 스냅 조회", description = "유저의 앨범들과, 각 앨범의 스냅들을 조회합니다.")
-    @Parameter(name = "loginId", description = "앨범과 사진들을 가져오기 위한 loginId", required = true)
-    @GetMapping("/albumSnap")
-    public ResponseEntity<CommonResponseDto<List<AlbumSnapResDto>>> getAlbumSnap(@RequestParam("loginId") String loginId){
+    @Parameter(name = "login_id", description = "앨범과 사진들을 가져오기 위한 loginId", required = true)
+    @GetMapping("/album_snap")
+    public ResponseEntity<CommonResponseDto<List<AlbumSnapResDto>>> getAlbumSnap(@RequestParam("login_id") String loginId){
         List<AlbumSnapResDto> albumSnapResDtoList = userService.getAlbumSnap(loginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
@@ -110,9 +110,9 @@ public class UserController {
     }
 
     @Operation(summary = "유저 이름, 프로필 사진 조회", description = "유저의 이름과, 프로필 사진을 조회합니다.")
-    @Parameter(name = "loginId", description = "이름과 프로필 사진을 가져오기 위한 loginId", required = true)
+    @Parameter(name = "login_id", description = "이름과 프로필 사진을 가져오기 위한 loginId", required = true)
     @GetMapping("/profile")
-    public ResponseEntity<CommonResponseDto<UserProfileResDto>> getUserProfile(@RequestParam("loginId") String loginId){
+    public ResponseEntity<CommonResponseDto<UserProfileResDto>> getUserProfile(@RequestParam("login_id") String loginId){
         UserProfileResDto userProfileResDto = userService.getUserProfile(loginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
@@ -122,9 +122,9 @@ public class UserController {
     }
 
     @Operation(summary = "유저의 Snap 수, Follower 수,  Following 수 조회", description = "유저의 사진 수, 팔로워 수, 팔로잉 수를 조회합니다.")
-    @Parameter(name = "loginId", description = "팔로워와 팔로잉 수를 가져오기 위한 loginId", required = true)
+    @Parameter(name = "login_id", description = "팔로워와 팔로잉 수를 가져오기 위한 loginId", required = true)
     @GetMapping("/profile/count")
-    public ResponseEntity<CommonResponseDto<ProfileCntResDto>> getProfileCnt(@RequestParam("loginId") String loginId){
+    public ResponseEntity<CommonResponseDto<ProfileCntResDto>> getProfileCnt(@RequestParam("login_id") String loginId){
         ProfileCntResDto profileCntResDto = userService.getUserProfileCnt(loginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
