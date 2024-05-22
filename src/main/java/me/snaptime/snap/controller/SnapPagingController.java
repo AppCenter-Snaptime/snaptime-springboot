@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/snaps")
 @RequiredArgsConstructor
 @Tag(name = "[Social] Snap API")
-@Log4j2
 public class SnapPagingController {
 
     private final SnapPagingServiceImpl snapPagingService;
@@ -33,7 +32,6 @@ public class SnapPagingController {
             @PathVariable final Long pageNum) {
 
         String loginId = userDetails.getUsername();
-        log.info(loginId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new CommonResponseDto("스냅 페이징조회가 완료되었습니다.", snapPagingService.findSnapPaging(loginId,pageNum)));
     }

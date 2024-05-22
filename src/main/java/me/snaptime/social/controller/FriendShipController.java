@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.dto.CommonResponseDto;
 import me.snaptime.social.common.FriendSearchType;
@@ -71,7 +72,7 @@ public class FriendShipController {
     })
     public ResponseEntity<CommonResponseDto> findFriendList(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam(name = "friendSearchType") FriendSearchType friendSearchType,
+            @RequestParam(name = "friendSearchType") @NotNull(message = "팔로우,팔로잉중 하나를 입력해주세요.") FriendSearchType friendSearchType,
             @RequestParam(name = "searchKeyword",required = false) String searchKeyword,
             @PathVariable(name = "pageNum") final Long pageNum){
 
