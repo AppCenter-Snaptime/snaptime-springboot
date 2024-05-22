@@ -12,6 +12,7 @@ import me.snaptime.user.data.dto.request.UserUpdateDto;
 import me.snaptime.user.data.dto.response.SignInResDto;
 import me.snaptime.user.data.dto.response.UserResDto;
 import me.snaptime.user.data.dto.response.userprofile.AlbumSnapResDto;
+import me.snaptime.user.data.dto.response.userprofile.ProfileCntResDto;
 import me.snaptime.user.data.dto.response.userprofile.UserProfileResDto;
 import me.snaptime.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -119,4 +120,17 @@ public class UserController {
                         userProfileResDto
                 ));
     }
+
+    @Operation(summary = "유저의 Snap 수, Follower 수,  Following 수 조회", description = "유저의 사진 수, 팔로워 수, 팔로잉 수를 조회합니다.")
+    @Parameter(name = "loginId", description = "팔로워와 팔로잉 수를 가져오기 위한 loginId", required = true)
+    @GetMapping("/profile/count")
+    public ResponseEntity<CommonResponseDto<ProfileCntResDto>> getProfileCnt(@RequestParam("loginId") String loginId){
+        ProfileCntResDto profileCntResDto = userService.getUserProfileCnt(loginId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "유저 팔로워, 팔로잉 수 조회를 성공적으로 완료하였습니다.",
+                        profileCntResDto
+                ));
+    }
+
 }

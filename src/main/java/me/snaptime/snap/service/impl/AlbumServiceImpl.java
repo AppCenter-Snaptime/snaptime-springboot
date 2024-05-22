@@ -5,6 +5,7 @@ import me.snaptime.common.component.UrlComponent;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.domain.Album;
+import me.snaptime.snap.data.domain.Snap;
 import me.snaptime.snap.data.dto.req.CreateAlbumReqDto;
 import me.snaptime.snap.data.dto.res.FindAlbumResDto;
 import me.snaptime.snap.data.dto.res.FindAllAlbumsResDto;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,13 +39,15 @@ public class AlbumServiceImpl implements AlbumService {
     public List<FindAllAlbumsResDto> findAllAlbumsByLoginId(String uid) {
         User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         List<Album> foundAlbums = albumRepository.findAlbumsByUser(foundUser);
-        return foundAlbums.stream().map(album -> FindAllAlbumsResDto.builder()
-                .id(album.getId())
-                .name(album.getName())
-                .photoUrl(
-                        urlComponent.makePhotoURL(album.getSnap().get(0).getFileName(), album.getSnap().get(0).isPrivate())
-                ).build()
-        ).toList();
+        return foundAlbums.stream().map(album -> {
+            Optional<Snap> firstSnapOptional = album.getSnap().isEmpty() ? Optional.empty() : Optional.of(album.getSnap().get(0));
+            String photoUrl = firstSnapOptional.map(snap -> urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate())).orElse(null);
+            return FindAllAlbumsResDto.builder()
+                    .id(album.getId())
+                    .name(album.getName())
+                    .photoUrl(photoUrl)
+                    .build();
+        }).toList();
     }
 
     @Override
