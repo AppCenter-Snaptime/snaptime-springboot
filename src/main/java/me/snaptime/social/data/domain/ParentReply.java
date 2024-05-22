@@ -20,7 +20,7 @@ public class ParentReply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long parentReplyId;
 
     @Column(nullable = false)
     private String content;

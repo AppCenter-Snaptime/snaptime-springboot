@@ -31,10 +31,10 @@ public class QParentReply extends EntityPathBase<ParentReply> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
+
+    public final NumberPath<Long> parentReplyId = createNumber("parentReplyId", Long.class);
 
     public final me.snaptime.snap.data.domain.QSnap snap;
 

@@ -17,7 +17,7 @@ public class ChildReply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long childReplyId;
 
     @Column(nullable = false)
     private String content;
@@ -33,14 +33,14 @@ public class ChildReply extends BaseTimeEntity {
 
     @OneToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "tag_user_id", nullable = true)
-    private User tagUser;
+    @JoinColumn(name = "reply_tag_user_id", nullable = true)
+    private User replyTagUser;
 
     @Builder
     protected ChildReply(String content, User user, User tagUser, ParentReply parentReply){
         this.content=content;
         this.user=user;
-        this.tagUser=tagUser;
+        this.replyTagUser=tagUser;
         this.parentReply=parentReply;
     }
 

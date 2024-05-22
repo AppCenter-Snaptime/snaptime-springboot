@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import me.snaptime.common.dto.CommonResponseDto;
 import me.snaptime.snap.service.impl.SnapPagingServiceImpl;
 import org.springframework.http.HttpStatus;

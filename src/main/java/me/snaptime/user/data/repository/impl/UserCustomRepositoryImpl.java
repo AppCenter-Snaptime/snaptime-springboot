@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import me.snaptime.common.component.UrlComponent;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.dto.response.userprofile.AlbumSnapResDto;
-import me.snaptime.user.data.dto.response.userprofile.ProfileCntResDto;
 import me.snaptime.user.data.repository.UserCustomRepository;
 import org.springframework.stereotype.Repository;
 

@@ -30,8 +30,8 @@ public record FindChildReplyResDto(
                 .content(result.get(childReply.content))
                 .tagUserLoginId(result.get(tagUser.loginId))
                 .tagUserName(result.get(tagUser.name))
-                .parentReplyId(result.get(childReply.parentReply.id))
-                .childReplyId(result.get(childReply.id))
+                .parentReplyId(result.get(childReply.parentReply.parentReplyId))
+                .childReplyId(result.get(childReply.childReplyId))
                 .build();
     }
 }
