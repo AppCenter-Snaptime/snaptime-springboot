@@ -7,6 +7,7 @@ import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.social.data.domain.ChildReply;
 import me.snaptime.social.data.domain.ParentReply;
 import me.snaptime.social.data.dto.req.AddChildReplyReqDto;
+import me.snaptime.social.data.dto.req.AddParentReplyReqDto;
 import me.snaptime.social.data.repository.reply.ChildReplyRepository;
 import me.snaptime.social.data.repository.reply.ParentReplyRepository;
 import me.snaptime.user.data.domain.User;
@@ -67,7 +68,7 @@ public class ReplyServiceTest {
         given(snapRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(snap));
 
         //when
-        replyService.addParentReply("loginId",1L,"댓글내용");
+        replyService.addParentReply("loginId", new AddParentReplyReqDto("댓글내용",1L));
 
         //then
         verify(parentReplyRepository,times(1)).save(any(ParentReply.class));
@@ -84,7 +85,7 @@ public class ReplyServiceTest {
 
         //when
         try{
-            replyService.addParentReply("loginId",1L,"댓글내용");
+            replyService.addParentReply("loginId",new AddParentReplyReqDto("댓글내용",1L));
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then

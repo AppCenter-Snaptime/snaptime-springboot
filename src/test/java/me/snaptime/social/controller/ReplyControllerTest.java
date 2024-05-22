@@ -6,6 +6,7 @@ import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.social.data.dto.req.AddChildReplyReqDto;
+import me.snaptime.social.data.dto.req.AddParentReplyReqDto;
 import me.snaptime.social.service.ReplyService;
 import me.snaptime.user.service.UserDetailsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
@@ -43,17 +44,21 @@ public class ReplyControllerTest {
     @DisplayName("댓글 등록 테스트 -> 성공")
     public void addParentReplyTest1() throws Exception {
         //given
+        Gson gson = new Gson();
+        AddParentReplyReqDto addParentReplyReqDto =
+                new AddParentReplyReqDto("댓글내용",1L);
+        String requestBody = gson.toJson(addParentReplyReqDto);
 
         //when, then
-        this.mockMvc.perform(post("/{snapId}/replys",1L)
-                        .param("content","댓글내용입니다.")
+        this.mockMvc.perform(post("/parent-replies")
+                        .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.msg").value("댓글등록이 성공했습니다."))
                 .andDo(print());
 
         verify(replyService,times(1))
-                .addParentReply(any(String.class),any(Long.class),any(String.class));
+                .addParentReply(any(String.class),any(AddParentReplyReqDto.class));
     }
 
     @Test
@@ -61,35 +66,45 @@ public class ReplyControllerTest {
     @DisplayName("댓글 등록 테스트 -> 실패(댓글내용 공백)")
     public void addParentReplyTest2() throws Exception {
         //given
+        Gson gson = new Gson();
+        AddParentReplyReqDto addParentReplyReqDto =
+                new AddParentReplyReqDto("",1L);
+        String requestBody = gson.toJson(addParentReplyReqDto);
 
         //when, then
-        this.mockMvc.perform(post("/{snapId}/replys",1L)
-                        .param("content","")
+        this.mockMvc.perform(post("/parent-replies",1L)
+                        .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.msg").value("댓글내용을 입력해주세요."))
+                .andExpect(jsonPath("$.msg").value("올바르지 않은 입력값입니다"))
+                .andExpect(jsonPath("$.result.content").value("내용을 입력해주세요"))
                 .andDo(print());
 
         verify(replyService,times(0))
-                .addParentReply(any(String.class),any(Long.class),any(String.class));
+                .addParentReply(any(String.class),any(AddParentReplyReqDto.class));
     }
 
     @Test
     @WithMockUser
-    @DisplayName("댓글 등록 테스트 -> 실패(PathVariable 타입예외)")
+    @DisplayName("댓글 등록 테스트 -> 실패(snapId 공백)")
     public void addParentReplyTest3() throws Exception {
         //given
+        Gson gson = new Gson();
+        AddParentReplyReqDto addParentReplyReqDto =
+                new AddParentReplyReqDto("댓글내용",null);
+        String requestBody = gson.toJson(addParentReplyReqDto);
 
         //when, then
-        this.mockMvc.perform(post("/{snapId}/replys","string")
-                        .param("content","댓글내용입니다.")
+        this.mockMvc.perform(post("/parent-replies")
+                        .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.msg").value("snapId이 Long타입이여야 합니다."))
+                .andExpect(jsonPath("$.msg").value("올바르지 않은 입력값입니다"))
+                .andExpect(jsonPath("$.result.snapId").value("snapId를 입력해주세요."))
                 .andDo(print());
 
         verify(replyService,times(0))
-                .addParentReply(any(String.class),any(Long.class),any(String.class));
+                .addParentReply(any(String.class),any(AddParentReplyReqDto.class));
     }
 
     @Test
@@ -97,19 +112,24 @@ public class ReplyControllerTest {
     @DisplayName("댓글 등록 테스트 -> 실패(존재하지 않는 snap)")
     public void addParentReplyTest4() throws Exception {
         //given
+        Gson gson = new Gson();
+        AddParentReplyReqDto addParentReplyReqDto =
+                new AddParentReplyReqDto("댓글내용",1L);
+        String requestBody = gson.toJson(addParentReplyReqDto);
+
         doThrow(new CustomException(ExceptionCode.SNAP_NOT_EXIST))
-                .when(replyService).addParentReply(any(String.class),any(Long.class),any(String.class));
+                .when(replyService).addParentReply(any(String.class),any(AddParentReplyReqDto.class));
 
         //when, then
-        this.mockMvc.perform(post("/{snapId}/replys",1L)
-                        .param("content","댓글내용입니다.")
+        this.mockMvc.perform(post("/parent-replies")
+                        .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("스냅이 존재하지 않습니다."))
                 .andDo(print());
 
         verify(replyService,times(1))
-                .addParentReply(any(String.class),any(Long.class),any(String.class));
+                .addParentReply(any(String.class),any(AddParentReplyReqDto.class));
     }
 
     @Test
@@ -123,8 +143,7 @@ public class ReplyControllerTest {
         String requestBody = gson.toJson(addChildReplyReqDto);
 
         //when, then
-        this.mockMvc.perform(post("/child-replys")
-                        .param("content","댓글내용입니다.")
+        this.mockMvc.perform(post("/child-replies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isCreated())
@@ -146,7 +165,7 @@ public class ReplyControllerTest {
         String requestBody = gson.toJson(addChildReplyReqDto);
 
         //when, then
-        this.mockMvc.perform(post("/child-replys")
+        this.mockMvc.perform(post("/child-replies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -173,7 +192,7 @@ public class ReplyControllerTest {
                 .when(replyService).addChildReply(any(String.class),any(AddChildReplyReqDto.class));
 
         //when, then
-        this.mockMvc.perform(post("/child-replys")
+        this.mockMvc.perform(post("/child-replies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -198,7 +217,7 @@ public class ReplyControllerTest {
                 .when(replyService).addChildReply(any(String.class),any(AddChildReplyReqDto.class));
 
         //when, then
-        this.mockMvc.perform(post("/child-replys")
+        this.mockMvc.perform(post("/child-replies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
