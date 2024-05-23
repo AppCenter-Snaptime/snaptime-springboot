@@ -100,8 +100,10 @@ public class UserController {
     @Operation(summary = "유저 앨범, 스냅 조회", description = "유저의 앨범들과, 각 앨범의 스냅들을 조회합니다.")
     @Parameter(name = "login_id", description = "앨범과 사진들을 가져오기 위한 loginId", required = true)
     @GetMapping("/album_snap")
-    public ResponseEntity<CommonResponseDto<List<AlbumSnapResDto>>> getAlbumSnap(@RequestParam("login_id") String loginId){
-        List<AlbumSnapResDto> albumSnapResDtoList = userService.getAlbumSnap(loginId);
+    public ResponseEntity<CommonResponseDto<List<AlbumSnapResDto>>> getAlbumSnap(@AuthenticationPrincipal UserDetails principal,
+                                                                                 @RequestParam("login_id") String targetLoginId){
+        String yourLoginId = principal.getUsername();
+        List<AlbumSnapResDto> albumSnapResDtoList = userService.getAlbumSnap(yourLoginId, targetLoginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 앨범과 스냅 조회를 성공적으로 완료하였습니다.",
