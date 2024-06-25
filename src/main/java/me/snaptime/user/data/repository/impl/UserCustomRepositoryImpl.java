@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import me.snaptime.common.component.UrlComponent;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.dto.response.userprofile.AlbumSnapResDto;
-import me.snaptime.user.data.dto.response.userprofile.ProfileCntResDto;
 import me.snaptime.user.data.repository.UserCustomRepository;
 import org.springframework.stereotype.Repository;
 
@@ -67,6 +66,11 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                     })
                     .toList();
 
+            //다른 사람의 프로필 검색 일 때, snap이 없거나, private이면 앨범도 private
+            if(!checkPermission && snapUrlList.isEmpty()){
+                continue;
+            }
+
             String albumName = albumMap.get(albumId);
 
             albumSnapResDtoList.add(AlbumSnapResDto.builder()
@@ -79,7 +83,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         return albumSnapResDtoList;
     }
 
-    // 자신이 자신의 profile을 조회할 때, 다른 사람이 자신의 profile을 조회할 때를 구별하기 위함.
+    // 자신이 자신의 profile을 조회할 때, 자신이 다른사람의 profile을 조회할 때를 구별하기 위함.
     private BooleanBuilder whereBuilder(Long albumId, Boolean checkPermission){
         BooleanBuilder builder = new BooleanBuilder();
 
