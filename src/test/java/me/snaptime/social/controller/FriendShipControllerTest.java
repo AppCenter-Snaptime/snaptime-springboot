@@ -245,7 +245,7 @@ public class FriendShipControllerTest {
         acceptFollowReqDto = new AcceptFollowReqDto("test",true);
         Gson gson = new Gson();
         String requestBody = gson.toJson(acceptFollowReqDto);
-        given(friendShipService.acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class))).willThrow(new CustomException(ExceptionCode.FRIENDSHIP_NOT_FOUND));
+        given(friendShipService.acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class))).willThrow(new CustomException(ExceptionCode.FRIENDSHIP_NOT_EXIST));
 
         //when, then
         this.mockMvc.perform(post("/friends/accept")
@@ -295,7 +295,7 @@ public class FriendShipControllerTest {
     @DisplayName("팔로우 삭제테스트 -> 실패(존재하지 않는 팔로우)")
     public void deleteFollowTest3() throws Exception {
         //given
-        doThrow(new CustomException(ExceptionCode.FRIENDSHIP_NOT_FOUND))
+        doThrow(new CustomException(ExceptionCode.FRIENDSHIP_NOT_EXIST))
                 .when(friendShipService).deleteFriendShip(any(String.class),any(Long.class));
 
         //when, then

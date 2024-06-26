@@ -102,7 +102,7 @@ public class FriendShipService {
     @Transactional
     public void deleteFriendShip(String loginId, Long friendShipId){
         FriendShip friendShip = friendShipRepository.findById(friendShipId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.FRIENDSHIP_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ExceptionCode.FRIENDSHIP_NOT_EXIST));
 
         User fromUser = findUserByLoginId(loginId);
 
@@ -143,6 +143,6 @@ public class FriendShipService {
 
     private FriendShip findFriendShipByToUserAndFromUser(User toUser, User fromUser){
         return friendShipRepository.findByToUserAndFromUser(toUser,fromUser)
-                .orElseThrow(() -> new CustomException(ExceptionCode.FRIENDSHIP_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ExceptionCode.FRIENDSHIP_NOT_EXIST));
     }
 }

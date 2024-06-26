@@ -18,6 +18,7 @@ public class SnapTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long snapTagId;
+
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "tag_user_id",nullable = false)
