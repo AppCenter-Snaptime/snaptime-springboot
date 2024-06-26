@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -58,7 +59,7 @@ public class AlbumServiceImpl implements AlbumService {
         return FindAlbumResDto.builder()
                 .id(foundAlbum.getId())
                 .name(foundAlbum.getName())
-                .snap(foundAlbum.getSnap().stream().map(snap -> FindSnapResDto.entityToResDto(snap, urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate()))).collect(Collectors.toList()))
+                .snap(foundAlbum.getSnap().stream().sorted(Comparator.comparing(Snap::getId).reversed()).map(snap -> FindSnapResDto.entityToResDto(snap, urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate()))).collect(Collectors.toList()))
                 .build();
     }
 
@@ -115,7 +116,6 @@ public class AlbumServiceImpl implements AlbumService {
     public void removeAlbum(String uId, Long album_id) {
         Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
         haveAuthority(uId, foundAlbum);
-
     }
 
     /*

@@ -6,6 +6,6 @@ import me.snaptime.user.data.dto.response.userprofile.AlbumSnapResDto;
 import java.util.List;
 
 public interface UserCustomRepository {
-    List<AlbumSnapResDto> fidAlbumSnap(User reqUser);
+    List<AlbumSnapResDto> findAlbumSnap(User targetUser, Boolean checkPermission);
 
 }

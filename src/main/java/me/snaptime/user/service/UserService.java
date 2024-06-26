@@ -26,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -136,10 +137,16 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<AlbumSnapResDto> getAlbumSnap(String loginId){
-        User reqUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    public List<AlbumSnapResDto> getAlbumSnap(String yourLoginId, String targetLoginId){
+        User targetUser = userRepository.findByLoginId(targetLoginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        List<AlbumSnapResDto> albumSnapResDtoList = userRepository.fidAlbumSnap(reqUser);
+        List<AlbumSnapResDto> albumSnapResDtoList = new ArrayList<>();
+        if(yourLoginId.equals(targetLoginId)){
+             albumSnapResDtoList = userRepository.findAlbumSnap(targetUser,true);
+        }
+        else{
+             albumSnapResDtoList = userRepository.findAlbumSnap(targetUser,false);
+        }
 
         return albumSnapResDtoList;
     }
