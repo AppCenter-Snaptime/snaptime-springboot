@@ -72,7 +72,7 @@ public class AlbumController {
     @Operation(summary = "한 Album의 내용을 전부 가져오기", description = "Album의 내용을 전부 가져옵니다.")
     @GetMapping("/{album_id}")
     public ResponseEntity<CommonResponseDto<FindAlbumResDto>> findAlbum(
-            final @RequestParam("album_id") Long album_id,
+            final @PathVariable("album_id") Long album_id,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uId = userDetails.getUsername();
