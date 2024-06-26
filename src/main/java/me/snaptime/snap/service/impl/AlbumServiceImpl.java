@@ -112,6 +112,13 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    public boolean isUserHavePermission(Long album_id, String uid) {
+        Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
+        User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        return foundAlbum.getUser() == foundUser;
+    }
+
+    @Override
     @Transactional
     public void removeAlbum(String uId, Long album_id) {
         Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));

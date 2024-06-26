@@ -29,5 +29,6 @@ public interface AlbumService {
     * */
     Long findUserNonClassificationId(String uid);
     void modifyAlbumName(Long album_id, String album_name);
+    boolean isUserHavePermission(Long album_id, String uid);
     void removeAlbum(String uId, Long album_id);
 }
