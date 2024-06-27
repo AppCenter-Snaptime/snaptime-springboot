@@ -3,6 +3,8 @@ package me.snaptime.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.dto.CommonResponseDto;
@@ -19,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +31,7 @@ import java.util.List;
 @RequestMapping("/users")
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class UserController {
 
     private final UserService userService;
@@ -46,7 +50,7 @@ public class UserController {
     @Operation(summary = "유저 정보 수정",description = "해당 유저의 정보를 수정합니다.")
     @PutMapping()
     public ResponseEntity<CommonResponseDto<UserResDto>> changeUser(@AuthenticationPrincipal UserDetails principal,
-                                                                    @RequestBody UserUpdateDto userUpdateDto){
+                                                                    @Valid @RequestBody UserUpdateDto userUpdateDto){
         UserResDto userResDto = userService.updateUser(principal.getUsername(), userUpdateDto);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
@@ -56,7 +60,8 @@ public class UserController {
     @Operation(summary = "유저 비밀번호 수정",description = "해당 유저의 비밀번호를 수정합니다.")
     @PutMapping("/password")
     public ResponseEntity<CommonResponseDto<Void>> changeUser(@AuthenticationPrincipal UserDetails principal,
-                                                              @RequestParam("password") String password){
+                                                              @RequestParam("password")
+                                                              @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String password) {
         userService.updatePassword(principal.getUsername(), password);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
@@ -77,7 +82,7 @@ public class UserController {
 
     @Operation(summary = "회원가입", description = "회원 가입 할 유저의 정보를 입력합니다.")
     @PostMapping("/sign-up")
-    public ResponseEntity<CommonResponseDto<UserResDto>> signUp(@RequestBody UserReqDto userReqDto){
+    public ResponseEntity<CommonResponseDto<UserResDto>> signUp(@Valid @RequestBody UserReqDto userReqDto){
         UserResDto userResDto = userService.signUp(userReqDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -88,7 +93,7 @@ public class UserController {
 
     @Operation(summary = "로그인", description = "회원 가입 한 유저의 loginId와 password를 입력합니다.")
     @PostMapping("/sign-in")
-    public ResponseEntity<CommonResponseDto<SignInResDto>> signIn(@RequestBody SignInReqDto signInReqDto){
+    public ResponseEntity<CommonResponseDto<SignInResDto>> signIn(@Valid @RequestBody SignInReqDto signInReqDto){
         SignInResDto signInResponseDto = userService.signIn(signInReqDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -101,7 +106,8 @@ public class UserController {
     @Parameter(name = "login_id", description = "앨범과 사진들을 가져오기 위한 loginId", required = true)
     @GetMapping("/album_snap")
     public ResponseEntity<CommonResponseDto<List<AlbumSnapResDto>>> getAlbumSnap(@AuthenticationPrincipal UserDetails principal,
-                                                                                 @RequestParam("login_id") String targetLoginId){
+                                                                                 @RequestParam("login_id")
+                                                                                 @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String targetLoginId){
         String yourLoginId = principal.getUsername();
         List<AlbumSnapResDto> albumSnapResDtoList = userService.getAlbumSnap(yourLoginId, targetLoginId);
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -114,7 +120,8 @@ public class UserController {
     @Operation(summary = "유저 이름, 프로필 사진 조회", description = "유저의 이름과, 프로필 사진을 조회합니다.")
     @Parameter(name = "login_id", description = "이름과 프로필 사진을 가져오기 위한 loginId", required = true)
     @GetMapping("/profile")
-    public ResponseEntity<CommonResponseDto<UserProfileResDto>> getUserProfile(@RequestParam("login_id") String loginId){
+    public ResponseEntity<CommonResponseDto<UserProfileResDto>> getUserProfile(@RequestParam("login_id")
+                                                                                   @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String loginId){
         UserProfileResDto userProfileResDto = userService.getUserProfile(loginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
@@ -126,7 +133,8 @@ public class UserController {
     @Operation(summary = "유저의 Snap 수, Follower 수,  Following 수 조회", description = "유저의 사진 수, 팔로워 수, 팔로잉 수를 조회합니다.")
     @Parameter(name = "login_id", description = "팔로워와 팔로잉 수를 가져오기 위한 loginId", required = true)
     @GetMapping("/profile/count")
-    public ResponseEntity<CommonResponseDto<ProfileCntResDto>> getProfileCnt(@RequestParam("login_id") String loginId){
+    public ResponseEntity<CommonResponseDto<ProfileCntResDto>> getProfileCnt(@RequestParam("login_id")
+                                                                                 @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String loginId){
         ProfileCntResDto profileCntResDto = userService.getUserProfileCnt(loginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
