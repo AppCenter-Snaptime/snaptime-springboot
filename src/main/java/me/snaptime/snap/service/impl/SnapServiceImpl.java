@@ -20,14 +20,12 @@ import me.snaptime.snap.service.SnapService;
 import me.snaptime.snap.util.EncryptionUtil;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -54,19 +52,16 @@ public class SnapServiceImpl implements SnapService {
                         .isPrivate(isPrivate)
                         .build()
         );
-
         return result.getId();
     }
 
     @Override
-    public FindSnapResDto findSnap(Long id) {
+    public FindSnapResDto findSnap(Long id, String uId) {
         Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         if(foundSnap.isPrivate()) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String uId = userDetails.getUsername();
             User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-            if (foundUser != foundSnap.getUser()) {
+
+            if (!Objects.equals(foundUser.getId(), foundSnap.getUser().getId())) {
                 throw new CustomException(ExceptionCode.SNAP_USER_IS_NOT_THE_SAME);
             }
         }
