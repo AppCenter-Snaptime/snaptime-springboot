@@ -2,7 +2,6 @@ package me.snaptime.snap.repository;
 
 import com.querydsl.core.Tuple;
 import me.snaptime.common.component.UrlComponent;
-import me.snaptime.common.component.impl.UrlComponentImpl;
 import me.snaptime.common.config.JpaAuditingConfig;
 import me.snaptime.common.config.QueryDslConfig;
 import me.snaptime.common.exception.customs.CustomException;
@@ -20,7 +19,6 @@ import me.snaptime.user.data.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

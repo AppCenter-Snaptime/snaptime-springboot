@@ -1,9 +1,9 @@
 package me.snaptime.snap.service;
 
 import me.snaptime.snap.data.dto.req.CreateAlbumReqDto;
-import me.snaptime.snap.data.dto.res.GetAllAlbumListResDto;
 import me.snaptime.snap.data.dto.res.FindAlbumResDto;
 import me.snaptime.snap.data.dto.res.FindAllAlbumsResDto;
+import me.snaptime.snap.data.dto.res.GetAllAlbumListResDto;
 
 import java.util.List;
 

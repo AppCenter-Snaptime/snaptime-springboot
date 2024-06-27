@@ -7,7 +7,6 @@ import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.component.EncryptionComponent;
 import me.snaptime.snap.component.FileComponent;
-import me.snaptime.common.component.UrlComponent;
 import me.snaptime.snap.data.domain.Album;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.domain.Snap;

@@ -32,14 +32,14 @@ public class ChildReplyPagingRepositoryImpl implements ChildReplyPagingRepositor
 
 
         List<Tuple> result =  jpaQueryFactory.select(
-                        childReply.id,childReply.content,childReply.parentReply.id,
+                        childReply.childReplyId,childReply.content,childReply.parentReply.parentReplyId,
                         writerUser.name,writerUser.loginId,tagUser.name,tagUser.loginId,
                         writerUser.profilePhoto.id
                 )
                 .from(childReply)
-                .leftJoin(tagUser).on(childReply.tagUser.id.eq(tagUser.id))
+                .leftJoin(tagUser).on(childReply.replyTagUser.id.eq(tagUser.id))
                 .join(writerUser).on(childReply.user.id.eq(writerUser.id))
-                .where(childReply.parentReply.id.eq(parentReplyId))
+                .where(childReply.parentReply.parentReplyId.eq(parentReplyId))
                 .orderBy(createOrderSpecifier())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()) //페이지의 크기

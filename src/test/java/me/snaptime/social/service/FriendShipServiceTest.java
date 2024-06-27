@@ -246,7 +246,7 @@ public class FriendShipServiceTest {
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
-            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIENDSHIP_NOT_FOUND);
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIENDSHIP_NOT_EXIST);
             verify(friendShipRepository,times(0)).save(any(FriendShip.class));
             verify(friendShipRepository,times(0)).delete(any(FriendShip.class));
             verify(userRepository,times(2)).findByLoginId(any(String.class));
@@ -284,7 +284,7 @@ public class FriendShipServiceTest {
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
-            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIENDSHIP_NOT_FOUND);
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIENDSHIP_NOT_EXIST);
             verify(friendShipRepository,times(0)).delete(any(FriendShip.class));
             verify(friendShipRepository,times(1)).findById(any(Long.class));
             verify(userRepository,times(0)).findByLoginId(any(String.class));

@@ -44,8 +44,6 @@ public class QSnap extends EntityPathBase<Snap> {
 
     public final StringPath oneLineJournal = createString("oneLineJournal");
 
-    public final ListPath<me.snaptime.social.data.domain.ParentReply, me.snaptime.social.data.domain.QParentReply> parentReplyList = this.<me.snaptime.social.data.domain.ParentReply, me.snaptime.social.data.domain.QParentReply>createList("parentReplyList", me.snaptime.social.data.domain.ParentReply.class, me.snaptime.social.data.domain.QParentReply.class, PathInits.DIRECT2);
-
     public final me.snaptime.user.data.domain.QUser user;
 
     public QSnap(String variable) {

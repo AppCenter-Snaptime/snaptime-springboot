@@ -6,11 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.snaptime.common.domain.BaseTimeEntity;
-import me.snaptime.social.data.domain.ParentReply;
 import me.snaptime.user.data.domain.User;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -28,9 +24,6 @@ public class Snap extends BaseTimeEntity {
     @JoinColumn(name = "album_id")
     private Album album;
 
-    @OneToMany(mappedBy = "snap",cascade = CascadeType.REMOVE)
-    private List<ParentReply> parentReplyList = new ArrayList<>();
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -47,12 +40,11 @@ public class Snap extends BaseTimeEntity {
     private String fileType;
 
     @Builder
-    protected Snap(Long id, String oneLineJournal, Album album, List<ParentReply> parentReplyList, User user,
+    protected Snap(Long id, String oneLineJournal, Album album, User user,
                    String fileName, String filePath, String fileType, boolean isPrivate) {
         this.id = id;
         this.oneLineJournal = oneLineJournal;
         this.album = album;
-        this.parentReplyList = parentReplyList;
         this.user = user;
         this.fileName = fileName;
         this.fileType = fileType;

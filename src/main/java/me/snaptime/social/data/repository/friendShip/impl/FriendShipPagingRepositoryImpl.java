@@ -32,7 +32,7 @@ public class FriendShipPagingRepositoryImpl implements FriendShipPagingRepositor
         Pageable pageable= PageRequest.of((int) (pageNum-1),30);
 
         List<Tuple> result =  jpaQueryFactory.select(
-                        user.loginId,user.profilePhoto.id,user.name,friendShip.id
+                        user.loginId,user.profilePhoto.id,user.name,friendShip.friendShipId
                 )
                 .from(friendShip)
                 .join(user).on(getJoinBuilder(searchType))

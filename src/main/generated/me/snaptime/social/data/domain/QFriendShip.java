@@ -22,11 +22,11 @@ public class QFriendShip extends EntityPathBase<FriendShip> {
 
     public static final QFriendShip friendShip = new QFriendShip("friendShip");
 
+    public final NumberPath<Long> friendShipId = createNumber("friendShipId", Long.class);
+
     public final EnumPath<me.snaptime.social.common.FriendStatus> friendStatus = createEnum("friendStatus", me.snaptime.social.common.FriendStatus.class);
 
     public final me.snaptime.user.data.domain.QUser fromUser;
-
-    public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final me.snaptime.user.data.domain.QUser toUser;
 

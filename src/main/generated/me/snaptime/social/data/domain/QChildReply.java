@@ -24,19 +24,19 @@ public class QChildReply extends EntityPathBase<ChildReply> {
 
     public final me.snaptime.common.domain.QBaseTimeEntity _super = new me.snaptime.common.domain.QBaseTimeEntity(this);
 
+    public final NumberPath<Long> childReplyId = createNumber("childReplyId", Long.class);
+
     public final StringPath content = createString("content");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
-
-    public final NumberPath<Long> id = createNumber("id", Long.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
 
     public final QParentReply parentReply;
 
-    public final me.snaptime.user.data.domain.QUser tagUser;
+    public final me.snaptime.user.data.domain.QUser replyTagUser;
 
     public final me.snaptime.user.data.domain.QUser user;
 
@@ -59,7 +59,7 @@ public class QChildReply extends EntityPathBase<ChildReply> {
     public QChildReply(Class<? extends ChildReply> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.parentReply = inits.isInitialized("parentReply") ? new QParentReply(forProperty("parentReply"), inits.get("parentReply")) : null;
-        this.tagUser = inits.isInitialized("tagUser") ? new me.snaptime.user.data.domain.QUser(forProperty("tagUser"), inits.get("tagUser")) : null;
+        this.replyTagUser = inits.isInitialized("replyTagUser") ? new me.snaptime.user.data.domain.QUser(forProperty("replyTagUser"), inits.get("replyTagUser")) : null;
         this.user = inits.isInitialized("user") ? new me.snaptime.user.data.domain.QUser(forProperty("user"), inits.get("user")) : null;
     }
 
