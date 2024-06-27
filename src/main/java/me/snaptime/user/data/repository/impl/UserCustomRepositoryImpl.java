@@ -10,7 +10,10 @@ import me.snaptime.user.data.dto.response.userprofile.AlbumSnapResDto;
 import me.snaptime.user.data.repository.UserCustomRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static me.snaptime.snap.data.domain.QAlbum.album;
 import static me.snaptime.snap.data.domain.QSnap.snap;

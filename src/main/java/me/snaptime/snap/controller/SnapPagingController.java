@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import me.snaptime.common.dto.CommonResponseDto;
 import me.snaptime.snap.service.impl.SnapPagingServiceImpl;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/snaps")
 @RequiredArgsConstructor
 @Tag(name = "[Social] Snap API")
-@Log4j2
 public class SnapPagingController {
 
     private final SnapPagingServiceImpl snapPagingService;
@@ -33,7 +31,6 @@ public class SnapPagingController {
             @PathVariable final Long pageNum) {
 
         String loginId = userDetails.getUsername();
-        log.info(loginId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new CommonResponseDto("스냅 페이징조회가 완료되었습니다.", snapPagingService.findSnapPaging(loginId,pageNum)));
     }

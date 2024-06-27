@@ -19,7 +19,7 @@ public record FindFriendResDto(
                 .loginId(result.get(user.loginId))
                 .profilePhotoURL(profilePhotoURL)
                 .userName(result.get(user.name))
-                .friendShipId(result.get(friendShip.id))
+                .friendShipId(result.get(friendShip.friendShipId))
                 .build();
     }
 }

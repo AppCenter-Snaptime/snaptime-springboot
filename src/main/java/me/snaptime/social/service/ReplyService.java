@@ -10,6 +10,7 @@ import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.social.data.domain.ChildReply;
 import me.snaptime.social.data.domain.ParentReply;
 import me.snaptime.social.data.dto.req.AddChildReplyReqDto;
+import me.snaptime.social.data.dto.req.AddParentReplyReqDto;
 import me.snaptime.social.data.dto.res.FindChildReplyResDto;
 import me.snaptime.social.data.dto.res.FindParentReplyResDto;
 import me.snaptime.social.data.repository.reply.ChildReplyRepository;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static me.snaptime.user.data.domain.QUser.user;
@@ -38,16 +38,16 @@ public class ReplyService {
     private final UrlComponent urlComponent;
 
     @Transactional
-    public void addParentReply(String loginId, Long snapId, String content){
+    public void addParentReply(String loginId, AddParentReplyReqDto addParentReplyReqDto){
         User user = findUserByLoginId(loginId);
-        Snap snap = snapRepository.findById(snapId)
+        Snap snap = snapRepository.findById(addParentReplyReqDto.snapId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
 
         parentReplyRepository.save(
                 ParentReply.builder()
                         .user(user)
                         .snap(snap)
-                        .content(content)
+                        .content(addParentReplyReqDto.content())
                         .build()
         );
     }

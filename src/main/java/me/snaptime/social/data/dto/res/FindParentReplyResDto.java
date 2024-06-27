@@ -21,7 +21,7 @@ public record FindParentReplyResDto(
                 .writerProfilePhotoURL(profilePhotoURL)
                 .writerUserName(result.get(user.name))
                 .content(result.get(parentReply.content))
-                .replyId(result.get(parentReply.id))
+                .replyId(result.get(parentReply.parentReplyId))
                 .build();
     }
 }

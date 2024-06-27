@@ -17,7 +17,7 @@ public class FriendShip {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long friendShipId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "friend_status")
