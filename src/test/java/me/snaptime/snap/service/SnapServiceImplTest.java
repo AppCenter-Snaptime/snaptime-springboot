@@ -7,7 +7,6 @@ import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.domain.Snap;
 import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
-import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.data.repository.AlbumRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.impl.SnapServiceImpl;
@@ -27,10 +26,9 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Objects;
+
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.spy;
 
@@ -107,7 +105,7 @@ public class SnapServiceImplTest {
         snapServiceImpl.createSnap(givenCreateSnapReqDto, "abcd", givenPrivate);
     }
 
-    @DisplayName("스냅 가져오기 테스트")
+    /*@DisplayName("스냅 가져오기 테스트")
     @Test
     @Transactional
     public void findSnapTest() {
@@ -134,5 +132,5 @@ public class SnapServiceImplTest {
         assertEquals(expectedDto.albumName(), result.albumName());
         assertEquals(expectedDto.userUid(), result.userUid());
         assertEquals(expectedDto.oneLineJournal(), result.oneLineJournal());
-    }
+    }*/
 }

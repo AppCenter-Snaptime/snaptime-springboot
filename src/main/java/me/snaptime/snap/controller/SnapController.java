@@ -39,7 +39,7 @@ public class SnapController {
 
     @Operation(summary = "Snap 생성", description = "Empty Value를 보내지마세요")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<CommonResponseDto<Void>> createSnap(
+    public ResponseEntity<CommonResponseDto<Long>> createSnap(
             final @RequestParam(value = "isPrivate") boolean isPrivate,
             final @RequestParam(value = "nonClassification") boolean nonClassification,
             final @RequestParam(value = "albumId", required = false) Long album_id,
@@ -78,7 +78,7 @@ public class SnapController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CommonResponseDto<>(
                 "스냅이 정상적으로 저장되었습니다.",
-                null
+                        snapId
         ));
     }
 
@@ -86,12 +86,14 @@ public class SnapController {
     @Parameter(name = "id", description = "찾을 Snap의 id")
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponseDto<FindSnapResDto>> findSnap(
-            final @PathVariable("id") Long id
+            final @PathVariable("id") Long id,
+            final @AuthenticationPrincipal UserDetails userDetails
     ) {
+        String uId = userDetails.getUsername();
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "스냅이 정상적으로 불러와졌습니다.",
-                        snapService.findSnap(id)
+                        snapService.findSnap(id, uId)
                 )
         );
     }
