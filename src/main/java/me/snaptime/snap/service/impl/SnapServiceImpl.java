@@ -7,7 +7,6 @@ import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.component.EncryptionComponent;
 import me.snaptime.snap.component.FileComponent;
-import me.snaptime.common.component.UrlComponent;
 import me.snaptime.snap.data.domain.Album;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.domain.Snap;
@@ -71,8 +70,9 @@ public class SnapServiceImpl implements SnapService {
                 throw new CustomException(ExceptionCode.SNAP_USER_IS_NOT_THE_SAME);
             }
         }
-        String photoUrl = urlComponent.makePhotoURL(foundSnap.getFileName(), foundSnap.isPrivate());
-        return FindSnapResDto.entityToResDto(foundSnap, photoUrl);
+        String snapPhotoUrl = urlComponent.makePhotoURL(foundSnap.getFileName(), foundSnap.isPrivate());
+        String profilePhotoUrl = urlComponent.makeProfileURL(foundSnap.getUser().getProfilePhoto().getId());
+        return FindSnapResDto.entityToResDto(foundSnap, snapPhotoUrl, profilePhotoUrl);
     }
 
     @Override

@@ -59,7 +59,16 @@ public class AlbumServiceImpl implements AlbumService {
         return FindAlbumResDto.builder()
                 .id(foundAlbum.getId())
                 .name(foundAlbum.getName())
-                .snap(foundAlbum.getSnap().stream().sorted(Comparator.comparing(Snap::getId).reversed()).map(snap -> FindSnapResDto.entityToResDto(snap, urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate()))).collect(Collectors.toList()))
+                .snap(foundAlbum.getSnap().stream()
+                        .sorted(Comparator.comparing(Snap::getId).reversed())
+                        .map(snap ->
+                                FindSnapResDto.entityToResDto(
+                                        snap,
+                                        urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate()),
+                                        urlComponent.makeProfileURL(snap.getUser().getProfilePhoto().getId())
+                                )
+                        )
+                        .collect(Collectors.toList()))
                 .build();
     }
 

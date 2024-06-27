@@ -3,29 +3,35 @@ package me.snaptime.snap.data.dto.res;
 import lombok.Builder;
 import me.snaptime.snap.data.domain.Snap;
 
+import java.time.LocalDateTime;
+
 @Builder
 public record FindSnapResDto(
-        Long id,
+        Long snapId,
         String oneLineJournal,
-        String photoURL,
-        String albumName,
-        String userUid
+        String snapPhotoURL,
+        LocalDateTime snapCreatedDate,
+        LocalDateTime snapModifiedDate,
+        String loginId,
+        String profilePhotoURL,
+        String userName
 ) {
-    public static FindSnapResDto entityToResDto(Snap entity, String photoURL) {
-        String albumName = null;
+    public static FindSnapResDto entityToResDto(Snap entity, String snapPhotoURL, String profilePhotoURL) {
         String userUid = null;
-        if (entity.getAlbum() != null) {
-                albumName = entity.getAlbum().getName();
-        }
+        String userName = null;
         if (entity.getUser() != null) {
             userUid = entity.getUser().getLoginId();
+            userName = entity.getUser().getName();
         }
         return FindSnapResDto.builder()
-                .id(entity.getId())
+                .snapId(entity.getId())
                 .oneLineJournal(entity.getOneLineJournal())
-                .photoURL(photoURL)
-                .albumName(albumName)
-                .userUid(userUid)
+                .snapPhotoURL(snapPhotoURL)
+                .snapCreatedDate(entity.getCreatedDate())
+                .snapModifiedDate(entity.getLastModifiedDate())
+                .loginId(userUid)
+                .profilePhotoURL(profilePhotoURL)
+                .userName(userName)
                 .build();
     }
 }
