@@ -9,7 +9,9 @@ import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.social.common.FriendStatus;
+import me.snaptime.social.data.dto.res.FriendCntResDto;
 import me.snaptime.social.data.repository.friendShip.FriendShipRepository;
+import me.snaptime.social.service.FriendShipService;
 import me.snaptime.user.data.domain.ProfilePhoto;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.dto.request.SignInReqDto;
@@ -44,7 +46,7 @@ public class UserService {
     private final UrlComponent urlComponent;
     private final FriendShipRepository friendShipRepository;
     private final SnapRepository snapRepository;
-
+    private final FriendShipService friendShipService;
 
     @Transactional(readOnly = true)
     public UserResDto getUser(String loginId) {
@@ -163,15 +165,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public ProfileCntResDto getUserProfileCnt(String loginId){
         User user = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
-        Long userSnap = snapRepository.countByUser(user);
-        Long userFollower = friendShipRepository.countByToUserAndFriendStatus(user, FriendStatus.FOLLOW);
-        Long userFollowing = friendShipRepository.countByFromUserAndFriendStatus(user,FriendStatus.FOLLOW);
+        Long userSnapCnt = snapRepository.countByUser(user);
+        FriendCntResDto friendCntResDto = friendShipService.findFriendShipCnt(loginId);
 
         return ProfileCntResDto.builder()
-                .snapCnt(userSnap)
-                .followerCnt(userFollower)
-                .followingCnt(userFollowing)
+                .snapCnt(userSnapCnt)
+                .followerCnt(friendCntResDto.followerCnt())
+                .followingCnt(friendCntResDto.followingCnt())
                 .build();
-
     }
 }
