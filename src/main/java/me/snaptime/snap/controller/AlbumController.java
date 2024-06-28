@@ -85,7 +85,7 @@ public class AlbumController {
     }
 
     @Operation(summary = "Album의 이름을 변경합니다.")
-    @PatchMapping("/")
+    @PatchMapping
     public ResponseEntity<CommonResponseDto<Void>> modifyAlbumName(
             final @RequestParam("album_name") String name,
             final @RequestParam("album_id") Long id
