@@ -44,7 +44,6 @@ public class UserService {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final UrlComponent urlComponent;
-    private final FriendShipRepository friendShipRepository;
     private final SnapRepository snapRepository;
     private final FriendShipService friendShipService;
 
@@ -57,6 +56,11 @@ public class UserService {
 
     public UserResDto signUp(UserReqDto userRequestDto) {
 
+        //로그인 id가 이미 존재하는지 확인
+        if(userRepository.findByLoginId(userRequestDto.loginId()).isPresent()){
+            throw new CustomException(ExceptionCode.LOGIN_ID_ALREADY_EXIST);
+        }
+
         String fileName = "default.png";
         String filePath =  "/test_resource/" + fileName;
 
@@ -67,6 +71,7 @@ public class UserService {
         //기본 프로필 저장
         profilePhotoRepository.save(profilePhoto);
 
+        //새로운 사용자 객체 생성
         User user = User.builder()
                 .name(userRequestDto.name())
                 .loginId(userRequestDto.loginId())
@@ -100,6 +105,14 @@ public class UserService {
     public UserResDto updateUser(String loginId, UserUpdateDto userUpdateDto) {
 
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+
+        if(user.getLoginId().equals(userUpdateDto.loginId())){
+            throw new CustomException(ExceptionCode.SAME_LOGIN_ID);
+        }
+
+        if(userRepository.findByLoginId(userUpdateDto.loginId()).isPresent()){
+            throw new CustomException(ExceptionCode.LOGIN_ID_ALREADY_EXIST);
+        }
 
         if (userUpdateDto.name() != null && !userUpdateDto.name().isEmpty()) {
             user.updateUserName(userUpdateDto.name());
@@ -143,13 +156,9 @@ public class UserService {
         User targetUser = userRepository.findByLoginId(targetLoginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         List<AlbumSnapResDto> albumSnapResDtoList = new ArrayList<>();
-        if(yourLoginId.equals(targetLoginId)){
-             albumSnapResDtoList = userRepository.findAlbumSnap(targetUser,true);
-        }
-        else{
-             albumSnapResDtoList = userRepository.findAlbumSnap(targetUser,false);
-        }
-
+        //자신이 자신의 profile을 조회하면 true, 다른 사람의 prfoile을 조회하면, false 를 매개변수로 전달한다
+        albumSnapResDtoList = userRepository.findAlbumSnap(targetUser,yourLoginId.equals(targetLoginId));
+        
         return albumSnapResDtoList;
     }
 
