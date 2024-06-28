@@ -156,13 +156,9 @@ public class UserService {
         User targetUser = userRepository.findByLoginId(targetLoginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         List<AlbumSnapResDto> albumSnapResDtoList = new ArrayList<>();
-        if(yourLoginId.equals(targetLoginId)){
-             albumSnapResDtoList = userRepository.findAlbumSnap(targetUser,true);
-        }
-        else{
-             albumSnapResDtoList = userRepository.findAlbumSnap(targetUser,false);
-        }
-
+        //자신이 자신의 profile을 조회하면 true, 다른 사람의 prfoile을 조회하면, false 를 매개변수로 전달한다
+        albumSnapResDtoList = userRepository.findAlbumSnap(targetUser,yourLoginId.equals(targetLoginId));
+        
         return albumSnapResDtoList;
     }
 
