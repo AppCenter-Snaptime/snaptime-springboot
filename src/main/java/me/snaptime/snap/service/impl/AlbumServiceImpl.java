@@ -55,12 +55,44 @@ public class AlbumServiceImpl implements AlbumService {
     @Transactional(readOnly = true)
     public FindAlbumResDto findAlbum(String uId, Long album_id) {
         Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
-        haveAuthority(uId, foundAlbum);
+        try {
+            haveAuthority(uId, foundAlbum);
+        } catch (CustomException e) {
+            /*
+            * 유저가 없거나, 권한이 없으면 공개인 것만 유저에게 반환한다.
+            * */
+            return FindAlbumResDto.builder()
+                    .id(foundAlbum.getId())
+                    .name(foundAlbum.getName())
+                    .snap(foundAlbum.getSnap().stream()
+                            .sorted(Comparator.comparing(Snap::getId).reversed())
+                            .filter( snap -> !snap.isPrivate())
+                            .map(snap ->
+                                    FindSnapResDto.entityToResDto(
+                                            snap,
+                                            urlComponent.makePhotoURL(snap.getFileName(), false),
+                                            urlComponent.makeProfileURL(snap.getUser().getProfilePhoto().getId())
+                                    )
+                            )
+                            .collect(Collectors.toList()))
+                    .build();
+        }
+
         return FindAlbumResDto.builder()
                 .id(foundAlbum.getId())
                 .name(foundAlbum.getName())
-                .snap(foundAlbum.getSnap().stream().sorted(Comparator.comparing(Snap::getId).reversed()).map(snap -> FindSnapResDto.entityToResDto(snap, urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate()))).collect(Collectors.toList()))
+                .snap(foundAlbum.getSnap().stream()
+                        .sorted(Comparator.comparing(Snap::getId).reversed())
+                        .map(snap ->
+                                FindSnapResDto.entityToResDto(
+                                        snap,
+                                        urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate()),
+                                        urlComponent.makeProfileURL(snap.getUser().getProfilePhoto().getId())
+                                )
+                        )
+                        .collect(Collectors.toList()))
                 .build();
+
     }
 
     @Override
