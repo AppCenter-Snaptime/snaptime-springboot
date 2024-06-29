@@ -61,13 +61,10 @@ public class SnapController {
             // 사용자가 앨범 선택을 하고 요청을 보낼 경우
             // 사용자가 보낸 앨범 id가 유효한지 확인
             if (albumService.isAlbumExistById(album_id)) {
-                // 사용자가 만든 앨범인지 확인
-                if (albumService.isUserHavePermission(album_id, uId)) {
-                    // 유효하다면 앨범 id를 Snap과 연관관계 맺어줌
-                    snapService.makeRelationSnapAndAlbum(snapId, album_id);
-                } else {
-                    throw new CustomException(ExceptionCode.ALBUM_USER_NOT_MATCH);
-                }
+                // 사용자가 만든 앨범인지 확인 (통과하지 못할 시 예외가 발생함)
+                albumService.isUserHavePermission(uId, album_id);
+                // 위 구문을 실행하는데 문제가 없다면, 앨범 id를 Snap과 연관관계 맺어줌
+                snapService.makeRelationSnapAndAlbum(snapId, album_id);
             } else {
                 // 사용자가 앨범이 존재한다고 하고, 이를 요청에 포함시켰으나, 앨범이 유효하지 않을경우
                 // non-classification에 스냅을 추가함

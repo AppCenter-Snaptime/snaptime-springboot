@@ -29,6 +29,10 @@ public interface AlbumService {
     * */
     Long findUserNonClassificationId(String uid);
     void modifyAlbumName(Long album_id, String album_name);
-    boolean isUserHavePermission(Long album_id, String uid);
     void removeAlbum(String uId, Long album_id);
+
+    /*
+    * 인자로 uId와 album_id을 받아 album을 생성한 사용자가 현재 요청을 보낸 사용자와 일치하는지 확인하는 메소드입니다.
+    * */
+    void isUserHavePermission(String uId, Long album_id);
 }
