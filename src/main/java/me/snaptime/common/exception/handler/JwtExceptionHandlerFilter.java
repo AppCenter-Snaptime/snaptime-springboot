@@ -56,5 +56,4 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
             e.printStackTrace();
         }
     }
-
 }

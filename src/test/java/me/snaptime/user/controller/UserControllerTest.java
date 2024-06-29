@@ -115,14 +115,14 @@ public class UserControllerTest {
         //given
         UserUpdateDto userUpdateDto = UserUpdateDto.builder()
                 .loginId("jun4746")
-                .name("")
+                .name("홍길순")
                 .email("strong@naver.com")
-                .birthDay("")
+                .birthDay("1999-10-29")
                 .build();
 
         given(userService.updateUser(eq("kang4746"),any(UserUpdateDto.class)))
                 .willReturn(UserResDto.builder()
-                        .loginId("kang4746")
+                        .loginId("jun4746")
                         .name("홍길순")
                         .email("strong@gmail.com")
                         .birthDay("1999-10-29")

@@ -27,7 +27,7 @@ public class ProfilePhotoController {
 
     private final ProfilePhotoService profilePhotoService;
 
-    @Operation(summary = "프로필 사진 조회",description = "유저의 프로필 사진을 조회 합니다.")
+    @Operation(summary = "프로필 사진 조회",description = "유저의 번호로 유저의 프로필 사진을 조회 합니다.")
     @Parameter(name = "profile_photo_id", description = "조회 할 프로필 사진의 id")
     @GetMapping("/{profile_photo_id}")
     public ResponseEntity<?> downloadProfileToFileSystem(@PathVariable("profile_photo_id") Long profilePhotoId) {
@@ -39,7 +39,8 @@ public class ProfilePhotoController {
                 .body(downloadProfile);
     }
 
-    @Operation(summary = "프로필 사진 수정",description = "유저의 프로필 사진을 수정 합니다.")
+    @Operation(summary = "프로필 사진 수정",description = "유저의 프로필 사진을 수정 합니다." +
+            "<br> 유저의 Token 으로 유저를 구분짓습니다.")
     @PutMapping(consumes = MULTIPART_FORM_DATA)
     public ResponseEntity<?> updateProfileToFileSystem(@AuthenticationPrincipal UserDetails principal,
                                                        @RequestParam MultipartFile file) throws Exception {
