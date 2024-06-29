@@ -5,6 +5,7 @@ import me.snaptime.common.component.UrlComponent;
 import me.snaptime.snap.data.dto.res.FindSnapPagingResDto;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.impl.SnapPagingServiceImpl;
+import me.snaptime.social.service.SnapLikeService;
 import me.snaptime.social.service.SnapTagService;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
@@ -39,6 +40,8 @@ public class SnapPagingServiceImplTest {
     private UrlComponent urlComponent;
     @Mock
     private SnapTagService snapTagService;
+    @Mock
+    private SnapLikeService snapLikeService;
     private User reqUser;
 
     @BeforeEach
