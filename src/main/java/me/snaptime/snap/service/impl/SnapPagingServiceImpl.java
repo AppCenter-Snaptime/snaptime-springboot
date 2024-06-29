@@ -7,6 +7,7 @@ import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.dto.res.FindSnapPagingResDto;
 import me.snaptime.snap.data.repository.SnapRepository;
+import me.snaptime.social.service.SnapTagService;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class SnapPagingServiceImpl {
     private final UserRepository userRepository;
     private final SnapRepository snapRepository;
     private final UrlComponent urlComponent;
+    private final SnapTagService snapTagService;
 
     // snap 페이징 조회
     public List<FindSnapPagingResDto> findSnapPaging(String loginId, Long pageNum){
@@ -38,7 +40,9 @@ public class SnapPagingServiceImpl {
             String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.id));
             String snapPhotoURL = urlComponent.makePhotoURL(entity.get(snap.fileName),false);
 
-            return FindSnapPagingResDto.toDto(entity,profilePhotoURL,snapPhotoURL);
+            return FindSnapPagingResDto
+                    .toDto(entity,profilePhotoURL,snapPhotoURL,snapTagService.findTagUserList(entity.get(snap.id)));
+
                 }).collect(Collectors.toList());
     }
 
