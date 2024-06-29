@@ -13,6 +13,7 @@ import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.service.AlbumService;
 import me.snaptime.snap.service.SnapService;
+import me.snaptime.social.service.SnapTagService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/snap")
@@ -36,6 +38,7 @@ import java.net.URLConnection;
 public class SnapController {
     private final SnapService snapService;
     private final AlbumService albumService;
+    private final SnapTagService snapTagService;
 
     @Operation(summary = "Snap 생성", description = "Empty Value를 보내지마세요")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -43,6 +46,7 @@ public class SnapController {
             final @RequestParam(value = "isPrivate") boolean isPrivate,
             final @RequestParam(value = "nonClassification") boolean nonClassification,
             final @RequestParam(value = "albumId", required = false) Long album_id,
+            final @RequestParam(value = "tagUserLoginIds", required = false) List<String> tagUserLoginIds,
             final @ModelAttribute CreateSnapReqDto createSnapReqDto,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
@@ -70,6 +74,11 @@ public class SnapController {
                 // non-classification에 스냅을 추가함
                 processSnapForNonClassification(snapId, uId);
             }
+        }
+
+        // tagUserLoginIds가 파라미터로 주어졌을 경우 태그에 추가
+        if (tagUserLoginIds != null) {
+            snapTagService.addTagUser(tagUserLoginIds, snapId);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
