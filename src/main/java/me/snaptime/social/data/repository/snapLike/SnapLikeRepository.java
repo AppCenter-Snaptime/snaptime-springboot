@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface SnapLikeRepository extends JpaRepository<SnapLike,Long> {
 
     Optional<SnapLike> findBySnapAndUser(Snap snap, User user);
+
+    Long countBySnap(Snap snap);
 }

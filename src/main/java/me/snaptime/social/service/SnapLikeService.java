@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class SnapLikeService {
 
     private final SnapRepository snapRepository;
@@ -46,5 +47,13 @@ public class SnapLikeService {
             snapLikeRepository.delete(optionalSnapLike.get());
             return "좋아요를 취소하였습니다.";
         }
+    }
+
+    // 스냅에 달린 좋아요 개수 조회
+    public Long findSnapLikeCnt(Long snapId){
+        Snap snap = snapRepository.findById(snapId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
+
+        return snapLikeRepository.countBySnap(snap);
     }
 }
