@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import me.snaptime.common.component.UrlComponent;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.dto.response.userprofile.AlbumSnapResDto;
+import me.snaptime.user.data.dto.response.userprofile.ProfileTagSnapResDto;
 import me.snaptime.user.data.repository.UserCustomRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import static me.snaptime.snap.data.domain.QAlbum.album;
 import static me.snaptime.snap.data.domain.QSnap.snap;
+import static me.snaptime.social.data.domain.QSnapTag.snapTag;
 import static me.snaptime.user.data.domain.QUser.user;
 
 @Repository
@@ -84,6 +86,29 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         }
 
         return albumSnapResDtoList;
+    }
+
+    @Override
+    public List<ProfileTagSnapResDto> findTagSnap(User reqUser) {
+        List<Tuple> tagSnapList = jpaQueryFactory
+                .select(snap.id,snap.user.loginId, snap.fileName, snap.isPrivate, snap.createdDate).distinct()
+                .from(snap)
+                .join(snapTag).on(snapTag.snap.id.eq(snap.id))
+                .where(snapTag.tagUser.loginId.eq(reqUser.getLoginId()))
+                .orderBy(snap.createdDate.desc())
+                .fetch();
+
+        List<ProfileTagSnapResDto> tagSnapUrlList = tagSnapList.stream()
+                .map(tuple -> {
+                    return ProfileTagSnapResDto.builder()
+                            .taggedSnapId(tuple.get(snap.id))
+                            .snapOwnLoginId(tuple.get(snap.user.loginId))
+                            .taggedSnapUrl(urlComponent.makePhotoURL(tuple.get(snap.fileName), tuple.get(snap.isPrivate)))
+                            .build();
+                })
+                .toList();
+
+        return tagSnapUrlList;
     }
 
     // 자신이 자신의 profile을 조회할 때, 자신이 다른사람의 profile을 조회할 때를 구별하기 위함.
