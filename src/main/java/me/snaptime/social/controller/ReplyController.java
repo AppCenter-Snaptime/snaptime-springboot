@@ -32,7 +32,7 @@ public class ReplyController {
 
     @PostMapping("/parent-replies")
     @Operation(summary = "댓글 등록요청", description = "댓글을 등록할 snap의 Id와 댓글내용을 보내주세요.")
-    public ResponseEntity<CommonResponseDto> addParentReply(
+    public ResponseEntity<CommonResponseDto<Void>> addParentReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @RequestBody @Valid AddParentReplyReqDto addParentReplyReqDto){
 
@@ -43,7 +43,7 @@ public class ReplyController {
 
     @PostMapping("/child-replies")
     @Operation(summary = "대댓글 등록요청", description = "대댓글을 등록할 부모댓글의 Id와 태그할 유저의 loginId,댓글내용을 입력해주세요<br>태그할 유저가 없다면 tagLoginId는 보내지 않아도 됩니다.")
-    public ResponseEntity<CommonResponseDto> addChildReply(
+    public ResponseEntity<CommonResponseDto<Void>> addChildReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @RequestBody @Valid AddChildReplyReqDto addChildReplyReqDto){
 
@@ -58,7 +58,7 @@ public class ReplyController {
             @Parameter(name = "pageNum", description = "페이지번호", required = true, example = "1"),
             @Parameter(name = "snapId", description = "조회할 snapId", required = true, example = "1"),
     })
-    public ResponseEntity<CommonResponseDto> readParentReply(
+    public ResponseEntity<CommonResponseDto<List<FindParentReplyResDto>>> readParentReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @RequestParam @NotNull(message = "댓글을 조회할 snapId를 입력해주세요.") final Long snapId,
             @PathVariable final Long pageNum){
@@ -74,7 +74,7 @@ public class ReplyController {
             @Parameter(name = "pageNum", description = "페이지번호", required = true, example = "1"),
             @Parameter(name = "parentReplyId", description = "대댓글을 조회할 부모댓글의Id", required = true, example = "1"),
     })
-    public ResponseEntity<CommonResponseDto> readChildReply(
+    public ResponseEntity<CommonResponseDto<List<FindChildReplyResDto>>> readChildReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @RequestParam @NotNull(message = "부모댓글의 Id를 입력해주세요.") final Long parentReplyId,
             @PathVariable final Long pageNum){
@@ -90,7 +90,7 @@ public class ReplyController {
             @Parameter(name = "parentReplyId", description = "댓글ID", required = true, example = "1"),
             @Parameter(name = "newContent", description = "수정할 댓글내용", required = true, example = "수정된 댓글"),
     })
-    public ResponseEntity<CommonResponseDto> updateParentReply(
+    public ResponseEntity<CommonResponseDto<Void>> updateParentReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final Long parentReplyId,
             @RequestParam final String newContent){
@@ -105,7 +105,7 @@ public class ReplyController {
             @Parameter(name = "childReplyId", description = "eo댓글ID", required = true, example = "1"),
             @Parameter(name = "newContent", description = "수정할 대댓글내용", required = true, example = "수정된 대댓글"),
     })
-    public ResponseEntity<CommonResponseDto> updateChildReply(
+    public ResponseEntity<CommonResponseDto<Void>> updateChildReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final Long childReplyId,
             @RequestParam final String newContent){
@@ -119,7 +119,7 @@ public class ReplyController {
     @Parameters({
             @Parameter(name = "parentReplyId", description = "댓글ID", required = true, example = "1")
     })
-    public ResponseEntity<CommonResponseDto> deleteParentReply(
+    public ResponseEntity<CommonResponseDto<Void>> deleteParentReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final Long parentReplyId){
 
@@ -132,7 +132,7 @@ public class ReplyController {
     @Parameters({
             @Parameter(name = "childReplyId", description = "대댓글ID", required = true, example = "1")
     })
-    public ResponseEntity<CommonResponseDto> deleteChildReply(
+    public ResponseEntity<CommonResponseDto<Void>> deleteChildReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final Long childReplyId){
 
