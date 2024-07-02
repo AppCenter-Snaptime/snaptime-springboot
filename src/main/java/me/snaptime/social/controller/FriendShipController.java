@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import me.snaptime.common.dto.CommonResponseDto;
 import me.snaptime.social.common.FriendSearchType;
 import me.snaptime.social.data.dto.req.AcceptFollowReqDto;
+import me.snaptime.social.data.dto.res.FindFriendResDto;
 import me.snaptime.social.service.FriendShipService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Validated
@@ -31,7 +34,7 @@ public class FriendShipController {
     @PostMapping
     @Operation(summary = "팔로우 요청", description = "팔로우할 유저의 loginId를 입력해주세요.<br>fromUser(요청자)의 팔로잉 +1, toUser의 팔로워 +1")
     @Parameter(name = "fromUserLoginId", description = "팔로우할 유저의 loginId", required = true, example = "seyong")
-    public ResponseEntity<CommonResponseDto> sendFollowReq(
+    public ResponseEntity<CommonResponseDto<Void>> sendFollowReq(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(name = "fromUserLoginId") @NotBlank(message = "팔로우요청을 보낼 유저의 이름을 입력해주세요.")String fromUserLoginId) {
 
@@ -42,7 +45,7 @@ public class FriendShipController {
 
     @PostMapping("/accept")
     @Operation(summary = "팔로우 수락or거절 요청", description = "팔로우요청을 수락or거절할 유저의 이름을 입력해주세요.<br>친구요청 수락(fromUser(수락자)의 팔로잉 +1, toUser의 팔로워 +1)<br>친구요청 거절(fromUser(수락자)의 팔로워 -1, toUser의 팔로잉 -1) ")
-    public ResponseEntity<CommonResponseDto> acceptFollowReq(
+    public ResponseEntity<CommonResponseDto<Void>> acceptFollowReq(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody @Valid AcceptFollowReqDto acceptFollowReqDto) {
 
@@ -54,7 +57,7 @@ public class FriendShipController {
     @DeleteMapping("/{friendShipId}")
     @Operation(summary = "팔로우하는 친구삭제", description = "팔로우요청을 수락or거절할 유저의 이름을 입력해주세요.<br>fromUser(삭제자)의 팔로잉 -1, toUser의 팔로워 -1")
     @Parameter(name = "friendShipId", description = "팔로우 삭제할 친구관계 id", required = true, example = "1")
-    public ResponseEntity<CommonResponseDto> deleteFollow(
+    public ResponseEntity<CommonResponseDto<Void>> deleteFollow(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable final Long friendShipId) {
 
@@ -73,7 +76,7 @@ public class FriendShipController {
             @Parameter(name = "friendSearchType", description = "검색 타입(팔로워 조회 시 FOLLOWER/팔로잉 조회 시 FOLLOWING)으로 입력해주세요.", required = true, example = "FOLLOWER"),
             @Parameter(name = "pageNum", description = "친구조회 페이지번호", required = true, example = "1")
     })
-    public ResponseEntity<CommonResponseDto> findFriendList(
+    public ResponseEntity<CommonResponseDto<List<FindFriendResDto>>> findFriendList(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(name = "friendSearchType") @NotNull(message = "팔로우,팔로잉중 하나를 입력해주세요.") FriendSearchType friendSearchType,
             @RequestParam(name = "searchKeyword",required = false) String searchKeyword,
