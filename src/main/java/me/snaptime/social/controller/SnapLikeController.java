@@ -26,7 +26,7 @@ public class SnapLikeController {
     @Operation(summary = "스냅 좋아요 토글", description = "좋아요 토글할 snapId를 보내주세요<br>" +
                                     "특정 유저가 특정스냅에 좋아요를 눌렀다면 좋아요가 취소됩니다.<br>"+
                                     "좋아요를 누르지 않았다면 좋아요가 추가됩니다.")
-    public ResponseEntity<CommonResponseDto> toggleSnapLike(
+    public ResponseEntity<CommonResponseDto<Void>> toggleSnapLike(
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final Long snapId){
 
