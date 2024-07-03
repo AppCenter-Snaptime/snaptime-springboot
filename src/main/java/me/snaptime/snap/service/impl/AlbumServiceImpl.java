@@ -102,16 +102,14 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public boolean isNonClassificationExist(String uId) {
-        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-        List<Album> foundAlbums = albumRepository.findAlbumsByUser(foundUser);
+    public boolean isNonClassificationExist(User user) {
+        List<Album> foundAlbums = albumRepository.findAlbumsByUser(user);
         return foundAlbums.stream().anyMatch(album -> Objects.equals(album.getName(), nonClassificationName));
     }
 
     @Override
-    public Long findUserNonClassificationId(String uid) {
-        User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-        List<Album> foundAlbums = albumRepository.findAlbumsByUser(foundUser);
+    public Long findUserNonClassificationId(User user) {
+        List<Album> foundAlbums = albumRepository.findAlbumsByUser(user);
         return foundAlbums.stream().filter(album -> Objects.equals(album.getName(), nonClassificationName)).findFirst().map(Album::getId).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
     }
 
@@ -130,9 +128,8 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public Long createNonClassificationAlbum(String uid) {
-        User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-        Album result = albumRepository.save(Album.builder().name(nonClassificationName).user(foundUser).build());
+    public Long createNonClassificationAlbum(User user) {
+        Album result = albumRepository.save(Album.builder().name(nonClassificationName).user(user).build());
         return result.getId();
     }
 

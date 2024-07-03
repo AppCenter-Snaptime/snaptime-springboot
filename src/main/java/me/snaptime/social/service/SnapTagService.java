@@ -23,17 +23,16 @@ public class SnapTagService {
 
     private final SnapTagRepository snapTagRepository;
     private final UserRepository userRepository;
-    private final SnapRepository snapRepository;
 
     @Transactional
     // snap에 태그유저를 등록합니다.
-    public void addTagUser(List<String> tagUserLoginIdList, Long snapId){
+    public void addTagUser(List<String> tagUserLoginIdList, Snap snap){
         snapTagRepository.saveAll(
                 tagUserLoginIdList.stream().map( loginId -> {
                     User tagedUser = userRepository.findByLoginId(loginId)
                             .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
                     return SnapTag.builder()
-                            .snap(snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST)))
+                            .snap(snap)
                             .tagUser(tagedUser)
                             .build();
                 }).collect(Collectors.toList())

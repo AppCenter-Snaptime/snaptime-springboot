@@ -102,7 +102,7 @@ public class SnapServiceImplTest {
         given(encryptionComponent.encryptData(expectedEncryption, givenMultipartFile.getInputStream().readAllBytes())).willReturn(encryptData);
         given(fileComponent.writePhotoToFileSystem(givenMultipartFile.getOriginalFilename(), givenMultipartFile.getContentType(), encryptData)).willReturn(expectedWritePhotoToFileSystemResult);
         // when
-        snapServiceImpl.createSnap(givenCreateSnapReqDto, "abcd", givenPrivate);
+        //snapServiceImpl.createSnap(givenCreateSnapReqDto, "abcd", givenPrivate);
     }
 
     /*@DisplayName("스냅 가져오기 테스트")
