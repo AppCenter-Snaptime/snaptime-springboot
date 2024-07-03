@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.domain.Snap;
-import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.social.data.domain.SnapTag;
 import me.snaptime.social.data.dto.res.FindTagUserResDto;
 import me.snaptime.social.data.repository.snapTag.SnapTagRepository;

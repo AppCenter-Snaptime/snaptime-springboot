@@ -7,8 +7,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.dto.CommonResponseDto;
-import me.snaptime.common.exception.customs.CustomException;
-import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.service.AlbumService;
