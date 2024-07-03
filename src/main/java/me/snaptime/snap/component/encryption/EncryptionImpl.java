@@ -1,10 +1,9 @@
-package me.snaptime.snap.component.impl;
+package me.snaptime.snap.component.encryption;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
-import me.snaptime.snap.component.EncryptionComponent;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.repository.EncryptionRepository;
 import me.snaptime.snap.util.EncryptionUtil;

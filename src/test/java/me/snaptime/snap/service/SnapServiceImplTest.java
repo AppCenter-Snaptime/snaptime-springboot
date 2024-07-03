@@ -1,8 +1,8 @@
 package me.snaptime.snap.service;
 
 import me.snaptime.common.component.UrlComponent;
-import me.snaptime.snap.component.EncryptionComponent;
-import me.snaptime.snap.component.FileComponent;
+import me.snaptime.snap.component.encryption.EncryptionComponent;
+import me.snaptime.snap.component.file.FileComponent;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.domain.Snap;
 import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;

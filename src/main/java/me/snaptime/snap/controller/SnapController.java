@@ -7,14 +7,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.dto.CommonResponseDto;
+import me.snaptime.snap.component.crawling.CrawlingComponent;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
-import me.snaptime.snap.service.AlbumService;
 import me.snaptime.snap.service.SnapService;
-import me.snaptime.social.service.SnapTagService;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
 @RestController
@@ -35,8 +28,7 @@ import java.util.List;
 @Slf4j
 public class SnapController {
     private final SnapService snapService;
-    private final AlbumService albumService;
-    private final SnapTagService snapTagService;
+    private final CrawlingComponent crawlingComponent;
 
     @Operation(summary = "Snap 생성", description = "Empty Value를 보내지마세요")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -49,7 +41,6 @@ public class SnapController {
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uId = userDetails.getUsername();
-        // 먼저 Snap 저장
         Long snapId = snapService.createSnap(createSnapReqDto, uId, isPrivate, tagUserLoginIds, nonClassification);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -102,14 +93,8 @@ public class SnapController {
             final @RequestParam("url") String url,
             final @AuthenticationPrincipal UserDetails userDetails
     ) throws IOException {
-        Document doc = Jsoup.connect(url).header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36").timeout(3000).get();
-        Elements image = doc.select("div.main_cont > img");
-        URL imageURL = new URL("http://haru9.mx2.co.kr" + image.attr("src"));
-        URLConnection connection = imageURL.openConnection();
-        InputStream inputStream = connection.getInputStream();
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(
-                inputStream.readAllBytes()
-        );
+        byte[] image = crawlingComponent.getImageFromHaruFilm(url);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(image);
     }
 
 }
