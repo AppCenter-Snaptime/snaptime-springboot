@@ -20,8 +20,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @Validated
 @RequestMapping("/friends")
@@ -77,7 +75,7 @@ public class FriendShipController {
             @Parameter(name = "friendSearchType", description = "검색 타입(팔로워 조회 시 FOLLOWER/팔로잉 조회 시 FOLLOWING)으로 입력해주세요.", required = true, example = "FOLLOWER"),
             @Parameter(name = "pageNum", description = "친구조회 페이지번호", required = true, example = "1")
     })
-    public ResponseEntity<CommonResponseDto<List<FindFriendResDto>>> findFriendList(
+    public ResponseEntity<CommonResponseDto<FindFriendResDto>> findFriendList(
             @RequestParam(name = "loginId") @NotBlank(message = "친구목록을 조회할 유저의 loginId를 입력해주세요.") String loginId,
             @RequestParam(name = "friendSearchType") @NotNull(message = "팔로우,팔로잉중 하나를 입력해주세요.") FriendSearchType friendSearchType,
             @RequestParam(name = "searchKeyword",required = false) String searchKeyword,

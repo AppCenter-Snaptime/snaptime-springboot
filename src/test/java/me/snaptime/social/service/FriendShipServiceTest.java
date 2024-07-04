@@ -2,6 +2,7 @@ package me.snaptime.social.service;
 
 import com.querydsl.core.Tuple;
 import me.snaptime.common.component.UrlComponent;
+import me.snaptime.common.component.impl.CheckNextPageComponentImpl;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.social.common.FriendSearchType;
@@ -42,6 +43,8 @@ public class FriendShipServiceTest {
     private UserRepository userRepository;
     @Mock
     private UrlComponent urlComponent;
+    @Mock
+    private CheckNextPageComponentImpl checkNextPageComponent;
 
     private FriendShip friendShip;
     private User user1;
@@ -362,21 +365,23 @@ public class FriendShipServiceTest {
                 .willReturn(List.of(tuple1,tuple2,tuple3));
 
         // when
-        List<FindFriendResDto> result = friendShipService
+        FindFriendResDto result = friendShipService
                 .findFriendList("loginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
 
         // then
-        assertThat(result.get(0).loginId()).isEqualTo("testLoginId1");
-        assertThat(result.get(1).loginId()).isEqualTo("testLoginId2");
-        assertThat(result.get(2).loginId()).isEqualTo("testLoginId3");
+        assertThat(result.friendInfoList().get(0).loginId()).isEqualTo("testLoginId1");
+        assertThat(result.friendInfoList().get(1).loginId()).isEqualTo("testLoginId2");
+        assertThat(result.friendInfoList().get(2).loginId()).isEqualTo("testLoginId3");
 
-        assertThat(result.get(0).userName()).isEqualTo("name1");
-        assertThat(result.get(1).userName()).isEqualTo("name2");
-        assertThat(result.get(2).userName()).isEqualTo("name3");
+        assertThat(result.friendInfoList().get(0).userName()).isEqualTo("name1");
+        assertThat(result.friendInfoList().get(1).userName()).isEqualTo("name2");
+        assertThat(result.friendInfoList().get(2).userName()).isEqualTo("name3");
 
-        assertThat(result.get(0).profilePhotoURL()).isEqualTo("profile1");
-        assertThat(result.get(1).profilePhotoURL()).isEqualTo("profile2");
-        assertThat(result.get(2).profilePhotoURL()).isEqualTo("profile3");
+        assertThat(result.friendInfoList().get(0).profilePhotoURL()).isEqualTo("profile1");
+        assertThat(result.friendInfoList().get(1).profilePhotoURL()).isEqualTo("profile2");
+        assertThat(result.friendInfoList().get(2).profilePhotoURL()).isEqualTo("profile3");
+
+        assertThat(result.hasNextPage()).isFalse();
 
         verify(userRepository,times(1)).findByLoginId(any(String.class));
         verify(urlComponent,times(3)).makeProfileURL(any(Long.class));

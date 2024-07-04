@@ -36,7 +36,7 @@ public class ParentReplyPagingRepositoryImpl implements ParentReplyPagingReposit
                 .where(parentReply.snap.id.eq(snapId))
                 .orderBy(createOrderSpecifier())
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize()) //페이지의 크기
+                .limit(pageable.getPageSize()+1) //페이지의 크기
                 .fetch();
 
         if(result.size() == 0)
