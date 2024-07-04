@@ -67,6 +67,7 @@ public enum ExceptionCode {
 
     // Jsoup Action
     URL_HAVING_PROBLEM(HttpStatus.BAD_REQUEST, "문제가 있는 URL입니다.");
+
     private final HttpStatus status;
     private final String message;
     ExceptionCode(HttpStatus status, String message) {
