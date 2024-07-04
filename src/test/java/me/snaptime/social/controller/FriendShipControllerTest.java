@@ -335,6 +335,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","FOLLOWING")
+                        .param("loginId","tempLoginId")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.msg").value("친구조회가 완료되었습니다."))
@@ -353,6 +354,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","FOLLOWER")
+                        .param("loginId","tempLoginId")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.msg").value("친구조회가 완료되었습니다."))
@@ -371,6 +373,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","FOLLOWING")
+                        .param("loginId","tempLoginId")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -390,6 +393,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","TEST")
+                        .param("loginId","tempLoginId")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -409,6 +413,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}","test")
                         .param("friendSearchType","FOLLOWER")
+                        .param("loginId","tempLoginId")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -428,6 +433,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","")
+                        .param("loginId","tempLoginId")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -449,6 +455,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","FOLLOWER")
+                        .param("loginId","tempLoginId")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
