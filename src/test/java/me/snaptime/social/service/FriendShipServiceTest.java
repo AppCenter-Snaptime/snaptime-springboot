@@ -2,7 +2,7 @@ package me.snaptime.social.service;
 
 import com.querydsl.core.Tuple;
 import me.snaptime.common.component.UrlComponent;
-import me.snaptime.common.component.impl.CheckNextPageComponentImpl;
+import me.snaptime.common.component.impl.NextPageChecker;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.social.common.FriendSearchType;
@@ -44,7 +44,7 @@ public class FriendShipServiceTest {
     @Mock
     private UrlComponent urlComponent;
     @Mock
-    private CheckNextPageComponentImpl checkNextPageComponent;
+    private NextPageChecker nextPageChecker;
 
     private FriendShip friendShip;
     private User user1;

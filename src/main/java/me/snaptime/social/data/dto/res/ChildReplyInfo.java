@@ -16,10 +16,11 @@ public record ChildReplyInfo(
         String tagUserLoginId,
         String tagUserName,
         Long parentReplyId,
-        Long childReplyId
+        Long childReplyId,
+        String timeAgo
 ) {
 
-    public static ChildReplyInfo toDto(Tuple result, String profilePhotoURL){
+    public static ChildReplyInfo toDto(Tuple result, String profilePhotoURL,String timeAgo){
         QUser tagUser = new QUser("tagUser");
         QUser writerUser = new QUser("writerUser");
 
@@ -32,6 +33,7 @@ public record ChildReplyInfo(
                 .tagUserName(result.get(tagUser.name))
                 .parentReplyId(result.get(childReply.parentReply.parentReplyId))
                 .childReplyId(result.get(childReply.childReplyId))
+                .timeAgo(timeAgo)
                 .build();
     }
 }

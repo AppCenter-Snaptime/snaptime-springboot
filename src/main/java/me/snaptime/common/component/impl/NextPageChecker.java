@@ -8,7 +8,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class CheckNextPageComponentImpl {
+public class NextPageChecker {
 
     public boolean hasNextPage(List<Tuple> resultList, Long pageSize){
 

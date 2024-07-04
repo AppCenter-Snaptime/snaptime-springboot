@@ -2,7 +2,7 @@ package me.snaptime.snap.service;
 
 import com.querydsl.core.Tuple;
 import me.snaptime.common.component.UrlComponent;
-import me.snaptime.common.component.impl.CheckNextPageComponentImpl;
+import me.snaptime.common.component.impl.NextPageChecker;
 import me.snaptime.snap.data.dto.res.FindSnapPagingResDto;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.impl.SnapPagingServiceImpl;
@@ -44,7 +44,7 @@ public class SnapPagingServiceImplTest {
     @Mock
     private SnapLikeService snapLikeService;
     @Mock
-    private CheckNextPageComponentImpl checkNextPageComponent;
+    private NextPageChecker nextPageChecker;
     private User reqUser;
 
     @BeforeEach

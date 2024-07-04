@@ -3,7 +3,7 @@ package me.snaptime.social.service;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.component.UrlComponent;
-import me.snaptime.common.component.impl.CheckNextPageComponentImpl;
+import me.snaptime.common.component.impl.NextPageChecker;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.social.common.FriendSearchType;
@@ -33,7 +33,7 @@ public class FriendShipService {
     private final FriendShipRepository friendShipRepository;
     private final UserRepository userRepository;
     private final UrlComponent urlComponent;
-    private final CheckNextPageComponentImpl checkNextPageComponent;
+    private final NextPageChecker nextPageChecker;
 
     // 친구요청 전송(fromUser(요청자)의 팔로잉 +1, toUser의 팔로워 +1)
     @Transactional
@@ -121,7 +121,7 @@ public class FriendShipService {
 
         User reqUser = findUserByLoginId(loginId);
         List<Tuple> result = friendShipRepository.findFriendList(reqUser,searchType,pageNum,searchKeyword);
-        boolean hasNextPage = checkNextPageComponent.hasNextPage(result,20L);
+        boolean hasNextPage = nextPageChecker.hasNextPage(result,20L);
         if(hasNextPage)
             result.remove(20);
 

@@ -3,7 +3,8 @@ package me.snaptime.social.service;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.component.UrlComponent;
-import me.snaptime.common.component.impl.CheckNextPageComponentImpl;
+import me.snaptime.common.component.impl.NextPageChecker;
+import me.snaptime.common.component.impl.TimeAgoCalculator;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.domain.Snap;
@@ -27,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.snaptime.social.data.domain.QChildReply.childReply;
+import static me.snaptime.social.data.domain.QParentReply.parentReply;
 import static me.snaptime.user.data.domain.QUser.user;
 
 @Service
@@ -39,7 +42,8 @@ public class ReplyService {
     private final UserRepository userRepository;
     private final SnapRepository snapRepository;
     private final UrlComponent urlComponent;
-    private final CheckNextPageComponentImpl checkNextPageComponent;
+    private final NextPageChecker nextPageChecker;
+    private final TimeAgoCalculator timeAgoCalculator;
 
     @Transactional
     public void addParentReply(String loginId, AddParentReplyReqDto addParentReplyReqDto){
@@ -79,14 +83,15 @@ public class ReplyService {
     public FindParentReplyResDto readParentReply(String loginId, Long snapId, Long pageNum){
 
         List<Tuple> result = parentReplyRepository.findReplyList(loginId,snapId,pageNum);
-        boolean hasNextPage = checkNextPageComponent.hasNextPage(result,20L);
+        boolean hasNextPage = nextPageChecker.hasNextPage(result,20L);
         if(hasNextPage)
             result.remove(20);
 
         List<ParentReplyInfo> parentReplyInfoList = result.stream().map(entity ->
         {
             String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.id));
-            return ParentReplyInfo.toDto(entity,profilePhotoURL);
+            String timeAgo = timeAgoCalculator.findTimeAgo(entity.get(parentReply.lastModifiedDate));
+            return ParentReplyInfo.toDto(entity,profilePhotoURL,timeAgo);
         }).collect(Collectors.toList());
 
         return FindParentReplyResDto.toDto(parentReplyInfoList, hasNextPage);
@@ -96,14 +101,16 @@ public class ReplyService {
 
         QUser writerUser = new QUser("writerUser");
         List<Tuple> result = childReplyRepository.findReplyList(loginId,parentReplyId,pageNum);
-        boolean hasNextPage = checkNextPageComponent.hasNextPage(result,20L);
+        boolean hasNextPage = nextPageChecker.hasNextPage(result,20L);
         if(hasNextPage)
             result.remove(20);
 
         List<ChildReplyInfo> childReplyInfoList = result.stream().map(entity ->
         {
             String profilePhotoURL = urlComponent.makeProfileURL(entity.get(writerUser.profilePhoto.id));
-            return ChildReplyInfo.toDto(entity,profilePhotoURL);
+            String timeAgo = timeAgoCalculator.findTimeAgo(entity.get(childReply.lastModifiedDate));
+
+            return ChildReplyInfo.toDto(entity,profilePhotoURL,timeAgo);
         }).collect(Collectors.toList());
 
         return FindChildReplyResDto.toDto(childReplyInfoList, hasNextPage);

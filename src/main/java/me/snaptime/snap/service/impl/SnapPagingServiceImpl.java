@@ -3,7 +3,7 @@ package me.snaptime.snap.service.impl;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.component.UrlComponent;
-import me.snaptime.common.component.impl.CheckNextPageComponentImpl;
+import me.snaptime.common.component.impl.NextPageChecker;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.dto.res.FindSnapPagingResDto;
@@ -32,7 +32,7 @@ public class SnapPagingServiceImpl {
     private final UrlComponent urlComponent;
     private final SnapTagService snapTagService;
     private final SnapLikeService snapLikeService;
-    private final CheckNextPageComponentImpl checkNextPageComponent;
+    private final NextPageChecker nextPageChecker;
 
     // snap 페이징 조회
     public FindSnapPagingResDto findSnapPaging(String loginId, Long pageNum){
@@ -40,7 +40,7 @@ public class SnapPagingServiceImpl {
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         List<Tuple> result = snapRepository.findSnapPaging(loginId,pageNum,reqUser);
-        boolean hasNextPage = checkNextPageComponent.hasNextPage(result,10L);
+        boolean hasNextPage = nextPageChecker.hasNextPage(result,10L);
         if(hasNextPage)
             result.remove(10);
 

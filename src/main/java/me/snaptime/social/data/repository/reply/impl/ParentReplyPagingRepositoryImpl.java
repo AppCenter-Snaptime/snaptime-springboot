@@ -29,7 +29,7 @@ public class ParentReplyPagingRepositoryImpl implements ParentReplyPagingReposit
 
         List<Tuple> result =  jpaQueryFactory.select(
                         user.loginId,user.profilePhoto.id,user.name,
-                        parentReply.content,parentReply.parentReplyId
+                        parentReply.content,parentReply.parentReplyId,parentReply.lastModifiedDate
                 )
                 .from(parentReply)
                 .join(user).on(parentReply.user.id.eq(user.id))
