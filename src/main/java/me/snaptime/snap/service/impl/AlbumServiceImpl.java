@@ -55,8 +55,9 @@ public class AlbumServiceImpl implements AlbumService {
     @Transactional(readOnly = true)
     public FindAlbumResDto findAlbum(String uId, Long album_id) {
         Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
+        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         try {
-            isUserHavePermission(uId, album_id);
+            isUserHavePermission(foundUser, album_id);
         } catch (CustomException e) {
             /*
             * 유저가 없거나, 권한이 없으면 공개인 것만 유저에게 반환한다.
@@ -143,17 +144,17 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     @Transactional
     public void removeAlbum(String uId, Long album_id) {
-        isUserHavePermission(uId, album_id);
+        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        isUserHavePermission(foundUser, album_id);
     }
 
     /*
     * 인자로 uId와 album을 받아 album을 생성한 사용자가 현재 요청을 보낸 사용자와 일치하는지 확인하는 메소드입니다.
     * */
     @Override
-    public void isUserHavePermission(String uId, Long album_id) {
+    public void isUserHavePermission(User user, Long album_id) {
         Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
-        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-        if(!(Objects.equals(foundAlbum.getUser().getId(), foundUser.getId()))){
+        if(!(Objects.equals(foundAlbum.getUser().getId(), user.getId()))){
             throw new CustomException(ExceptionCode.ALBUM_USER_NOT_MATCH);
         }
     }

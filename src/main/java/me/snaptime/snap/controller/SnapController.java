@@ -41,7 +41,7 @@ public class SnapController {
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uId = userDetails.getUsername();
-        Long snapId = snapService.createSnap(createSnapReqDto, uId, isPrivate, tagUserLoginIds, nonClassification);
+        Long snapId = snapService.createSnap(createSnapReqDto, uId, isPrivate, tagUserLoginIds, nonClassification, album_id);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CommonResponseDto<>(

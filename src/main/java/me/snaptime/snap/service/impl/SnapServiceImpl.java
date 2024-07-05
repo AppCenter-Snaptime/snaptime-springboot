@@ -43,7 +43,7 @@ public class SnapServiceImpl implements SnapService {
     private final AlbumService albumService;
 
     @Override
-    public Long createSnap(CreateSnapReqDto createSnapReqDto, String userUid, boolean isPrivate, List<String> tagUserLoginIds, boolean nonClassification) {
+    public Long createSnap(CreateSnapReqDto createSnapReqDto, String userUid, boolean isPrivate, List<String> tagUserLoginIds, boolean nonClassification, Long album_id) {
         User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         WritePhotoToFileSystemResult writePhotoToFileSystemResult = savePhotoToFileSystem(foundUser, createSnapReqDto.multipartFile(), isPrivate);
         Snap savedSnap = snapRepository.save(
@@ -62,12 +62,26 @@ public class SnapServiceImpl implements SnapService {
             snapTagService.addTagUser(tagUserLoginIds, savedSnap);
         }
 
-        // 사용자가 앨범을 선택하지 않고 요청을 보낼 경우
+        // 사용자가 앨범 선택을 하지 않고 요청을 보낼 경우
         if (nonClassification) {
             // non-classification 앨범에 스냅을 추가함
             processSnapForNonClassification(savedSnap, foundUser);
         } else {
-
+            if(album_id == null) {
+                throw new CustomException(ExceptionCode.ALBUM_ID_IS_NOT_GIVEN);
+            }
+            // 사용자가 앨범 선택을 하고 요청을 보낼 경우
+            // 사용자가 보낸 앨범 id가 유효한지 확인
+            if (albumService.isAlbumExistById(album_id)) {
+                // 사용자가 만든 앨범인지 확인 (통과하지 못할 시 예외가 발생함)
+                albumService.isUserHavePermission(foundUser, album_id);
+                // 위 구문을 실행하는데 문제가 없다면, 앨범 id를 Snap과 연관관계 맺어줌
+                makeRelationSnapAndAlbum(savedSnap, album_id);
+            } else {
+                // 사용자가 앨범이 존재한다고 하고, 이를 요청에 포함시켰으나, 앨범이 유효하지 않을경우
+                // non-classification에 스냅을 추가함
+                processSnapForNonClassification(savedSnap, foundUser);
+            }
         }
 
         return savedSnap.getId();
