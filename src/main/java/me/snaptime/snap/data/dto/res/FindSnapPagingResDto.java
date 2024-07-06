@@ -2,8 +2,10 @@ package me.snaptime.snap.data.dto.res;
 
 import com.querydsl.core.Tuple;
 import lombok.Builder;
+import me.snaptime.social.data.dto.res.FindTagUserResDto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static me.snaptime.snap.data.domain.QSnap.snap;
 import static me.snaptime.user.data.domain.QUser.user;
@@ -17,10 +19,13 @@ public record FindSnapPagingResDto(
         LocalDateTime snapModifiedDate,
         String loginId,
         String profilePhotoURL,
-        String userName
+        String userName,
+        List<FindTagUserResDto> findTagUserList,
+        Long likeCnt
 
 ) {
-    public static FindSnapPagingResDto toDto(Tuple result, String profilePhotoURL, String snapPhotoURL){
+    public static FindSnapPagingResDto toDto(Tuple result, String profilePhotoURL, String snapPhotoURL,
+                                             List<FindTagUserResDto> findTagUserList, Long likeCnt){
         return FindSnapPagingResDto.builder()
                 .snapId(result.get(snap.id))
                 .oneLineJournal(String.valueOf(result.get(snap.oneLineJournal)))
@@ -30,6 +35,8 @@ public record FindSnapPagingResDto(
                 .loginId(result.get(user.loginId))
                 .profilePhotoURL(profilePhotoURL)
                 .userName(result.get(user.name))
+                .findTagUserList(findTagUserList)
+                .likeCnt(likeCnt)
                 .build();
     }
 }

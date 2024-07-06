@@ -5,6 +5,8 @@ import me.snaptime.common.component.UrlComponent;
 import me.snaptime.snap.data.dto.res.FindSnapPagingResDto;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.impl.SnapPagingServiceImpl;
+import me.snaptime.social.service.SnapLikeService;
+import me.snaptime.social.service.SnapTagService;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +38,10 @@ public class SnapPagingServiceImplTest {
     private SnapRepository snapRepository;
     @Mock
     private UrlComponent urlComponent;
+    @Mock
+    private SnapTagService snapTagService;
+    @Mock
+    private SnapLikeService snapLikeService;
     private User reqUser;
 
     @BeforeEach
@@ -93,6 +99,7 @@ public class SnapPagingServiceImplTest {
 
         verify(snapRepository,times(1)).findSnapPaging(any(String.class),any(Long.class),any(User.class));
         verify(userRepository,times(1)).findByLoginId(any(String.class));
+
     }
 
 }

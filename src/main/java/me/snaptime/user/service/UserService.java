@@ -8,9 +8,7 @@ import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.common.jwt.JwtProvider;
 import me.snaptime.snap.data.repository.SnapRepository;
-import me.snaptime.social.common.FriendStatus;
 import me.snaptime.social.data.dto.res.FriendCntResDto;
-import me.snaptime.social.data.repository.friendShip.FriendShipRepository;
 import me.snaptime.social.service.FriendShipService;
 import me.snaptime.user.data.domain.ProfilePhoto;
 import me.snaptime.user.data.domain.User;
@@ -21,6 +19,7 @@ import me.snaptime.user.data.dto.response.SignInResDto;
 import me.snaptime.user.data.dto.response.UserResDto;
 import me.snaptime.user.data.dto.response.userprofile.AlbumSnapResDto;
 import me.snaptime.user.data.dto.response.userprofile.ProfileCntResDto;
+import me.snaptime.user.data.dto.response.userprofile.ProfileTagSnapResDto;
 import me.snaptime.user.data.dto.response.userprofile.UserProfileResDto;
 import me.snaptime.user.data.repository.ProfilePhotoRepository;
 import me.snaptime.user.data.repository.UserRepository;
@@ -106,11 +105,7 @@ public class UserService {
 
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        if(user.getLoginId().equals(userUpdateDto.loginId())){
-            throw new CustomException(ExceptionCode.SAME_LOGIN_ID);
-        }
-
-        if(userRepository.findByLoginId(userUpdateDto.loginId()).isPresent()){
+        if(!loginId.equals(userUpdateDto.loginId()) && userRepository.findByLoginId(userUpdateDto.loginId()).isPresent()){
             throw new CustomException(ExceptionCode.LOGIN_ID_ALREADY_EXIST);
         }
 
@@ -155,9 +150,7 @@ public class UserService {
     public List<AlbumSnapResDto> getAlbumSnap(String yourLoginId, String targetLoginId){
         User targetUser = userRepository.findByLoginId(targetLoginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        List<AlbumSnapResDto> albumSnapResDtoList = new ArrayList<>();
-        //자신이 자신의 profile을 조회하면 true, 다른 사람의 prfoile을 조회하면, false 를 매개변수로 전달한다
-        albumSnapResDtoList = userRepository.findAlbumSnap(targetUser,yourLoginId.equals(targetLoginId));
+        List<AlbumSnapResDto> albumSnapResDtoList = userRepository.findAlbumSnap(targetUser,yourLoginId.equals(targetLoginId));
         
         return albumSnapResDtoList;
     }
@@ -182,5 +175,13 @@ public class UserService {
                 .followerCnt(friendCntResDto.followerCnt())
                 .followingCnt(friendCntResDto.followingCnt())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProfileTagSnapResDto> getTagSnap(String loginId){
+        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        List<ProfileTagSnapResDto> profileTagSnapList = userRepository.findTagSnap(user);
+
+        return profileTagSnapList;
     }
 }

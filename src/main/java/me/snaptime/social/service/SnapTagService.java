@@ -40,7 +40,11 @@ public class SnapTagService {
 
     @Transactional
     // snap에 태그된 유저를 삭제합니다.
-    public void deleteTagUser(List<String> tagUserLoginIdList, Snap snap){
+    public void deleteTagUser(List<String> tagUserLoginIdList, Long snapId){
+
+        Snap snap = snapRepository.findById(snapId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
+
         snapTagRepository.deleteAll(
                 tagUserLoginIdList.stream().map( loginId -> {
                     User user = userRepository.findByLoginId(loginId)
@@ -53,9 +57,11 @@ public class SnapTagService {
     }
 
     // 스냅에 태그된 유저들의 정보를 가져옵니다.
-    public List<FindTagUserResDto> findTagUser(Snap snap){
-        List<SnapTag> snapTagList = snapTagRepository.findBySnap(snap);
+    public List<FindTagUserResDto> findTagUserList(Long snapId){
+        Snap snap = snapRepository.findById(snapId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
 
+        List<SnapTag> snapTagList = snapTagRepository.findBySnap(snap);
         return snapTagList.stream().map( snapTag -> {
 
             return FindTagUserResDto.toDto(snapTag);

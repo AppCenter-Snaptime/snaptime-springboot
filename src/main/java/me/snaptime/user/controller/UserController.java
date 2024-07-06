@@ -15,6 +15,7 @@ import me.snaptime.user.data.dto.response.SignInResDto;
 import me.snaptime.user.data.dto.response.UserResDto;
 import me.snaptime.user.data.dto.response.userprofile.AlbumSnapResDto;
 import me.snaptime.user.data.dto.response.userprofile.ProfileCntResDto;
+import me.snaptime.user.data.dto.response.userprofile.ProfileTagSnapResDto;
 import me.snaptime.user.data.dto.response.userprofile.UserProfileResDto;
 import me.snaptime.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -148,6 +149,19 @@ public class UserController {
                 new CommonResponseDto<>(
                         "유저 팔로워, 팔로잉 수 조회를 성공적으로 완료하였습니다.",
                         profileCntResDto
+                ));
+    }
+
+    @Operation(summary = "자신이 태그된 snap 들 조회", description = "자신의 Token 을 통하여 자신이 태그된 snap 들을 조회합니다" +
+            "<br> snap id 기준 내림차순으로 조회합니다.(최근 snap 이 제일 먼저 조회)")
+    @GetMapping("/profile/tag")
+    public ResponseEntity<CommonResponseDto<List<ProfileTagSnapResDto>>> getTagSnap(@AuthenticationPrincipal UserDetails principal){
+
+        List<ProfileTagSnapResDto> profileTagSnapResDto = userService.getTagSnap(principal.getUsername());
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "유저가 태그된 Snap 들을 성공적으로 조회하였습니다.",
+                        profileTagSnapResDto
                 ));
     }
 
