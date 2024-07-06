@@ -34,14 +34,13 @@ public class SnapController {
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CommonResponseDto<Long>> createSnap(
             final @RequestParam(value = "isPrivate") boolean isPrivate,
-            final @RequestParam(value = "nonClassification") boolean nonClassification,
             final @RequestParam(value = "albumId", required = false) Long album_id,
             final @RequestParam(value = "tagUserLoginIds", required = false) List<String> tagUserLoginIds,
             final @ModelAttribute CreateSnapReqDto createSnapReqDto,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uId = userDetails.getUsername();
-        Long snapId = snapService.createSnap(createSnapReqDto, uId, isPrivate, tagUserLoginIds, nonClassification, album_id);
+        Long snapId = snapService.createSnap(createSnapReqDto, uId, isPrivate, tagUserLoginIds, album_id);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CommonResponseDto<>(
