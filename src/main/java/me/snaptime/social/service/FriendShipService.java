@@ -3,6 +3,7 @@ package me.snaptime.social.service;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.component.UrlComponent;
+import me.snaptime.common.component.impl.NextPageChecker;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.social.common.FriendSearchType;
@@ -11,6 +12,7 @@ import me.snaptime.social.data.domain.FriendShip;
 import me.snaptime.social.data.dto.req.AcceptFollowReqDto;
 import me.snaptime.social.data.dto.res.FindFriendResDto;
 import me.snaptime.social.data.dto.res.FriendCntResDto;
+import me.snaptime.social.data.dto.res.FriendInfo;
 import me.snaptime.social.data.repository.friendShip.FriendShipRepository;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
@@ -31,6 +33,7 @@ public class FriendShipService {
     private final FriendShipRepository friendShipRepository;
     private final UserRepository userRepository;
     private final UrlComponent urlComponent;
+    private final NextPageChecker nextPageChecker;
 
     // 친구요청 전송(fromUser(요청자)의 팔로잉 +1, toUser의 팔로워 +1)
     @Transactional
@@ -114,15 +117,21 @@ public class FriendShipService {
     }
     
     // 팔로워 or 팔로잉 친구리스트 조회
-    public List<FindFriendResDto> findFriendList(String loginId, Long pageNum, FriendSearchType searchType, String searchKeyword){
+    public FindFriendResDto findFriendList(String loginId, Long pageNum, FriendSearchType searchType, String searchKeyword){
 
         User reqUser = findUserByLoginId(loginId);
         List<Tuple> result = friendShipRepository.findFriendList(reqUser,searchType,pageNum,searchKeyword);
+        boolean hasNextPage = nextPageChecker.hasNextPage(result,20L);
+        if(hasNextPage)
+            result.remove(20);
 
-        return result.stream().map(entity -> {
+        List<FriendInfo> friendInfoList = result.stream().map(entity ->
+        {
             String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.id));
-            return FindFriendResDto.toDto(entity,profilePhotoURL);
+            return FriendInfo.toDto(entity,profilePhotoURL);
         }).collect(Collectors.toList());
+
+        return FindFriendResDto.toDto(friendInfoList, hasNextPage);
     }
 
     // 유저 프로필 조회 시 팔로잉,팔로워 수를 반환하는 메소드

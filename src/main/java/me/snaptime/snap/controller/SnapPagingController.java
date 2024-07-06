@@ -13,13 +13,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/snaps")
 @RequiredArgsConstructor
 @Tag(name = "[Social] Snap API")
 public class SnapPagingController {
@@ -28,8 +24,8 @@ public class SnapPagingController {
 
     @Operation(summary = "Snap 조회", description = "커뮤니티에서 Snap을 10개씩 페이징조회합니다.")
     @Parameter(name = "pageNum", description = "Snap페이지 번호를 보내주세요")
-    @GetMapping("/community/{pageNum}")
-    public ResponseEntity<CommonResponseDto<List<FindSnapPagingResDto>>> findSnapPaging(
+    @GetMapping("/community/snaps/{pageNum}")
+    public ResponseEntity<CommonResponseDto<FindSnapPagingResDto>> findSnapPaging(
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final Long pageNum) {
 

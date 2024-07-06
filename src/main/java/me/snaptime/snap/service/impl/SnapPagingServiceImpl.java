@@ -3,9 +3,11 @@ package me.snaptime.snap.service.impl;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.component.UrlComponent;
+import me.snaptime.common.component.impl.NextPageChecker;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.dto.res.FindSnapPagingResDto;
+import me.snaptime.snap.data.dto.res.SnapPagingInfo;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.social.service.SnapLikeService;
 import me.snaptime.social.service.SnapTagService;
@@ -30,24 +32,30 @@ public class SnapPagingServiceImpl {
     private final UrlComponent urlComponent;
     private final SnapTagService snapTagService;
     private final SnapLikeService snapLikeService;
+    private final NextPageChecker nextPageChecker;
 
     // snap 페이징 조회
-    public List<FindSnapPagingResDto> findSnapPaging(String loginId, Long pageNum){
+    public FindSnapPagingResDto findSnapPaging(String loginId, Long pageNum){
         User reqUser = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         List<Tuple> result = snapRepository.findSnapPaging(loginId,pageNum,reqUser);
+        boolean hasNextPage = nextPageChecker.hasNextPage(result,10L);
+        if(hasNextPage)
+            result.remove(10);
 
-        return result.stream().map(entity -> {
+        List<SnapPagingInfo> snapPagingInfoList = result.stream().map(entity ->
+        {
             Long snapId = entity.get(snap.id);
             String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.id));
             String snapPhotoURL = urlComponent.makePhotoURL(entity.get(snap.fileName),false);
 
-            return FindSnapPagingResDto
-                    .toDto(entity,profilePhotoURL,snapPhotoURL,
-                            snapTagService.findTagUserList(snapId),
-                            snapLikeService.findSnapLikeCnt(snapId));
-                }).collect(Collectors.toList());
+            return SnapPagingInfo.toDto(entity,profilePhotoURL,snapPhotoURL,
+                    snapTagService.findTagUserList(snapId),
+                    snapLikeService.findSnapLikeCnt(snapId));
+        }).collect(Collectors.toList());
+
+        return FindSnapPagingResDto.toDto(snapPagingInfoList, hasNextPage);
     }
 
 }

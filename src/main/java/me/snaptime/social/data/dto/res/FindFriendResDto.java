@@ -1,25 +1,19 @@
 package me.snaptime.social.data.dto.res;
 
-import com.querydsl.core.Tuple;
 import lombok.Builder;
 
-import static me.snaptime.social.data.domain.QFriendShip.friendShip;
-import static me.snaptime.user.data.domain.QUser.user;
+import java.util.List;
 
 @Builder
 public record FindFriendResDto(
 
-        String loginId,
-        String profilePhotoURL,
-        String userName,
-        Long friendShipId
+        List<FriendInfo> friendInfoList,
+        boolean hasNextPage
 ) {
-    public static FindFriendResDto toDto(Tuple result,String profilePhotoURL){
+    public static FindFriendResDto toDto(List<FriendInfo> friendInfoList, boolean hasNextPage){
         return FindFriendResDto.builder()
-                .loginId(result.get(user.loginId))
-                .profilePhotoURL(profilePhotoURL)
-                .userName(result.get(user.name))
-                .friendShipId(result.get(friendShip.friendShipId))
+                .friendInfoList(friendInfoList)
+                .hasNextPage(hasNextPage)
                 .build();
     }
 }

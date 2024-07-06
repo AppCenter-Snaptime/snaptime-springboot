@@ -1,27 +1,19 @@
 package me.snaptime.social.data.dto.res;
 
-import com.querydsl.core.Tuple;
 import lombok.Builder;
 
-import static me.snaptime.social.data.domain.QParentReply.parentReply;
-import static me.snaptime.user.data.domain.QUser.user;
+import java.util.List;
 
 @Builder
 public record FindParentReplyResDto(
 
-        String writerLoginId,
-        String writerProfilePhotoURL,
-        String writerUserName,
-        String content,
-        Long replyId
+        List<ParentReplyInfo> parentReplyInfoList,
+        boolean hasNextPage
 ) {
-    public static FindParentReplyResDto toDto(Tuple result, String profilePhotoURL){
+    public static FindParentReplyResDto toDto(List<ParentReplyInfo> parentReplyInfoList, boolean hasNextPage){
         return FindParentReplyResDto.builder()
-                .writerLoginId(result.get(user.loginId))
-                .writerProfilePhotoURL(profilePhotoURL)
-                .writerUserName(result.get(user.name))
-                .content(result.get(parentReply.content))
-                .replyId(result.get(parentReply.parentReplyId))
+                .parentReplyInfoList(parentReplyInfoList)
+                .hasNextPage(hasNextPage)
                 .build();
     }
 }

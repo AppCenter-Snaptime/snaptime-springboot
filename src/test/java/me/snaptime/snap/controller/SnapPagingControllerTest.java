@@ -45,7 +45,7 @@ public class SnapPagingControllerTest {
         //given
 
         //when, then
-        this.mockMvc.perform(get("/snaps/community/{pageNum}",1L)
+        this.mockMvc.perform(get("/community/snaps/{pageNum}",1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.msg").value("스냅 페이징조회가 완료되었습니다."))
@@ -61,7 +61,7 @@ public class SnapPagingControllerTest {
         //given
 
         //when, then
-        this.mockMvc.perform(get("/snaps/community/{pageNum}","test")
+        this.mockMvc.perform(get("/community/snaps/{pageNum}","test")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("pageNum이 Long타입이여야 합니다."))
@@ -79,7 +79,7 @@ public class SnapPagingControllerTest {
                 .willThrow(new CustomException(ExceptionCode.PAGE_NOT_FOUND));
 
         //when, then
-        this.mockMvc.perform(get("/snaps/community/{pageNum}",1L)
+        this.mockMvc.perform(get("/community/snaps/{pageNum}",1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("존재하지 않는 페이지입니다."))

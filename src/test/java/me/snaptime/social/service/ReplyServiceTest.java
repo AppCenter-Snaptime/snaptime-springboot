@@ -1,5 +1,7 @@
 package me.snaptime.social.service;
 
+import me.snaptime.common.component.impl.NextPageChecker;
+import me.snaptime.common.component.impl.TimeAgoCalculator;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.domain.Snap;
@@ -42,6 +44,10 @@ public class ReplyServiceTest {
     private UserRepository userRepository;
     @Mock
     private SnapRepository snapRepository;
+    @Mock
+    private NextPageChecker nextPageChecker;
+    @Mock
+    private TimeAgoCalculator timeAgoCalculator;
 
     private User user;
     private Snap snap;

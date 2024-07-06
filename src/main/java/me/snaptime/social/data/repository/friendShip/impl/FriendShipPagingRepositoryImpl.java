@@ -29,7 +29,7 @@ public class FriendShipPagingRepositoryImpl implements FriendShipPagingRepositor
 
     @Override
     public List<Tuple> findFriendList(User reqUser, FriendSearchType searchType, Long pageNum, String searchKeyword) {
-        Pageable pageable= PageRequest.of((int) (pageNum-1),30);
+        Pageable pageable= PageRequest.of((int) (pageNum-1),20);
 
         List<Tuple> result =  jpaQueryFactory.select(
                         user.loginId,user.profilePhoto.id,user.name,friendShip.friendShipId
@@ -39,7 +39,7 @@ public class FriendShipPagingRepositoryImpl implements FriendShipPagingRepositor
                 .where(getWhereBuilder(reqUser, searchType,searchKeyword))
                 .orderBy(createOrderSpecifier())
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize()) //페이지의 크기
+                .limit(pageable.getPageSize()+1) //페이지의 크기
                 .fetch();
 
         if(result.size() == 0)

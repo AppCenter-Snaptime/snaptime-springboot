@@ -20,8 +20,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @Validated
 @RequiredArgsConstructor
@@ -58,14 +56,13 @@ public class ReplyController {
             @Parameter(name = "pageNum", description = "페이지번호", required = true, example = "1"),
             @Parameter(name = "snapId", description = "조회할 snapId", required = true, example = "1"),
     })
-    public ResponseEntity<CommonResponseDto<List<FindParentReplyResDto>>> readParentReply(
+    public ResponseEntity<CommonResponseDto<FindParentReplyResDto>> readParentReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @RequestParam @NotNull(message = "댓글을 조회할 snapId를 입력해주세요.") final Long snapId,
             @PathVariable final Long pageNum){
 
-        List<FindParentReplyResDto> result = replyService.readParentReply(userDetails.getUsername(),snapId,pageNum);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new CommonResponseDto("댓글조회 성공했습니다.",result));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto("댓글조회 성공했습니다.",
+                replyService.readParentReply(userDetails.getUsername(),snapId,pageNum)));
     }
 
     @GetMapping("/child-replies/{pageNum}")
@@ -74,14 +71,13 @@ public class ReplyController {
             @Parameter(name = "pageNum", description = "페이지번호", required = true, example = "1"),
             @Parameter(name = "parentReplyId", description = "대댓글을 조회할 부모댓글의Id", required = true, example = "1"),
     })
-    public ResponseEntity<CommonResponseDto<List<FindChildReplyResDto>>> readChildReply(
+    public ResponseEntity<CommonResponseDto<FindChildReplyResDto>> readChildReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @RequestParam @NotNull(message = "부모댓글의 Id를 입력해주세요.") final Long parentReplyId,
             @PathVariable final Long pageNum){
 
-        List<FindChildReplyResDto> result = replyService.readChildReply(userDetails.getUsername(),parentReplyId,pageNum);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new CommonResponseDto("대댓글조회 성공했습니다.",result));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto("대댓글조회 성공했습니다.",
+                replyService.readChildReply(userDetails.getUsername(),parentReplyId,pageNum)));
     }
 
     @PatchMapping("/parent-replies/{parentReplyId}")
