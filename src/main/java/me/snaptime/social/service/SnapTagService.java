@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
 import me.snaptime.snap.data.domain.Snap;
+import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.social.data.domain.SnapTag;
 import me.snaptime.social.data.dto.res.FindTagUserResDto;
 import me.snaptime.social.data.repository.snapTag.SnapTagRepository;
@@ -22,6 +23,7 @@ public class SnapTagService {
 
     private final SnapTagRepository snapTagRepository;
     private final UserRepository userRepository;
+    private final SnapRepository snapRepository;
 
     @Transactional
     // snap에 태그유저를 등록합니다.
