@@ -53,7 +53,7 @@ public class FriendShipController {
     }
 
     @DeleteMapping("/{friendShipId}")
-    @Operation(summary = "팔로우하는 친구삭제", description = "팔로우요청을 수락or거절할 유저의 이름을 입력해주세요.<br>fromUser(삭제자)의 팔로잉 -1, toUser의 팔로워 -1")
+    @Operation(summary = "팔로우하는 친구삭제", description = "언팔로우 할 친구의 friendShipId를 보내주세요.<br>fromUser(삭제자)의 팔로잉 -1, toUser의 팔로워 -1")
     @Parameter(name = "friendShipId", description = "팔로우 삭제할 친구관계 id", required = true, example = "1")
     public ResponseEntity<CommonResponseDto<Void>> deleteFollow(
             @AuthenticationPrincipal UserDetails userDetails,
