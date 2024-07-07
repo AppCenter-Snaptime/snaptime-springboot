@@ -335,14 +335,14 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","FOLLOWING")
-                        .param("loginId","tempLoginId")
+                        .param("targetLoginId","tempLoginId")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.msg").value("친구조회가 완료되었습니다."))
                 .andDo(print());
 
         verify(friendShipService,times(1))
-                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq(null));
+                .findFriendList(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq(null));
     }
 
     @Test
@@ -354,14 +354,14 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","FOLLOWER")
-                        .param("loginId","tempLoginId")
+                        .param("targetLoginId","tempLoginId")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.msg").value("친구조회가 완료되었습니다."))
                 .andDo(print());
 
         verify(friendShipService,times(1))
-                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq(null));
+                .findFriendList(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq(null));
     }
 
     @Test
@@ -373,7 +373,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","FOLLOWING")
-                        .param("loginId","tempLoginId")
+                        .param("targetLoginId","tempLoginId")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -381,7 +381,7 @@ public class FriendShipControllerTest {
                 .andDo(print());
 
         verify(friendShipService,times(1))
-                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+                .findFriendList(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 
     @Test
@@ -393,7 +393,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","TEST")
-                        .param("loginId","tempLoginId")
+                        .param("targetLoginId","tempLoginId")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -401,7 +401,7 @@ public class FriendShipControllerTest {
                 .andDo(print());
 
         verify(friendShipService,times(0))
-                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+                .findFriendList(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 
     @Test
@@ -413,7 +413,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}","test")
                         .param("friendSearchType","FOLLOWER")
-                        .param("loginId","tempLoginId")
+                        .param("targetLoginId","tempLoginId")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -421,7 +421,7 @@ public class FriendShipControllerTest {
                 .andDo(print());
 
         verify(friendShipService,times(0))
-                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+                .findFriendList(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 
     @Test
@@ -433,7 +433,7 @@ public class FriendShipControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","")
-                        .param("loginId","tempLoginId")
+                        .param("targetLoginId","tempLoginId")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -441,7 +441,7 @@ public class FriendShipControllerTest {
                 .andDo(print());
 
         verify(friendShipService,times(0))
-                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+                .findFriendList(any(String.class), any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 
     @Test
@@ -450,12 +450,13 @@ public class FriendShipControllerTest {
     public void findFriendListTest7() throws Exception {
         //given
         doThrow(new CustomException(ExceptionCode.PAGE_NOT_FOUND))
-                .when(friendShipService).findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+                .when(friendShipService).findFriendList(any(String.class),any(String.class),any(Long.class),
+                                                        any(FriendSearchType.class),eq("박"));
 
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","FOLLOWER")
-                        .param("loginId","tempLoginId")
+                        .param("targetLoginId","tempLoginId")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -463,6 +464,7 @@ public class FriendShipControllerTest {
                 .andDo(print());
 
         verify(friendShipService,times(1))
-                .findFriendList(any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+                .findFriendList(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),
+                                eq("박"));
     }
 }

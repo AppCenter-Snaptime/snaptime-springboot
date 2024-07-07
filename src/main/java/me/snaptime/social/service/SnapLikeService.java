@@ -56,4 +56,16 @@ public class SnapLikeService {
 
         return snapLikeRepository.countBySnap(snap);
     }
+
+    // 자신이 좋아요를 누른 스냅인지 여부 체크
+    public boolean isLikedSnap(Long snapId, String loginId){
+        Snap snap = snapRepository.findById(snapId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
+
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+
+        return snapLikeRepository.existsBySnapAndUser(snap,user);
+    }
+
 }

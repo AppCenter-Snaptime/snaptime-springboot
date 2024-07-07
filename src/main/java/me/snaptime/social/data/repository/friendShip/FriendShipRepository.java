@@ -15,4 +15,6 @@ public interface FriendShipRepository extends JpaRepository<FriendShip,Long>, Fr
 
     // 나를 팔로우 하는 사람의 수
     Long countByToUserAndFriendStatus(User toUser, FriendStatus friendStatus);
+
+    boolean existsByToUserAndFromUser(User toUser, User fromUser);
 }

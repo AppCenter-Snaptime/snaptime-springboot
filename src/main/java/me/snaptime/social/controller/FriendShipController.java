@@ -70,19 +70,20 @@ public class FriendShipController {
                     "<br>검색키워드는 필수가 아니며 없으면 입력하지 않아도 됩니다." +
                     "<br>스냅에 친구를 태그하기 위해 태그할 유저 조회를 할 경우 friendSearchType을 팔로잉으로 보내시면 됩니다.")
     @Parameters({
-            @Parameter(name = "loginId" , description = "친구목록을 조회할 유저의 loginId", required = true,example = "tempLoginId"),
+            @Parameter(name = "targetLoginId" , description = "친구목록을 조회할 유저의 loginId", required = true,example = "tempLoginId"),
             @Parameter(name = "searchKeyword", description = "친구 검색키워드", required = false, example = "홍길동"),
             @Parameter(name = "friendSearchType", description = "검색 타입(팔로워 조회 시 FOLLOWER/팔로잉 조회 시 FOLLOWING)으로 입력해주세요.", required = true, example = "FOLLOWER"),
             @Parameter(name = "pageNum", description = "친구조회 페이지번호", required = true, example = "1")
     })
     public ResponseEntity<CommonResponseDto<FindFriendResDto>> findFriendList(
-            @RequestParam(name = "loginId") @NotBlank(message = "친구목록을 조회할 유저의 loginId를 입력해주세요.") String loginId,
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(name = "targetLoginId") @NotBlank(message = "친구목록을 조회할 유저의 loginId를 입력해주세요.") String loginId,
             @RequestParam(name = "friendSearchType") @NotNull(message = "팔로우,팔로잉중 하나를 입력해주세요.") FriendSearchType friendSearchType,
             @RequestParam(name = "searchKeyword",required = false) String searchKeyword,
             @PathVariable(name = "pageNum") final Long pageNum){
 
         return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("친구조회가 완료되었습니다.",
-                friendShipService.findFriendList(loginId,pageNum,friendSearchType,searchKeyword)));
+                friendShipService.findFriendList(userDetails.getUsername(), loginId,pageNum,friendSearchType,searchKeyword)));
     }
 
 }

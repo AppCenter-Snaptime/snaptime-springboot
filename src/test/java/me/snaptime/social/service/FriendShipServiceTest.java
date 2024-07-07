@@ -366,7 +366,7 @@ public class FriendShipServiceTest {
 
         // when
         FindFriendResDto result = friendShipService
-                .findFriendList("loginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
+                .findFriendList("loginId","targetLoginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
 
         // then
         assertThat(result.friendInfoList().get(0).loginId()).isEqualTo("testLoginId1");
@@ -383,7 +383,7 @@ public class FriendShipServiceTest {
 
         assertThat(result.hasNextPage()).isFalse();
 
-        verify(userRepository,times(1)).findByLoginId(any(String.class));
+        verify(userRepository,times(4)).findByLoginId(any(String.class));
         verify(urlComponent,times(3)).makeProfileURL(any(Long.class));
         verify(friendShipRepository,times(1))
                 .findFriendList(any(User.class),any(FriendSearchType.class),any(Long.class),any(String.class));
