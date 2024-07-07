@@ -7,16 +7,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.dto.CommonResponseDto;
-import me.snaptime.common.exception.customs.CustomException;
-import me.snaptime.common.exception.customs.ExceptionCode;
+import me.snaptime.snap.component.crawling.CrawlingComponent;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
-import me.snaptime.snap.service.AlbumService;
 import me.snaptime.snap.service.SnapService;
-import me.snaptime.social.service.SnapTagService;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
 @RestController
@@ -37,49 +28,19 @@ import java.util.List;
 @Slf4j
 public class SnapController {
     private final SnapService snapService;
-    private final AlbumService albumService;
-    private final SnapTagService snapTagService;
+    private final CrawlingComponent crawlingComponent;
 
     @Operation(summary = "Snap 생성", description = "Empty Value를 보내지마세요")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CommonResponseDto<Long>> createSnap(
             final @RequestParam(value = "isPrivate") boolean isPrivate,
-            final @RequestParam(value = "nonClassification") boolean nonClassification,
             final @RequestParam(value = "albumId", required = false) Long album_id,
             final @RequestParam(value = "tagUserLoginIds", required = false) List<String> tagUserLoginIds,
             final @ModelAttribute CreateSnapReqDto createSnapReqDto,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uId = userDetails.getUsername();
-        // 먼저 Snap 저장
-        Long snapId = snapService.createSnap(createSnapReqDto, uId, isPrivate);
-
-        // 사용자가 앨범 선택을 하지 않고 요청을 보낼 경우
-        if (nonClassification) {
-            // non-classification 앨범에 스냅을 추가함
-            processSnapForNonClassification(snapId, uId);
-        } else {
-            if(album_id == null) {
-                throw new CustomException(ExceptionCode.ALBUM_ID_IS_NOT_GIVEN);
-            }
-            // 사용자가 앨범 선택을 하고 요청을 보낼 경우
-            // 사용자가 보낸 앨범 id가 유효한지 확인
-            if (albumService.isAlbumExistById(album_id)) {
-                // 사용자가 만든 앨범인지 확인 (통과하지 못할 시 예외가 발생함)
-                albumService.isUserHavePermission(uId, album_id);
-                // 위 구문을 실행하는데 문제가 없다면, 앨범 id를 Snap과 연관관계 맺어줌
-                snapService.makeRelationSnapAndAlbum(snapId, album_id);
-            } else {
-                // 사용자가 앨범이 존재한다고 하고, 이를 요청에 포함시켰으나, 앨범이 유효하지 않을경우
-                // non-classification에 스냅을 추가함
-                processSnapForNonClassification(snapId, uId);
-            }
-        }
-
-        // tagUserLoginIds가 파라미터로 주어졌을 경우 태그에 추가
-        if (tagUserLoginIds != null) {
-            snapTagService.addTagUser(tagUserLoginIds, snapId);
-        }
+        Long snapId = snapService.createSnap(createSnapReqDto, uId, isPrivate, tagUserLoginIds, album_id);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CommonResponseDto<>(
@@ -131,27 +92,8 @@ public class SnapController {
             final @RequestParam("url") String url,
             final @AuthenticationPrincipal UserDetails userDetails
     ) throws IOException {
-        Document doc = Jsoup.connect(url).header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36").timeout(3000).get();
-        Elements image = doc.select("div.main_cont > img");
-        URL imageURL = new URL("http://haru9.mx2.co.kr" + image.attr("src"));
-        URLConnection connection = imageURL.openConnection();
-        InputStream inputStream = connection.getInputStream();
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(
-                inputStream.readAllBytes()
-        );
-    }
-
-    private void processSnapForNonClassification(Long snapId, String uId){
-        // 분류되지 않은 앨범이 사용자에게 이미 존재하는지 확인함
-        if(albumService.isNonClassificationExist(uId)) {
-            // 존재한다면 분류되지 않은 앨범에 추가함
-            Long foundNonClassificationAlbumId = albumService.findUserNonClassificationId(uId);
-            snapService.makeRelationSnapAndAlbum(snapId, foundNonClassificationAlbumId);
-        } else {
-            // 존재하지 않는다면 분류되지 않은 앨범을 생성하고 앨범에 추가함
-            Long createdNonClassificationAlbumId = albumService.createNonClassificationAlbum(uId);
-            snapService.makeRelationSnapAndAlbum(snapId, createdNonClassificationAlbumId);
-        }
+        byte[] image = crawlingComponent.getImageFromHaruFilm(url);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(image);
     }
 
 }

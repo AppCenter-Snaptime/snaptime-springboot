@@ -1,4 +1,4 @@
-package me.snaptime.snap.component;
+package me.snaptime.snap.component.file;
 
 import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;
 

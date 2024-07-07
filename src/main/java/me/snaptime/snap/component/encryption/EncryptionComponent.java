@@ -1,4 +1,4 @@
-package me.snaptime.snap.component;
+package me.snaptime.snap.component.encryption;
 
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.user.data.domain.User;

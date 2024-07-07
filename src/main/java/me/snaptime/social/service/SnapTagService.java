@@ -27,11 +27,7 @@ public class SnapTagService {
 
     @Transactional
     // snap에 태그유저를 등록합니다.
-    public void addTagUser(List<String> tagUserLoginIdList, Long snapId){
-
-        Snap snap = snapRepository.findById(snapId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
-
+    public void addTagUser(List<String> tagUserLoginIdList, Snap snap){
         snapTagRepository.saveAll(
                 tagUserLoginIdList.stream().map( loginId -> {
                     User tagedUser = userRepository.findByLoginId(loginId)
