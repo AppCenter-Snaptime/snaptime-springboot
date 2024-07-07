@@ -11,6 +11,7 @@ public record FindSnapPagingResDto(
     boolean hasNextPage
 ) {
     public static FindSnapPagingResDto toDto(List<SnapPagingInfo> snapPagingInfoList, boolean hasNextPage){
+
         return FindSnapPagingResDto.builder()
                 .snapPagingInfoList(snapPagingInfoList)
                 .hasNextPage(hasNextPage)

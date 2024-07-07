@@ -56,7 +56,7 @@ public class SnapPagingServiceImpl {
                     snapLikeService.isLikedSnap(snapId, loginId));
         }).collect(Collectors.toList());
 
-        return FindSnapPagingResDto.toDto(snapPagingInfoList, hasNextPage);
+        return FindSnapPagingResDto.toDto(snapPagingInfoList,hasNextPage);
     }
 
 }
