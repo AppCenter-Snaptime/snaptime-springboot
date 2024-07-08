@@ -96,4 +96,13 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler{
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponseDto(message,null));
     }
 
+    // 기타예외 발생 시 500반환
+    @ExceptionHandler
+    public ResponseEntity<CommonResponseDto> handleException(Exception ex) {
+
+        String message = "서버 내부에 에러가 발생했습니다.";
+        log.error(message+":"+ex.getMessage()+ex.getStackTrace()+ex.getCause());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CommonResponseDto(message,null));
+    }
+
 }

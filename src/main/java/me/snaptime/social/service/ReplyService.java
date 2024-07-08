@@ -63,21 +63,35 @@ public class ReplyService {
     @Transactional
     public void addChildReply(String loginId, AddChildReplyReqDto addChildReplyReqDto){
         User user = findUserByLoginId(loginId);
-        User tagUser = userRepository.findByLoginId(addChildReplyReqDto.tagLoginId())
-                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         ParentReply parentReply = parentReplyRepository.findById(addChildReplyReqDto.parentReplyId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
 
+        // 태그유저가 없는 댓글 등록이면
+        if( addChildReplyReqDto.tagLoginId() == "" || addChildReplyReqDto.tagLoginId() == null){
+            childReplyRepository.save(
+                    ChildReply.builder()
+                            .parentReply(parentReply)
+                            .user(user)
+                            .content(addChildReplyReqDto.content())
+                            .build()
+            );
+
+            return ;
+        }
+
+        User tagUser = userRepository.findByLoginId(addChildReplyReqDto.tagLoginId())
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         childReplyRepository.save(
                 ChildReply.builder()
                         .parentReply(parentReply)
-                        .tagUser(tagUser)
                         .user(user)
+                        .tagUser(tagUser)
                         .content(addChildReplyReqDto.content())
                         .build()
         );
+
     }
 
     public FindParentReplyResDto readParentReply(String loginId, Long snapId, Long pageNum){

@@ -158,7 +158,7 @@ public class ReplyServiceTest {
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.REPLY_NOT_FOUND);
             verify(parentReplyRepository,times(1)).findById(any(Long.class));
-            verify(userRepository,times(2)).findByLoginId(any(String.class));
+            verify(userRepository,times(1)).findByLoginId(any(String.class));
             verify(childReplyRepository,times(0)).save(any(ChildReply.class));
         }
     }
