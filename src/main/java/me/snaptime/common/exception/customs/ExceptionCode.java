@@ -62,8 +62,10 @@ public enum ExceptionCode {
     TOKEN_NOT_AUTHORIZED(HttpStatus.FORBIDDEN, "권한이 없습니다"),
     TOKEN_UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "인증되지 않은 토큰입니다."),
     TOKEN_INVALID_FORMAT(HttpStatus.UNAUTHORIZED, "잘못된 형식의 토큰입니다."),
-    TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "토큰이 비었거나 null입니다");
+    TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "토큰이 비었거나 null입니다"),
 
+    // Jsoup Action
+    URL_HAVING_PROBLEM(HttpStatus.BAD_REQUEST, "문제가 있는 URL입니다.");
 
     private final HttpStatus status;
     private final String message;

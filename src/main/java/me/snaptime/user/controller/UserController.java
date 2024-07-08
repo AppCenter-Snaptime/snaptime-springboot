@@ -152,12 +152,14 @@ public class UserController {
                 ));
     }
 
-    @Operation(summary = "자신이 태그된 snap 들 조회", description = "자신의 Token 을 통하여 자신이 태그된 snap 들을 조회합니다" +
+    @Operation(summary = "유저의 태그된 snap 들 조회", description = "유저의 loginId로 유저가 태그된 snap 들을 조회합니다" +
             "<br> snap id 기준 내림차순으로 조회합니다.(최근 snap 이 제일 먼저 조회)")
+    @Parameter(name = "login_id", description = "팔로워와 팔로잉 수를 가져오기 위한 loginId", required = true)
     @GetMapping("/profile/tag")
-    public ResponseEntity<CommonResponseDto<List<ProfileTagSnapResDto>>> getTagSnap(@AuthenticationPrincipal UserDetails principal){
+    public ResponseEntity<CommonResponseDto<List<ProfileTagSnapResDto>>> getTagSnap(@RequestParam("login_id")
+                                                                                        @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String loginId){
 
-        List<ProfileTagSnapResDto> profileTagSnapResDto = userService.getTagSnap(principal.getUsername());
+        List<ProfileTagSnapResDto> profileTagSnapResDto = userService.getTagSnap(loginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저가 태그된 Snap 들을 성공적으로 조회하였습니다.",

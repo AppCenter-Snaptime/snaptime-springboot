@@ -1,11 +1,10 @@
-package me.snaptime.snap.component.impl;
+package me.snaptime.snap.component.file;
 
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
-import me.snaptime.snap.component.FileComponent;
 import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;
 import me.snaptime.snap.util.FileNameGenerator;
 import org.springframework.beans.factory.annotation.Value;

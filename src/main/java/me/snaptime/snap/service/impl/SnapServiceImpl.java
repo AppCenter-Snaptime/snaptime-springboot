@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.component.UrlComponent;
 import me.snaptime.common.exception.customs.CustomException;
 import me.snaptime.common.exception.customs.ExceptionCode;
-import me.snaptime.snap.component.EncryptionComponent;
-import me.snaptime.snap.component.FileComponent;
+import me.snaptime.snap.component.encryption.EncryptionComponent;
+import me.snaptime.snap.component.file.FileComponent;
 import me.snaptime.snap.data.domain.Album;
 import me.snaptime.snap.data.domain.Encryption;
 import me.snaptime.snap.data.domain.Snap;
@@ -16,15 +16,17 @@ import me.snaptime.snap.data.dto.req.ModifySnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.data.repository.AlbumRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
+import me.snaptime.snap.service.AlbumService;
 import me.snaptime.snap.service.SnapService;
 import me.snaptime.snap.util.EncryptionUtil;
+import me.snaptime.social.service.SnapTagService;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -37,12 +39,14 @@ public class SnapServiceImpl implements SnapService {
     private final FileComponent fileComponent;
     private final EncryptionComponent encryptionComponent;
     private final UrlComponent urlComponent;
+    private final SnapTagService snapTagService;
+    private final AlbumService albumService;
 
     @Override
-    public Long createSnap(CreateSnapReqDto createSnapReqDto, String userUid, boolean isPrivate) {
+    public Long createSnap(CreateSnapReqDto createSnapReqDto, String userUid, boolean isPrivate, List<String> tagUserLoginIds, Long album_id) {
         User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         WritePhotoToFileSystemResult writePhotoToFileSystemResult = savePhotoToFileSystem(foundUser, createSnapReqDto.multipartFile(), isPrivate);
-        Snap result = snapRepository.save(
+        Snap savedSnap = snapRepository.save(
                 Snap.builder()
                         .oneLineJournal(createSnapReqDto.oneLineJournal())
                         .fileName(writePhotoToFileSystemResult.fileName())
@@ -52,7 +56,28 @@ public class SnapServiceImpl implements SnapService {
                         .isPrivate(isPrivate)
                         .build()
         );
-        return result.getId();
+
+        // 사용자가 앨범 선택을 하고 요청을 보낼 경우
+        if (album_id != null) {
+            // 사용자가 보낸 앨범 id가 유효한지 확인한다.
+            if (albumService.isAlbumExistById(album_id)) {
+                // 사용자가 만든 앨범인지 확인 한다.
+                albumService.isUserHavePermission(foundUser, album_id);
+                // 위 구문을 실행하는데 문제가 없다면 연관관계를 맺어준다.
+                makeRelationSnapAndAlbum(savedSnap, album_id);
+            }
+        } else {
+            // 사용자가 앨범 선택을 하지 않고 요청을 보낼 경우
+            // non-classification 앨범에 스냅을 추가함
+            processSnapForNonClassification(savedSnap, foundUser);
+        }
+
+        // tagUserLoginIds가 파라미터로 주어졌을 경우 태그에 추가
+        if (tagUserLoginIds != null) {
+            snapTagService.addTagUser(tagUserLoginIds, savedSnap);
+        }
+
+        return savedSnap.getId();
     }
 
     @Override
@@ -72,15 +97,6 @@ public class SnapServiceImpl implements SnapService {
 
     @Override
     public void modifySnap(ModifySnapReqDto modifySnapReqDto, String userUid, boolean isPrivate) {
-    }
-
-    @Override
-    @Transactional
-    public void makeRelationSnapAndAlbum(Long snap_id, Long album_id) {
-        Snap foundSnap = snapRepository.findById(snap_id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
-        Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
-        foundSnap.updateAlbum(foundAlbum);
-        snapRepository.save(foundSnap);
     }
 
     @Override
@@ -143,6 +159,25 @@ public class SnapServiceImpl implements SnapService {
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(ExceptionCode.FILE_READ_ERROR);
+        }
+    }
+
+    private void makeRelationSnapAndAlbum(Snap snap, Long album_id) {
+        Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
+        snap.updateAlbum(foundAlbum);
+        snapRepository.save(snap);
+    }
+
+    private void processSnapForNonClassification(Snap snap, User user){
+        // 분류되지 않은 앨범이 사용자에게 이미 존재하는지 확인함
+        if(albumService.isNonClassificationExist(user)) {
+            // 존재한다면 분류되지 않은 앨범에 추가함
+            Long foundNonClassificationAlbumId = albumService.findUserNonClassificationId(user);
+            makeRelationSnapAndAlbum(snap, foundNonClassificationAlbumId);
+        } else {
+            // 존재하지 않는다면 분류되지 않은 앨범을 생성하고 앨범에 추가함
+            Long createdNonClassificationAlbumId = albumService.createNonClassificationAlbum(user);
+            makeRelationSnapAndAlbum(snap, createdNonClassificationAlbumId);
         }
     }
 
