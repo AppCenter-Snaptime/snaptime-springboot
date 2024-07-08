@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -85,9 +86,9 @@ public class SnapServiceImpl implements SnapService {
         Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         if(foundSnap.isPrivate()) {
             User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-
+            // Snap이 비공개라면, 요청한 유저와 스냅의 ID가 일치하는지 확인한다.
             if (!Objects.equals(foundUser.getId(), foundSnap.getUser().getId())) {
-                throw new CustomException(ExceptionCode.SNAP_USER_IS_NOT_THE_SAME);
+                throw new CustomException(ExceptionCode.SNAP_IS_PRIVATE);
             }
         }
         String snapPhotoUrl = urlComponent.makePhotoURL(foundSnap.getFileName(), foundSnap.isPrivate());
@@ -96,7 +97,49 @@ public class SnapServiceImpl implements SnapService {
     }
 
     @Override
-    public void modifySnap(ModifySnapReqDto modifySnapReqDto, String userUid, boolean isPrivate) {
+    public Long modifySnap(Long snapId, ModifySnapReqDto modifySnapReqDto, String userUid, boolean isPrivate) {
+        Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
+        User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+
+        // 수정하려는 유저와 수정되려는 스냅의 저자가 일치하는지 확인한다.
+        if (!foundSnap.getUser().getId().equals(foundUser.getId())) {
+            throw new CustomException(ExceptionCode.SNAP_USER_IS_NOT_THE_SAME);
+        }
+
+        if (null != modifySnapReqDto.multipartFile()) {
+            try {
+                byte[] foundPhotoByte = modifySnapReqDto.multipartFile().getInputStream().readAllBytes();
+                if (isPrivate) {
+                    // 사용자가 이미지 수정까지 요구했고, 암호화까지 원한다면
+                    // getEncryption을 통해 사용자의 암호화키를 가져온다. (없으면 null이다.)
+                    Encryption encryption = encryptionComponent.getEncryption(foundUser);
+                    // 사용자의 암호화키가 존재하는지 확인한다.
+                    if (encryption != null) {
+                        // 기존 암호화키가 존재할 경우 기존의 암호화키로 데이터를 암호화한 후 저장소에 쓰기 한다.
+                        byte[] encryptedByte = encryptionComponent.encryptData(encryption, foundPhotoByte);
+                        fileComponent.updateFileSystemPhoto(foundSnap.getFilePath(), encryptedByte);
+                    } else {
+                        // 암호화키가 존재하지 않을 경우 새로운 암호화키를 생성 한 뒤에 저장소에 쓰기 한다.
+                        Encryption newEncryption = encryptionComponent.setEncryption(foundUser);
+                        byte[] encryptedByte = encryptionComponent.encryptData(newEncryption, foundPhotoByte);
+                        fileComponent.updateFileSystemPhoto(foundSnap.getFilePath(), encryptedByte);
+                    }
+                    // Snap의 암호화 상태를 활성으로 변경한다.
+                    foundSnap.updateIsPrivate(true);
+                } else {
+                    // 사용자가 이미지 수정을 요구하였으나, 암호화를 원하지 않는다면
+                    // fileComponent를 통해 원래 경로에 사진을 저장한다.
+                    fileComponent.updateFileSystemPhoto(foundSnap.getFilePath(), foundPhotoByte);
+                    // Snap의 암호화 상태를 비활성화로 변경한다.
+                    foundSnap.updateIsPrivate(false);
+                }
+            } catch (IOException e) {
+                throw new CustomException(ExceptionCode.SNAP_MODIFY_ERROR);
+            }
+        }
+        foundSnap.updateOneLineJournal(modifySnapReqDto.oneLineJournal());
+        Snap snap = snapRepository.save(foundSnap);
+        return snap.getId();
     }
 
     @Override
@@ -104,10 +147,13 @@ public class SnapServiceImpl implements SnapService {
         Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
+        // 설정되어 있는 값하고 똑같다면
         if (foundSnap.isPrivate() == isPrivate) {
+            // 예외를 발생시킨다.
             throw new CustomException(ExceptionCode.CHANGE_SNAP_VISIBILITY_ERROR);
         }
 
+        // 저장된 filePath 경로로 부터 파일을 가져온다.
         byte[] foundPhotoByte = fileComponent.getPhotoByte(foundSnap.getFilePath());
         if(isPrivate) {
             // public -> private (암호화)
@@ -156,6 +202,21 @@ public class SnapServiceImpl implements SnapService {
             } else {
                 return fileComponent.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), multipartFile.getInputStream().readAllBytes());
         }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.FILE_READ_ERROR);
+        }
+    }
+
+    private WritePhotoToFileSystemResult modifyPhotoToFileSystem(User user, MultipartFile multipartFile, boolean isPrivate) {
+        try {
+            if (isPrivate) {
+                Encryption encryption = encryptionComponent.setEncryption(user);
+                byte[] encryptedData = encryptionComponent.encryptData(encryption, multipartFile.getInputStream().readAllBytes());
+                return fileComponent.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), encryptedData);
+            } else {
+                return fileComponent.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), multipartFile.getInputStream().readAllBytes());
+            }
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(ExceptionCode.FILE_READ_ERROR);

@@ -60,5 +60,9 @@ public class Snap extends BaseTimeEntity {
         this.album = album;
     }
 
+    public void updateOneLineJournal(String oneLineJournal) {
+        this.oneLineJournal = oneLineJournal;
+    }
+
 
 }

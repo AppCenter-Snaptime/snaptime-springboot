@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.dto.CommonResponseDto;
 import me.snaptime.snap.component.crawling.CrawlingComponent;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
+import me.snaptime.snap.data.dto.req.ModifySnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.service.SnapService;
 import org.springframework.http.HttpStatus;
@@ -61,6 +62,26 @@ public class SnapController {
                 new CommonResponseDto<>(
                         "스냅이 정상적으로 불러와졌습니다.",
                         snapService.findSnap(id, uId)
+                )
+        );
+    }
+
+    @Operation(summary = "Snap 수정", description = "Snap 수정하기")
+
+    @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<CommonResponseDto<Long>> modifySnap(
+            final @ModelAttribute ModifySnapReqDto modifySnapReqDto,
+            @Parameter(name = "isPrivate", description = "변경 할 상태")
+            final @RequestParam boolean isPrivate,
+            @Parameter(name = "snapId", description = "변경 할 Snap의 ID")
+            final Long snapId,
+            final @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String uId = userDetails.getUsername();
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "스냅이 정상적으로 수정되었습니다.",
+                        snapService.modifySnap(snapId, modifySnapReqDto, uId, isPrivate)
                 )
         );
     }
