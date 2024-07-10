@@ -11,7 +11,7 @@ public class CrawlingComponentImpl implements CrawlingComponent {
 
     @Override
     public byte[] getImageFromHaruFilm(String page_url) {
-        String image_url = haruFilm.getCrawling(page_url);
+        String image_url = haruFilm.getCrawlingImageURL(page_url);
         return haruFilm.getImageByte(image_url);
     }
 
