@@ -12,6 +12,7 @@ import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.data.dto.req.ModifySnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.service.SnapService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -105,6 +106,27 @@ public class SnapController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "게시글의 상태가 성공적으로 변경되었습니다.",
+                        null
+                )
+        );
+    }
+
+    @Operation(summary = "Snap 앨범 위치 변경", description = "Snap의 앨범 위치를 변경합니다.")
+    @PostMapping("/album")
+    @Parameters({
+            @Parameter(name = "snapId", description = "위치를 변경할 Snap Id"),
+            @Parameter(name = "albumId", description = "이동할 Album Id")
+    })
+    ResponseEntity<CommonResponseDto<Void>> relocateSnap(
+            final @RequestParam Long snapId,
+            final @RequestParam Long albumId,
+            final @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String uId = userDetails.getUsername();
+        snapService.relocateSnap(snapId, albumId, uId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "스냅의 위치가 " + albumId + "번 앨범으로 변경되었습니다.",
                         null
                 )
         );

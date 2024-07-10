@@ -226,6 +226,21 @@ public class SnapServiceImpl implements SnapService {
         return photoData;
     }
 
+    @Override
+    public void relocateSnap(Long snapId, Long albumId, String uId) {
+        Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
+        Album foundAlbum = albumRepository.findById(albumId).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
+        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        // 찾은 Snap의 소유자가 요청자와 일치하고, 새로 옮길 앨범의 소유자가 요청자와 일치한다면
+        if (Objects.equals(foundSnap.getUser().getId(), foundUser.getId()) && Objects.equals(foundSnap.getAlbum().getUser().getId(), foundUser.getId())) {
+            // 새로 연관관계를 맺어주고 DB에 반영한다.
+            foundSnap.associateAlbum(foundAlbum);
+            snapRepository.save(foundSnap);
+        } else {
+            throw new CustomException(ExceptionCode.ALBUM_USER_NOT_MATCH);
+        }
+    }
+
     private WritePhotoToFileSystemResult savePhotoToFileSystem(User user, MultipartFile multipartFile, boolean isPrivate) {
         try {
             if (isPrivate) {
@@ -243,7 +258,7 @@ public class SnapServiceImpl implements SnapService {
 
     private void makeRelationSnapAndAlbum(Snap snap, Long album_id) {
         Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
-        snap.updateAlbum(foundAlbum);
+        snap.associateAlbum(foundAlbum);
         snapRepository.save(snap);
     }
 
