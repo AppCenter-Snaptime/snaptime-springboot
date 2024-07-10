@@ -75,13 +75,15 @@ public class SnapController {
             final @RequestParam boolean isPrivate,
             @Parameter(name = "snapId", description = "변경 할 Snap의 ID")
             final Long snapId,
+            @Parameter(name = "tagUserLoginIds")
+            final @RequestParam(value = "tagUserLoginIds", required = false) List<String> tagUserLoginIds,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uId = userDetails.getUsername();
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "스냅이 정상적으로 수정되었습니다.",
-                        snapService.modifySnap(snapId, modifySnapReqDto, uId, isPrivate)
+                        snapService.modifySnap(snapId, modifySnapReqDto, uId, tagUserLoginIds, isPrivate)
                 )
         );
     }

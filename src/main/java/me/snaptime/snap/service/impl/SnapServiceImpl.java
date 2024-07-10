@@ -19,6 +19,7 @@ import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.AlbumService;
 import me.snaptime.snap.service.SnapService;
 import me.snaptime.snap.util.EncryptionUtil;
+import me.snaptime.social.data.dto.res.FindTagUserResDto;
 import me.snaptime.social.service.SnapTagService;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -97,7 +99,7 @@ public class SnapServiceImpl implements SnapService {
     }
 
     @Override
-    public Long modifySnap(Long snapId, ModifySnapReqDto modifySnapReqDto, String userUid, boolean isPrivate) {
+    public Long modifySnap(Long snapId, ModifySnapReqDto modifySnapReqDto, String userUid, List<String> tagUserLoginIds, boolean isPrivate) {
         Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
@@ -106,6 +108,7 @@ public class SnapServiceImpl implements SnapService {
             throw new CustomException(ExceptionCode.SNAP_USER_IS_NOT_THE_SAME);
         }
 
+        // 이미지 수정
         if (null != modifySnapReqDto.multipartFile()) {
             try {
                 byte[] foundPhotoByte = modifySnapReqDto.multipartFile().getInputStream().readAllBytes();
@@ -137,6 +140,36 @@ public class SnapServiceImpl implements SnapService {
                 throw new CustomException(ExceptionCode.SNAP_MODIFY_ERROR);
             }
         }
+
+        // 태그 목록 수정
+        /*
+        * 새로운 유저를 찾아 태그 목록에 추가한다.
+        * */
+        List<String> originalTagIds = snapTagService.findTagUserList(snapId).stream().map(FindTagUserResDto::loginId).toList();
+        log.info("originalTagIds: {}", originalTagIds);
+        List<String> newTagIds = new ArrayList<>();
+        List<String> missingTagIds = new ArrayList<>();
+        if (tagUserLoginIds != null){ // 새롭게 추가된 Ids를 찾아 newTagIds 목록에 추가한다.
+            for (String tagId : tagUserLoginIds) {
+                if (!originalTagIds.contains(tagId)) {
+                    newTagIds.add(tagId);
+                }
+            }
+            log.info("new Tag Ids {}", newTagIds);
+            snapTagService.addTagUser(newTagIds, foundSnap);
+
+            // 원래 있었다가 이번 목록에서 사라진 Ids를 찾아 목록에 추가한다.
+            for (String tagId : originalTagIds) {
+                if (!tagUserLoginIds.contains(tagId)) {
+                    missingTagIds.add(tagId);
+                }
+            }
+            log.info("missing Tag Ids {}", missingTagIds);
+            snapTagService.deleteTagUser(missingTagIds, snapId);
+        } else {
+            snapTagService.deleteTagUser(originalTagIds, snapId);
+        }
+        log.info("태그상태 현황 : {}", snapTagService.findTagUserList(snapId));
         foundSnap.updateOneLineJournal(modifySnapReqDto.oneLineJournal());
         Snap snap = snapRepository.save(foundSnap);
         return snap.getId();
@@ -202,21 +235,6 @@ public class SnapServiceImpl implements SnapService {
             } else {
                 return fileComponent.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), multipartFile.getInputStream().readAllBytes());
         }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(ExceptionCode.FILE_READ_ERROR);
-        }
-    }
-
-    private WritePhotoToFileSystemResult modifyPhotoToFileSystem(User user, MultipartFile multipartFile, boolean isPrivate) {
-        try {
-            if (isPrivate) {
-                Encryption encryption = encryptionComponent.setEncryption(user);
-                byte[] encryptedData = encryptionComponent.encryptData(encryption, multipartFile.getInputStream().readAllBytes());
-                return fileComponent.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), encryptedData);
-            } else {
-                return fileComponent.writePhotoToFileSystem(multipartFile.getOriginalFilename(), multipartFile.getContentType(), multipartFile.getInputStream().readAllBytes());
-            }
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(ExceptionCode.FILE_READ_ERROR);

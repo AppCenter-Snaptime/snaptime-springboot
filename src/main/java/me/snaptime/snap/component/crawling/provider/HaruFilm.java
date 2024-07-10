@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class HaruFilm extends Provider {
     @Override
-    public String getCrawling(String page_url) {
+    public String getCrawlingImageURL(String page_url) {
         Document crawledPage = JsoupAction.getDocument(page_url);
         return JsoupAction.returnSrcBySelectedElements(crawledPage, "div.main_cont > img");
     }
