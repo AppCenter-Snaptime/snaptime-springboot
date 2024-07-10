@@ -3,33 +3,15 @@ package me.snaptime.snap.service;
 import me.snaptime.common.component.UrlComponent;
 import me.snaptime.snap.component.encryption.EncryptionComponent;
 import me.snaptime.snap.component.file.FileComponent;
-import me.snaptime.snap.data.domain.Encryption;
-import me.snaptime.snap.data.domain.Snap;
-import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;
-import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.data.repository.AlbumRepository;
 import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.impl.SnapServiceImpl;
-import me.snaptime.snap.util.EncryptionUtil;
-import me.snaptime.snap.util.FileNameGenerator;
-import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Optional;
-
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
 public class SnapServiceImplTest {

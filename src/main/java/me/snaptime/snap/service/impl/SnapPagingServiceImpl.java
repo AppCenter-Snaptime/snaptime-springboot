@@ -52,10 +52,11 @@ public class SnapPagingServiceImpl {
 
             return SnapPagingInfo.toDto(entity,profilePhotoURL,snapPhotoURL,
                     snapTagService.findTagUserList(snapId),
-                    snapLikeService.findSnapLikeCnt(snapId));
+                    snapLikeService.findSnapLikeCnt(snapId),
+                    snapLikeService.isLikedSnap(snapId, loginId));
         }).collect(Collectors.toList());
 
-        return FindSnapPagingResDto.toDto(snapPagingInfoList, hasNextPage);
+        return FindSnapPagingResDto.toDto(snapPagingInfoList,hasNextPage);
     }
 
 }

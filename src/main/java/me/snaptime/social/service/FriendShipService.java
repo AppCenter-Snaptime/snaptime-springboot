@@ -117,18 +117,22 @@ public class FriendShipService {
     }
     
     // 팔로워 or 팔로잉 친구리스트 조회
-    public FindFriendResDto findFriendList(String loginId, Long pageNum, FriendSearchType searchType, String searchKeyword){
+    public FindFriendResDto findFriendList(String loginId, String targetLoginId, Long pageNum,
+                                           FriendSearchType searchType, String searchKeyword){
 
-        User reqUser = findUserByLoginId(loginId);
-        List<Tuple> result = friendShipRepository.findFriendList(reqUser,searchType,pageNum,searchKeyword);
+        User targetUser = findUserByLoginId(targetLoginId);
+        List<Tuple> result = friendShipRepository.findFriendList(targetUser,searchType,pageNum,searchKeyword);
+
+        // 다음 페이지 유무 체크
         boolean hasNextPage = nextPageChecker.hasNextPage(result,20L);
         if(hasNextPage)
             result.remove(20);
 
         List<FriendInfo> friendInfoList = result.stream().map(entity ->
         {
+            boolean isMyFriend = checkIsFriend(loginId,targetUser);
             String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.id));
-            return FriendInfo.toDto(entity,profilePhotoURL);
+            return FriendInfo.toDto(entity,profilePhotoURL,isMyFriend);
         }).collect(Collectors.toList());
 
         return FindFriendResDto.toDto(friendInfoList, hasNextPage);
@@ -143,6 +147,13 @@ public class FriendShipService {
         Long followingCnt = friendShipRepository.countByFromUserAndFriendStatus(user,FriendStatus.FOLLOW);
 
         return FriendCntResDto.toDto(followerCnt,followingCnt);
+    }
+
+    // 해당 유저가 자신이 팔로우했는지 유무체크
+    private boolean checkIsFriend(String loginId, User targetUser){
+        User user = findUserByLoginId(loginId);
+
+        return friendShipRepository.existsByToUserAndFromUser(user,targetUser);
     }
 
     private User findUserByLoginId(String loginId){
