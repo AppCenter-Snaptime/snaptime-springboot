@@ -1,15 +1,15 @@
 package me.snaptime.user.service;
 
-import me.snaptime.common.jwt.JwtProvider;
-import me.snaptime.user.data.domain.ProfilePhoto;
-import me.snaptime.user.data.domain.User;
-import me.snaptime.user.data.dto.request.SignInReqDto;
-import me.snaptime.user.data.dto.request.UserReqDto;
-import me.snaptime.user.data.dto.request.UserUpdateDto;
-import me.snaptime.user.data.dto.response.SignInResDto;
-import me.snaptime.user.data.dto.response.UserResDto;
-import me.snaptime.user.data.repository.ProfilePhotoRepository;
-import me.snaptime.user.data.repository.UserRepository;
+import me.snaptime.jwt.JwtProvider;
+import me.snaptime.profile.profilePhoto.domain.ProfilePhoto;
+import me.snaptime.profile.profilePhoto.repository.ProfilePhotoRepository;
+import me.snaptime.user.domain.User;
+import me.snaptime.user.dto.req.SignInReqDto;
+import me.snaptime.user.dto.req.UserReqDto;
+import me.snaptime.user.dto.req.UserUpdateDto;
+import me.snaptime.user.dto.res.SignInResDto;
+import me.snaptime.user.dto.res.UserResDto;
+import me.snaptime.user.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

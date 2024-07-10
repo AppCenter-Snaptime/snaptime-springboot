@@ -1,11 +1,11 @@
 package me.snaptime.snap.controller;
 
-import me.snaptime.common.config.SecurityConfig;
-import me.snaptime.common.exception.customs.CustomException;
-import me.snaptime.common.exception.customs.ExceptionCode;
-import me.snaptime.common.jwt.JwtProvider;
+import me.snaptime.config.SecurityConfig;
+import me.snaptime.exception.CustomException;
+import me.snaptime.exception.ExceptionCode;
+import me.snaptime.jwt.JwtProvider;
+import me.snaptime.jwt.UserDetailsServiceImpl;
 import me.snaptime.snap.service.impl.SnapPagingServiceImpl;
-import me.snaptime.user.service.UserDetailsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

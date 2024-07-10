@@ -1,18 +1,18 @@
 package me.snaptime.social.repository;
 
 import com.querydsl.core.Tuple;
-import me.snaptime.common.component.impl.UrlComponentImpl;
-import me.snaptime.common.config.JpaAuditingConfig;
-import me.snaptime.common.config.QueryDslConfig;
-import me.snaptime.common.exception.customs.CustomException;
-import me.snaptime.common.exception.customs.ExceptionCode;
-import me.snaptime.social.common.FriendSearchType;
-import me.snaptime.social.common.FriendStatus;
-import me.snaptime.social.data.domain.FriendShip;
-import me.snaptime.social.data.repository.friendShip.FriendShipRepository;
-import me.snaptime.user.data.domain.ProfilePhoto;
-import me.snaptime.user.data.domain.User;
-import me.snaptime.user.data.repository.UserRepository;
+import me.snaptime.component.url.UrlComponentImpl;
+import me.snaptime.config.JpaAuditingConfig;
+import me.snaptime.config.QueryDslConfig;
+import me.snaptime.exception.CustomException;
+import me.snaptime.exception.ExceptionCode;
+import me.snaptime.friendShip.common.FriendSearchType;
+import me.snaptime.friendShip.common.FriendStatus;
+import me.snaptime.friendShip.domain.FriendShip;
+import me.snaptime.friendShip.repository.FriendShipRepository;
+import me.snaptime.profile.profilePhoto.domain.ProfilePhoto;
+import me.snaptime.user.domain.User;
+import me.snaptime.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.snaptime.user.data.domain.QUser.user;
+import static me.snaptime.user.domain.QUser.user;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.fail;
 

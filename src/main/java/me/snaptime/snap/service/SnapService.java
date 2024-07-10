@@ -1,8 +1,8 @@
 package me.snaptime.snap.service;
 
-import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
-import me.snaptime.snap.data.dto.req.ModifySnapReqDto;
-import me.snaptime.snap.data.dto.res.FindSnapResDto;
+import me.snaptime.snap.dto.req.CreateSnapReqDto;
+import me.snaptime.snap.dto.req.ModifySnapReqDto;
+import me.snaptime.snap.dto.res.FindSnapResDto;
 
 import java.util.List;
 
