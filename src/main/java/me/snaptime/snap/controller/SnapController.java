@@ -67,16 +67,17 @@ public class SnapController {
     }
 
     @Operation(summary = "Snap 수정", description = "Snap 수정하기")
-
+    @Parameters({
+            @Parameter(name = "isPrivate", description = "변경 할 상태"),
+            @Parameter(name = "snapId", description = "변경 할 Snap의 ID"),
+            @Parameter(name = "tagUserLoginIds", description = "변경 할 TagID")
+    })
     @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CommonResponseDto<Long>> modifySnap(
             final @ModelAttribute ModifySnapReqDto modifySnapReqDto,
-            @Parameter(name = "isPrivate", description = "변경 할 상태")
             final @RequestParam boolean isPrivate,
-            @Parameter(name = "snapId", description = "변경 할 Snap의 ID")
-            final Long snapId,
-            @Parameter(name = "tagUserLoginIds")
-            final @RequestParam(value = "tagUserLoginIds", required = false) List<String> tagUserLoginIds,
+            final @RequestParam Long snapId,
+            final @RequestParam(required = false) List<String> tagUserLoginIds,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
         String uId = userDetails.getUsername();
