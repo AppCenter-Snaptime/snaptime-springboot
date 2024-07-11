@@ -1,12 +1,11 @@
-package me.snaptime.snap.component.crawling.provider;
+package me.snaptime.component.crawling.provider;
 
-import me.snaptime.snap.util.ConnectionAction;
-import me.snaptime.snap.util.JsoupAction;
+import me.snaptime.util.JsoupAction;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OnePercent implements PhotoProvider {
+public class OnePercent extends AbstractPhotoProvider {
 
     @Override
     public String crawlingImageURL(String page_url) {
@@ -15,7 +14,7 @@ public class OnePercent implements PhotoProvider {
     }
 
     @Override
-    public byte[] getImageBytes(String image_url) {
-        return ConnectionAction.getImage("bc1.mx2.co.kr", image_url);
+    public String getHostname() {
+        return "bc1.mx2.co.kr";
     }
 }

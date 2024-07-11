@@ -1,47 +1,30 @@
 package me.snaptime.component.crawling;
 
-import me.snaptime.component.crawling.provider.HaruFilm;
-import me.snaptime.snap.component.crawling.provider.OnePercent;
 import me.snaptime.component.crawling.provider.PhotoProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Component
 public class CrawlingComponentImpl implements CrawlingComponent {
-    private final HaruFilm haruFilm;
-    private final OnePercent onePercent;
+    private final Map<String, PhotoProvider> providers;
 
     @Autowired
-    public CrawlingComponentImpl(@Qualifier("haruFilm") PhotoProvider haruFilm,
-                                 @Qualifier("onePercent") PhotoProvider onePercent) {
-        this.haruFilm = (HaruFilm) haruFilm;
-        this.onePercent = (OnePercent) onePercent;
+    public CrawlingComponentImpl(List<PhotoProvider> providerList) {
+        this.providers = providerList.stream()
+                .collect(Collectors.toMap(provider -> provider.getClass().getSimpleName().toLowerCase(), Function.identity()));
     }
+
 
     @Override
-    public byte[] getImageFromHaruFilm(String page_url) {
-        String image_url = haruFilm.crawlingImageURL(page_url);
-        return haruFilm.getImageBytes(image_url);
+    public byte[] getImage(String providerName, String page_url) {
+        PhotoProvider provider = providers.get(providerName.toLowerCase());
+        String image_url = provider.crawlingImageURL(page_url);
+        return provider.getImageBytes(image_url);
     }
-
-    @Override
-    public byte[] getImageFromOnePercent(String page_url) {
-        String image_url = onePercent.crawlingImageURL(page_url);
-        return onePercent.getImageBytes(image_url);
-    }
-
-    @Override
-    public String getImageFromLifeFourCuts(String page_url) {
-        return "";
-    }
-
-    @Override
-    public String getImageFromPhotoism(String page_url) {
-        return "";
-    }
-
-    //....
 }
