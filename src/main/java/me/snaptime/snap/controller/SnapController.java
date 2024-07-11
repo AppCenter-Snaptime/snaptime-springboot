@@ -132,6 +132,23 @@ public class SnapController {
         );
     }
 
+    @Operation(summary = "Snap 삭제", description = "스냅을 삭제합니다.")
+    @DeleteMapping
+    @Parameter(name = "snapId", description = "삭제할 Snap ID")
+    ResponseEntity<CommonResponseDto<Void>> deleteSnap(
+            final @RequestParam Long snapId,
+            final @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String uId = userDetails.getUsername();
+        snapService.deleteSnap(snapId, uId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        snapId + "번 스냅이 삭제되었습니다.",
+                        null
+                )
+        );
+    }
+
     @Operation(summary = "하루필름 크롤링 테스트 API", description = "하루필름 크롤링 테스트 API입니다.")
     @GetMapping("/test")
     public ResponseEntity<?> test(

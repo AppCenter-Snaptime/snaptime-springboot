@@ -207,8 +207,20 @@ public class SnapServiceImpl implements SnapService {
     }
 
     @Override
-    public void deleteSnap(Long id, String Uid) {
+    public void deleteSnap(Long snapId, String uId) {
+        Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
+        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
+        // 삭제를 요청한 사용자가 Snap를 만든 사용자인지 확인한다.
+        if (!Objects.equals(foundSnap.getUser().getId(), foundUser.getId())) {
+            // 다르다면 에러를 던진다.
+            throw new CustomException(ExceptionCode.SNAP_USER_IS_NOT_THE_SAME);
+        }
+        String fileName = foundSnap.getFileName();
+        // 저장소에 보관되어있는 사진을 삭제한다.
+        fileComponent.deletePhoto(fileName);
+        // DB에서 스냅을 삭제한다.
+        snapRepository.delete(foundSnap);
     }
 
     @Override
