@@ -12,6 +12,7 @@ import me.snaptime.snap.data.dto.res.FindAllAlbumsResDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.data.dto.res.GetAllAlbumListResDto;
 import me.snaptime.snap.data.repository.AlbumRepository;
+import me.snaptime.snap.data.repository.SnapRepository;
 import me.snaptime.snap.service.AlbumService;
 import me.snaptime.user.data.domain.User;
 import me.snaptime.user.data.repository.UserRepository;
@@ -31,6 +32,7 @@ public class AlbumServiceImpl implements AlbumService {
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
     private final UrlComponent urlComponent;
+    private final SnapRepository snapRepository;
 
     @Value(value = "${nonClassification.name}")
     private String nonClassificationName;
@@ -146,6 +148,19 @@ public class AlbumServiceImpl implements AlbumService {
     public void removeAlbum(String uId, Long album_id) {
         User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         isUserHavePermission(foundUser, album_id);
+        Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
+        // 사용자가 가지고 있는 non-classification id를 가져온다.
+        Long foundNonClassificationId = findUserNonClassificationId(foundUser);
+        Album nonClassificationAlbum = albumRepository.findById(foundNonClassificationId).orElseThrow(() -> new CustomException(ExceptionCode.NON_CLASSIFICATION_ALBUM_IS_NOT_EXIST));
+        // 앨범과 연관관계가 맺어져있는 snap들의 목록을 가져온다
+        List<Snap> snapList = foundAlbum.getSnap();
+        for (Snap snap: snapList) {
+            // non-classification Snap과 앨범을 연관관계 맺어준다.
+            snap.associateAlbum(nonClassificationAlbum);
+        }
+        // DB에 반영한다.
+        snapRepository.saveAll(snapList);
+        albumRepository.delete(foundAlbum);
     }
 
     /*

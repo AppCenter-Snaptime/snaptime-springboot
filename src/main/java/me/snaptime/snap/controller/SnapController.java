@@ -9,8 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.dto.CommonResponseDto;
 import me.snaptime.snap.component.crawling.CrawlingComponent;
 import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
+import me.snaptime.snap.data.dto.req.ModifySnapReqDto;
 import me.snaptime.snap.data.dto.res.FindSnapResDto;
 import me.snaptime.snap.service.SnapService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +67,29 @@ public class SnapController {
         );
     }
 
+    @Operation(summary = "Snap 수정", description = "Snap 수정하기")
+    @Parameters({
+            @Parameter(name = "isPrivate", description = "변경 할 상태"),
+            @Parameter(name = "snapId", description = "변경 할 Snap의 ID"),
+            @Parameter(name = "tagUserLoginIds", description = "변경 할 TagID")
+    })
+    @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<CommonResponseDto<Long>> modifySnap(
+            final @ModelAttribute ModifySnapReqDto modifySnapReqDto,
+            final @RequestParam boolean isPrivate,
+            final @RequestParam Long snapId,
+            final @RequestParam(required = false) List<String> tagUserLoginIds,
+            final @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String uId = userDetails.getUsername();
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "스냅이 정상적으로 수정되었습니다.",
+                        snapService.modifySnap(snapId, modifySnapReqDto, uId, tagUserLoginIds, isPrivate)
+                )
+        );
+    }
+
     @Operation(summary = "Snap 공개상태 변경", description = "Snap 공개 상태를 변경합니다.")
     @PostMapping("/visibility")
     @Parameters({
@@ -81,6 +106,44 @@ public class SnapController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "게시글의 상태가 성공적으로 변경되었습니다.",
+                        null
+                )
+        );
+    }
+
+    @Operation(summary = "Snap 앨범 위치 변경", description = "Snap의 앨범 위치를 변경합니다.")
+    @PostMapping("/album")
+    @Parameters({
+            @Parameter(name = "snapId", description = "위치를 변경할 Snap Id"),
+            @Parameter(name = "albumId", description = "이동할 Album Id")
+    })
+    ResponseEntity<CommonResponseDto<Void>> relocateSnap(
+            final @RequestParam Long snapId,
+            final @RequestParam Long albumId,
+            final @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String uId = userDetails.getUsername();
+        snapService.relocateSnap(snapId, albumId, uId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "스냅의 위치가 " + albumId + "번 앨범으로 변경되었습니다.",
+                        null
+                )
+        );
+    }
+
+    @Operation(summary = "Snap 삭제", description = "스냅을 삭제합니다.")
+    @DeleteMapping
+    @Parameter(name = "snapId", description = "삭제할 Snap ID")
+    ResponseEntity<CommonResponseDto<Void>> deleteSnap(
+            final @RequestParam Long snapId,
+            final @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String uId = userDetails.getUsername();
+        snapService.deleteSnap(snapId, uId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        snapId + "번 스냅이 삭제되었습니다.",
                         null
                 )
         );
