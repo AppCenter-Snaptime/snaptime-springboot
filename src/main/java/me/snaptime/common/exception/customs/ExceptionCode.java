@@ -58,6 +58,7 @@ public enum ExceptionCode {
     ALBUM_NOT_EXIST(HttpStatus.BAD_REQUEST, "앨범이 존재하지 않습니다."),
     ALBUM_ID_IS_NOT_GIVEN(HttpStatus.BAD_REQUEST, "앨범 id가 주어지지 않았습니다."),
     ALBUM_USER_NOT_MATCH(HttpStatus.BAD_REQUEST, "앨범을 만든 사용자와 일치하지 않습니다."),
+    NON_CLASSIFICATION_ALBUM_IS_NOT_EXIST(HttpStatus.BAD_REQUEST, "모든 스냅 앨범이 존재하지 않습니다."),
 
     // Jwt Exception
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED,  "토큰이 만료되었습니다."),
