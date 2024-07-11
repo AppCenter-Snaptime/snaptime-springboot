@@ -1,12 +1,12 @@
 package me.snaptime.user.controller;
 
 import com.google.gson.Gson;
-import me.snaptime.common.config.SecurityConfig;
-import me.snaptime.common.jwt.JwtProvider;
-import me.snaptime.user.data.dto.request.UserReqDto;
-import me.snaptime.user.data.dto.request.UserUpdateDto;
-import me.snaptime.user.data.dto.response.UserResDto;
-import me.snaptime.user.service.UserDetailsServiceImpl;
+import me.snaptime.config.SecurityConfig;
+import me.snaptime.jwt.JwtProvider;
+import me.snaptime.jwt.UserDetailsServiceImpl;
+import me.snaptime.user.dto.req.UserReqDto;
+import me.snaptime.user.dto.req.UserUpdateDto;
+import me.snaptime.user.dto.res.UserResDto;
 import me.snaptime.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,15 +1,15 @@
 package me.snaptime.snap.service;
 
 import com.querydsl.core.Tuple;
-import me.snaptime.common.component.UrlComponent;
-import me.snaptime.common.component.impl.NextPageChecker;
-import me.snaptime.snap.data.dto.res.FindSnapPagingResDto;
-import me.snaptime.snap.data.repository.SnapRepository;
+import me.snaptime.component.url.UrlComponent;
+import me.snaptime.snap.dto.res.FindSnapPagingResDto;
+import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snap.service.impl.SnapPagingServiceImpl;
-import me.snaptime.social.service.SnapLikeService;
-import me.snaptime.social.service.SnapTagService;
-import me.snaptime.user.data.domain.User;
-import me.snaptime.user.data.repository.UserRepository;
+import me.snaptime.snapLike.service.SnapLikeService;
+import me.snaptime.snapTag.service.SnapTagService;
+import me.snaptime.user.domain.User;
+import me.snaptime.user.repository.UserRepository;
+import me.snaptime.util.NextPageChecker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static me.snaptime.snap.data.domain.QSnap.snap;
-import static me.snaptime.user.data.domain.QUser.user;
+import static me.snaptime.snap.domain.QSnap.snap;
+import static me.snaptime.user.domain.QUser.user;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;

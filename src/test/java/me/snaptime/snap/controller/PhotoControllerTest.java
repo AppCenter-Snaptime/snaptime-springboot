@@ -1,7 +1,7 @@
 package me.snaptime.snap.controller;
 
 import me.snaptime.snap.service.impl.SnapServiceImpl;
-import me.snaptime.user.data.dto.request.UserReqDto;
+import me.snaptime.user.dto.req.UserReqDto;
 import me.snaptime.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

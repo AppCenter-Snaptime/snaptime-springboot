@@ -1,12 +1,12 @@
 package me.snaptime.snap.service;
 
-import me.snaptime.common.component.UrlComponent;
-import me.snaptime.snap.component.encryption.EncryptionComponent;
-import me.snaptime.snap.component.file.FileComponent;
-import me.snaptime.snap.data.repository.AlbumRepository;
-import me.snaptime.snap.data.repository.SnapRepository;
+import me.snaptime.album.repository.AlbumRepository;
+import me.snaptime.component.encryption.EncryptionComponent;
+import me.snaptime.component.file.FileComponent;
+import me.snaptime.component.url.UrlComponent;
+import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snap.service.impl.SnapServiceImpl;
-import me.snaptime.user.data.repository.UserRepository;
+import me.snaptime.user.repository.UserRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

@@ -1,11 +1,12 @@
 package me.snaptime.user.service;
 
-import me.snaptime.user.data.domain.ProfilePhoto;
-import me.snaptime.user.data.domain.User;
-import me.snaptime.user.data.dto.response.ProfilePhotoResDto;
-import me.snaptime.user.data.repository.ProfilePhotoRepository;
-import me.snaptime.user.data.repository.UserRepository;
-import me.snaptime.user.util.ProfilePhotoNameGenerator;
+import me.snaptime.profilePhoto.domain.ProfilePhoto;
+import me.snaptime.profilePhoto.dto.res.ProfilePhotoResDto;
+import me.snaptime.profilePhoto.repository.ProfilePhotoRepository;
+import me.snaptime.profilePhoto.service.ProfilePhotoService;
+import me.snaptime.user.domain.User;
+import me.snaptime.user.repository.UserRepository;
+import me.snaptime.util.ProfilePhotoNameGenerator;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

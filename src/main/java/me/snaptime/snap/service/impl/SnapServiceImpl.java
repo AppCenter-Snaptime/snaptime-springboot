@@ -2,27 +2,27 @@ package me.snaptime.snap.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.snaptime.common.component.UrlComponent;
-import me.snaptime.common.exception.customs.CustomException;
-import me.snaptime.common.exception.customs.ExceptionCode;
-import me.snaptime.snap.component.encryption.EncryptionComponent;
-import me.snaptime.snap.component.file.FileComponent;
-import me.snaptime.snap.data.domain.Album;
-import me.snaptime.snap.data.domain.Encryption;
-import me.snaptime.snap.data.domain.Snap;
-import me.snaptime.snap.data.dto.file.WritePhotoToFileSystemResult;
-import me.snaptime.snap.data.dto.req.CreateSnapReqDto;
-import me.snaptime.snap.data.dto.req.ModifySnapReqDto;
-import me.snaptime.snap.data.dto.res.FindSnapResDto;
-import me.snaptime.snap.data.repository.AlbumRepository;
-import me.snaptime.snap.data.repository.SnapRepository;
-import me.snaptime.snap.service.AlbumService;
+import me.snaptime.album.domain.Album;
+import me.snaptime.album.repository.AlbumRepository;
+import me.snaptime.album.service.AlbumService;
+import me.snaptime.component.encryption.EncryptionComponent;
+import me.snaptime.component.file.FileComponent;
+import me.snaptime.component.url.UrlComponent;
+import me.snaptime.exception.CustomException;
+import me.snaptime.exception.ExceptionCode;
+import me.snaptime.snap.domain.Encryption;
+import me.snaptime.snap.domain.Snap;
+import me.snaptime.snap.dto.file.WritePhotoToFileSystemResult;
+import me.snaptime.snap.dto.req.CreateSnapReqDto;
+import me.snaptime.snap.dto.req.ModifySnapReqDto;
+import me.snaptime.snap.dto.res.FindSnapResDto;
+import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snap.service.SnapService;
-import me.snaptime.snap.util.EncryptionUtil;
-import me.snaptime.social.data.dto.res.FindTagUserResDto;
-import me.snaptime.social.service.SnapTagService;
-import me.snaptime.user.data.domain.User;
-import me.snaptime.user.data.repository.UserRepository;
+import me.snaptime.snapTag.dto.res.FindTagUserResDto;
+import me.snaptime.snapTag.service.SnapTagService;
+import me.snaptime.user.domain.User;
+import me.snaptime.user.repository.UserRepository;
+import me.snaptime.util.EncryptionUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -145,7 +145,9 @@ public class SnapServiceImpl implements SnapService {
         /*
         * 새로운 유저를 찾아 태그 목록에 추가한다.
         * */
-        List<String> originalTagIds = snapTagService.findTagUserList(snapId).stream().map(FindTagUserResDto::loginId).toList();
+        List<String> originalTagIds = snapTagService.findTagUserList(snapId).
+                stream().map(FindTagUserResDto::loginId).toList();
+
         log.info("originalTagIds: {}", originalTagIds);
         List<String> newTagIds = new ArrayList<>();
         List<String> missingTagIds = new ArrayList<>();
