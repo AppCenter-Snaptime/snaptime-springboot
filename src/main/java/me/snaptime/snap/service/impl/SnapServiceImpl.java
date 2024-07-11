@@ -1,7 +1,6 @@
 package me.snaptime.snap.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import me.snaptime.snapTag.dto.res.FindTagUserResDto;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.album.domain.Album;
 import me.snaptime.album.repository.AlbumRepository;
@@ -19,6 +18,7 @@ import me.snaptime.snap.dto.req.ModifySnapReqDto;
 import me.snaptime.snap.dto.res.FindSnapResDto;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snap.service.SnapService;
+import me.snaptime.snapTag.dto.res.FindTagUserResDto;
 import me.snaptime.snapTag.service.SnapTagService;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
@@ -209,8 +209,20 @@ public class SnapServiceImpl implements SnapService {
     }
 
     @Override
-    public void deleteSnap(Long id, String Uid) {
+    public void deleteSnap(Long snapId, String uId) {
+        Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
+        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
+        // 삭제를 요청한 사용자가 Snap를 만든 사용자인지 확인한다.
+        if (!Objects.equals(foundSnap.getUser().getId(), foundUser.getId())) {
+            // 다르다면 에러를 던진다.
+            throw new CustomException(ExceptionCode.SNAP_USER_IS_NOT_THE_SAME);
+        }
+        String fileName = foundSnap.getFileName();
+        // 저장소에 보관되어있는 사진을 삭제한다.
+        fileComponent.deletePhoto(fileName);
+        // DB에서 스냅을 삭제한다.
+        snapRepository.delete(foundSnap);
     }
 
     @Override
@@ -226,6 +238,21 @@ public class SnapServiceImpl implements SnapService {
             }
         }
         return photoData;
+    }
+
+    @Override
+    public void relocateSnap(Long snapId, Long albumId, String uId) {
+        Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
+        Album foundAlbum = albumRepository.findById(albumId).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
+        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        // 찾은 Snap의 소유자가 요청자와 일치하고, 새로 옮길 앨범의 소유자가 요청자와 일치한다면
+        if (Objects.equals(foundSnap.getUser().getId(), foundUser.getId()) && Objects.equals(foundSnap.getAlbum().getUser().getId(), foundUser.getId())) {
+            // 새로 연관관계를 맺어주고 DB에 반영한다.
+            foundSnap.associateAlbum(foundAlbum);
+            snapRepository.save(foundSnap);
+        } else {
+            throw new CustomException(ExceptionCode.ALBUM_USER_NOT_MATCH);
+        }
     }
 
     private WritePhotoToFileSystemResult savePhotoToFileSystem(User user, MultipartFile multipartFile, boolean isPrivate) {
@@ -245,7 +272,7 @@ public class SnapServiceImpl implements SnapService {
 
     private void makeRelationSnapAndAlbum(Snap snap, Long album_id) {
         Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
-        snap.updateAlbum(foundAlbum);
+        snap.associateAlbum(foundAlbum);
         snapRepository.save(snap);
     }
 

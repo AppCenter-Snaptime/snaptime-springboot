@@ -110,6 +110,44 @@ public class SnapController {
         );
     }
 
+    @Operation(summary = "Snap 앨범 위치 변경", description = "Snap의 앨범 위치를 변경합니다.")
+    @PostMapping("/album")
+    @Parameters({
+            @Parameter(name = "snapId", description = "위치를 변경할 Snap Id"),
+            @Parameter(name = "albumId", description = "이동할 Album Id")
+    })
+    ResponseEntity<CommonResponseDto<Void>> relocateSnap(
+            final @RequestParam Long snapId,
+            final @RequestParam Long albumId,
+            final @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String uId = userDetails.getUsername();
+        snapService.relocateSnap(snapId, albumId, uId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "스냅의 위치가 " + albumId + "번 앨범으로 변경되었습니다.",
+                        null
+                )
+        );
+    }
+
+    @Operation(summary = "Snap 삭제", description = "스냅을 삭제합니다.")
+    @DeleteMapping
+    @Parameter(name = "snapId", description = "삭제할 Snap ID")
+    ResponseEntity<CommonResponseDto<Void>> deleteSnap(
+            final @RequestParam Long snapId,
+            final @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String uId = userDetails.getUsername();
+        snapService.deleteSnap(snapId, uId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        snapId + "번 스냅이 삭제되었습니다.",
+                        null
+                )
+        );
+    }
+
     @Operation(summary = "하루필름 크롤링 테스트 API", description = "하루필름 크롤링 테스트 API입니다.")
     @GetMapping("/test")
     public ResponseEntity<?> test(

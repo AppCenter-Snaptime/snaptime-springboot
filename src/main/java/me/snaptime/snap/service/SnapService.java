@@ -14,4 +14,5 @@ public interface SnapService {
     void changeVisibility(Long snapId, String userUid, boolean isPrivate);
     void deleteSnap(Long id, String Uid);
     byte[] downloadPhotoFromFileSystem(String fileName, String uId, boolean isEncrypted);
+    void relocateSnap(Long snapId, Long albumId, String uId);
 }

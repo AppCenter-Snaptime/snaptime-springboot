@@ -1,6 +1,7 @@
 package me.snaptime.album.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.album.dto.req.CreateAlbumReqDto;
@@ -78,7 +79,7 @@ public class AlbumController {
         String uId = userDetails.getUsername();
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
-                        "한 Album의 내용을 전부 가져오는데 성공했습니다.",
+                        album_id + "번 Album의 내용을 전부 가져오는데 성공했습니다.",
                         albumService.findAlbum(uId, album_id)
                 )
         );
@@ -93,7 +94,24 @@ public class AlbumController {
         albumService.modifyAlbumName(id, name);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
-                        "앨범의 이름을 수정했습니다.",
+                        id + "번 앨범의 이름을 수정했습니다.",
+                        null
+                )
+        );
+    }
+
+    @Operation(summary = "Album을 삭제합니다.", description = "Album Id로 Album을 삭제합니다. 삭제된 앨범 안에 있는 Snap은 '모든 스냅' 앨범으로 이동됩니다.")
+    @Parameter(name = "albumId", description = "삭제될 앨범의 ID를 입력해주세요")
+    @DeleteMapping
+    ResponseEntity<CommonResponseDto<Void>> deleteAlbum(
+            final @RequestParam Long albumId,
+            final @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String uId = userDetails.getUsername();
+        albumService.removeAlbum(uId, albumId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        albumId + "번 album을 정상적으로 삭제했습니다.",
                         null
                 )
         );
