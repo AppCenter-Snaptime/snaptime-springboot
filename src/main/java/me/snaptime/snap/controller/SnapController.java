@@ -151,12 +151,15 @@ public class SnapController {
 
     @Operation(summary = "하루필름 크롤링 테스트 API", description = "하루필름 크롤링 테스트 API입니다.")
     @GetMapping("/test")
-    public ResponseEntity<?> test(
-            final @RequestParam("url") String url,
-            final @AuthenticationPrincipal UserDetails userDetails
-    ) throws IOException {
+    public ResponseEntity<?> test(final @RequestParam("url") String url) {
         byte[] image = crawlingComponent.getImageFromHaruFilm(url);
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(image);
     }
 
+    @Operation(summary = "1Percent 크롤링 테스트 API", description = "1")
+    @GetMapping("/test2")
+    ResponseEntity<?> test2(final @RequestParam String url) {
+        byte[] image = crawlingComponent.getImageFromOnePercent(url);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(image);
+    }
 }
