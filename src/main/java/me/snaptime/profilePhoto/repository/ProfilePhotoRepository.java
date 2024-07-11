@@ -1,6 +1,6 @@
-package me.snaptime.profile.profilePhoto.repository;
+package me.snaptime.profilePhoto.repository;
 
-import me.snaptime.profile.profilePhoto.domain.ProfilePhoto;
+import me.snaptime.profilePhoto.domain.ProfilePhoto;
 import me.snaptime.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

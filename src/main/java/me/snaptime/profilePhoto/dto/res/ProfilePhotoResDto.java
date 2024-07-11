@@ -1,7 +1,7 @@
-package me.snaptime.profile.profilePhoto.dto.res;
+package me.snaptime.profilePhoto.dto.res;
 
 import lombok.Builder;
-import me.snaptime.profile.profilePhoto.domain.ProfilePhoto;
+import me.snaptime.profilePhoto.domain.ProfilePhoto;
 
 @Builder
 public record ProfilePhotoResDto(

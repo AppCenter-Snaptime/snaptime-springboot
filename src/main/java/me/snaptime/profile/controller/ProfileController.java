@@ -1,4 +1,4 @@
-package me.snaptime.profile.userProfile.controller;
+package me.snaptime.profile.controller;
 
 public class ProfileController {
 

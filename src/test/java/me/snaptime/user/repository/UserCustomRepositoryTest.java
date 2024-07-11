@@ -3,7 +3,7 @@ package me.snaptime.user.repository;
 import me.snaptime.component.url.UrlComponentImpl;
 import me.snaptime.config.JpaAuditingConfig;
 import me.snaptime.config.QueryDslConfig;
-import me.snaptime.profile.profilePhoto.repository.ProfilePhotoRepository;
+import me.snaptime.profilePhoto.repository.ProfilePhotoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

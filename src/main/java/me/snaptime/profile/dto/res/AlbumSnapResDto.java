@@ -1,4 +1,4 @@
-package me.snaptime.profile.userProfile.dto.res;
+package me.snaptime.profile.dto.res;
 
 import lombok.Builder;
 

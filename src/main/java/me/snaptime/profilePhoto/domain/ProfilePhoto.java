@@ -1,4 +1,4 @@
-package me.snaptime.profile.profilePhoto.domain;
+package me.snaptime.profilePhoto.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

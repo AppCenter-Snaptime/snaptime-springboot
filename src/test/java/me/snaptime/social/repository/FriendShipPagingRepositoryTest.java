@@ -10,7 +10,7 @@ import me.snaptime.friendShip.common.FriendSearchType;
 import me.snaptime.friendShip.common.FriendStatus;
 import me.snaptime.friendShip.domain.FriendShip;
 import me.snaptime.friendShip.repository.FriendShipRepository;
-import me.snaptime.profile.profilePhoto.domain.ProfilePhoto;
+import me.snaptime.profilePhoto.domain.ProfilePhoto;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

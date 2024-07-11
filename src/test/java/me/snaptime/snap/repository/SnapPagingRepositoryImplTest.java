@@ -11,7 +11,7 @@ import me.snaptime.exception.ExceptionCode;
 import me.snaptime.friendShip.common.FriendStatus;
 import me.snaptime.friendShip.domain.FriendShip;
 import me.snaptime.friendShip.repository.FriendShipRepository;
-import me.snaptime.profile.profilePhoto.domain.ProfilePhoto;
+import me.snaptime.profilePhoto.domain.ProfilePhoto;
 import me.snaptime.snap.domain.Snap;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;

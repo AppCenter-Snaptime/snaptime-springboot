@@ -1,4 +1,4 @@
-package me.snaptime.profile.userProfile.repository;
+package me.snaptime.profile.repository;
 
 public interface ProfileRepository {
 

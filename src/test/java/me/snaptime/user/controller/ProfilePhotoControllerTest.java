@@ -1,8 +1,8 @@
 package me.snaptime.user.controller;
 
 
-import me.snaptime.profile.profilePhoto.domain.ProfilePhoto;
-import me.snaptime.profile.profilePhoto.service.ProfilePhotoService;
+import me.snaptime.profilePhoto.domain.ProfilePhoto;
+import me.snaptime.profilePhoto.service.ProfilePhotoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

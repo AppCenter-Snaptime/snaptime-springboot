@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.snaptime.common.BaseTimeEntity;
-import me.snaptime.profile.profilePhoto.domain.ProfilePhoto;
+import me.snaptime.profilePhoto.domain.ProfilePhoto;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

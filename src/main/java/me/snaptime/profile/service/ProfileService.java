@@ -1,4 +1,4 @@
-package me.snaptime.profile.userProfile.service;
+package me.snaptime.profile.service;
 
 public class ProfileService {
 

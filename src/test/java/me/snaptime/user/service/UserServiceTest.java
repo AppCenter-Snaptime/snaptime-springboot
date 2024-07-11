@@ -1,8 +1,8 @@
 package me.snaptime.user.service;
 
 import me.snaptime.jwt.JwtProvider;
-import me.snaptime.profile.profilePhoto.domain.ProfilePhoto;
-import me.snaptime.profile.profilePhoto.repository.ProfilePhotoRepository;
+import me.snaptime.profilePhoto.domain.ProfilePhoto;
+import me.snaptime.profilePhoto.repository.ProfilePhotoRepository;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.dto.req.SignInReqDto;
 import me.snaptime.user.dto.req.UserReqDto;

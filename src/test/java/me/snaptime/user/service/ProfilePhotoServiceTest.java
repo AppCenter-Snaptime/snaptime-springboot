@@ -1,9 +1,9 @@
 package me.snaptime.user.service;
 
-import me.snaptime.profile.profilePhoto.domain.ProfilePhoto;
-import me.snaptime.profile.profilePhoto.dto.res.ProfilePhotoResDto;
-import me.snaptime.profile.profilePhoto.repository.ProfilePhotoRepository;
-import me.snaptime.profile.profilePhoto.service.ProfilePhotoService;
+import me.snaptime.profilePhoto.domain.ProfilePhoto;
+import me.snaptime.profilePhoto.dto.res.ProfilePhotoResDto;
+import me.snaptime.profilePhoto.repository.ProfilePhotoRepository;
+import me.snaptime.profilePhoto.service.ProfilePhotoService;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.util.ProfilePhotoNameGenerator;

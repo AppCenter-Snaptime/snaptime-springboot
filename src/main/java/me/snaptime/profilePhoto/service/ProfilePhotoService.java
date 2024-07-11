@@ -1,12 +1,12 @@
-package me.snaptime.profile.profilePhoto.service;
+package me.snaptime.profilePhoto.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
-import me.snaptime.profile.profilePhoto.domain.ProfilePhoto;
-import me.snaptime.profile.profilePhoto.dto.res.ProfilePhotoResDto;
-import me.snaptime.profile.profilePhoto.repository.ProfilePhotoRepository;
+import me.snaptime.profilePhoto.domain.ProfilePhoto;
+import me.snaptime.profilePhoto.dto.res.ProfilePhotoResDto;
+import me.snaptime.profilePhoto.repository.ProfilePhotoRepository;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.util.ProfilePhotoNameGenerator;
