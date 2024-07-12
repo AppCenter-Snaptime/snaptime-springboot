@@ -126,8 +126,6 @@ public class FriendService {
 
         // 다음 페이지 유무 체크
         boolean hasNextPage = NextPageChecker.hasNextPage(result,20L);
-        if(hasNextPage)
-            result.remove(20);
 
         List<FriendInfo> friendInfoList = result.stream().map(entity ->
         {
@@ -153,7 +151,6 @@ public class FriendService {
     // 해당 유저가 자신이 팔로우했는지 유무체크
     private boolean checkIsFriend(String loginId, User targetUser){
         User user = findUserByLoginId(loginId);
-
         return friendRepository.existsByToUserAndFromUser(user,targetUser);
     }
 

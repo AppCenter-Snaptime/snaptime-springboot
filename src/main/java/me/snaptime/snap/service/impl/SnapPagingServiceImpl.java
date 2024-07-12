@@ -41,8 +41,6 @@ public class SnapPagingServiceImpl {
 
         List<Tuple> result = snapRepository.findSnapPaging(loginId,pageNum,reqUser);
         boolean hasNextPage = NextPageChecker.hasNextPage(result,10L);
-        if(hasNextPage)
-            result.remove(10);
 
         List<SnapPagingInfo> snapPagingInfoList = result.stream().map(entity ->
         {

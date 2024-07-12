@@ -9,6 +9,9 @@ public class NextPageChecker {
     public static boolean hasNextPage(List<Tuple> resultList, Long pageSize){
 
         boolean hasNextPage = resultList.size() <= pageSize ? false : true;
+        if(hasNextPage)
+            resultList.remove(pageSize);
+
         return hasNextPage;
     }
 }

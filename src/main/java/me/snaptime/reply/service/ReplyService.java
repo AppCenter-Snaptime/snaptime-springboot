@@ -75,30 +75,27 @@ public class ReplyService {
                             .content(addChildReplyReqDto.content())
                             .build()
             );
-
-            return ;
         }
+        // 태그유저가 있는 댓글등록이면
+        else{
+            User tagUser = userRepository.findByLoginId(addChildReplyReqDto.tagLoginId())
+                    .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        User tagUser = userRepository.findByLoginId(addChildReplyReqDto.tagLoginId())
-                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-
-        childReplyRepository.save(
-                ChildReply.builder()
-                        .parentReply(parentReply)
-                        .user(user)
-                        .tagUser(tagUser)
-                        .content(addChildReplyReqDto.content())
-                        .build()
-        );
-
+            childReplyRepository.save(
+                    ChildReply.builder()
+                            .parentReply(parentReply)
+                            .user(user)
+                            .tagUser(tagUser)
+                            .content(addChildReplyReqDto.content())
+                            .build()
+            );
+        }
     }
 
     public FindParentReplyResDto readParentReply(String loginId, Long snapId, Long pageNum){
 
         List<Tuple> result = parentReplyRepository.findReplyList(loginId,snapId,pageNum);
         boolean hasNextPage = NextPageChecker.hasNextPage(result,20L);
-        if(hasNextPage)
-            result.remove(20);
 
         List<ParentReplyInfo> parentReplyInfoList = result.stream().map(entity ->
         {
@@ -115,8 +112,6 @@ public class ReplyService {
         QUser writerUser = new QUser("writerUser");
         List<Tuple> result = childReplyRepository.findReplyList(loginId,parentReplyId,pageNum);
         boolean hasNextPage = NextPageChecker.hasNextPage(result,20L);
-        if(hasNextPage)
-            result.remove(20);
 
         List<ChildReplyInfo> childReplyInfoList = result.stream().map(entity ->
         {

@@ -12,5 +12,7 @@ public interface SnapTagRepository extends JpaRepository<SnapTag,Long> {
 
     Optional<SnapTag> findBySnapAndTagUser(Snap snap, User tagUser);
 
+    boolean existsBySnapAndTagUser(Snap snap, User tagUser);
+
     List<SnapTag> findBySnap(Snap snap);
 }
