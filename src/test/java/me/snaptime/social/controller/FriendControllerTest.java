@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import me.snaptime.config.SecurityConfig;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
-import me.snaptime.friendShip.common.FriendSearchType;
-import me.snaptime.friendShip.controller.FriendShipController;
-import me.snaptime.friendShip.dto.req.AcceptFollowReqDto;
-import me.snaptime.friendShip.service.FriendShipService;
+import me.snaptime.friend.common.FriendSearchType;
+import me.snaptime.friend.controller.FriendController;
+import me.snaptime.friend.dto.req.AcceptFollowReqDto;
+import me.snaptime.friend.service.FriendService;
 import me.snaptime.jwt.JwtProvider;
 import me.snaptime.jwt.UserDetailsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
@@ -28,12 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(value = FriendShipController.class)
+@WebMvcTest(value = FriendController.class)
 @Import({SecurityConfig.class, JwtProvider.class})
-public class FriendShipControllerTest {
+public class FriendControllerTest {
 
     @MockBean
-    private FriendShipService friendShipService;
+    private FriendService friendService;
 
     @MockBean
     private UserDetailsServiceImpl userDetailsService;
@@ -58,7 +58,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("팔로우가 완료되었습니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1)).sendFriendShipReq(any(String.class),any(String.class));
+        verify(friendService,times(1)).sendFollow(any(String.class),any(String.class));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class FriendShipControllerTest {
     @DisplayName("팔로우 요청테스트 -> (실패 : 존재하지 않는 유저)")
     public void sendFollowReq2() throws Exception {
         //given
-        doThrow(new CustomException(ExceptionCode.USER_NOT_EXIST)).when(friendShipService).sendFriendShipReq(any(String.class),any(String.class));
+        doThrow(new CustomException(ExceptionCode.USER_NOT_EXIST)).when(friendService).sendFollow(any(String.class),any(String.class));
 
         //when, then
         this.mockMvc.perform(post("/friends")
@@ -76,7 +76,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("사용자가 존재하지 않습니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1)).sendFriendShipReq(any(String.class),any(String.class));
+        verify(friendService,times(1)).sendFollow(any(String.class),any(String.class));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class FriendShipControllerTest {
     @DisplayName("팔로우 요청테스트 -> (실패 : 이미 팔로우한 유저)")
     public void sendFollowReq3() throws Exception {
         //given
-        doThrow(new CustomException(ExceptionCode.ALREADY_FOLLOW)).when(friendShipService).sendFriendShipReq(any(String.class),any(String.class));
+        doThrow(new CustomException(ExceptionCode.ALREADY_FOLLOW)).when(friendService).sendFollow(any(String.class),any(String.class));
 
         //when, then
         this.mockMvc.perform(post("/friends")
@@ -94,7 +94,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("이미 팔로우관계입니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1)).sendFriendShipReq(any(String.class),any(String.class));
+        verify(friendService,times(1)).sendFollow(any(String.class),any(String.class));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class FriendShipControllerTest {
     @DisplayName("팔로우 요청테스트 -> (실패 : 전에 팔로우요청이 거절됨)")
     public void sendFollowReq4() throws Exception {
         //given
-        doThrow(new CustomException(ExceptionCode.REJECT_FRIEND_REQ)).when(friendShipService).sendFriendShipReq(any(String.class),any(String.class));
+        doThrow(new CustomException(ExceptionCode.REJECT_FRIEND_REQ)).when(friendService).sendFollow(any(String.class),any(String.class));
 
         //when, then
         this.mockMvc.perform(post("/friends")
@@ -112,7 +112,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("팔로우요청이 거절되었습니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1)).sendFriendShipReq(any(String.class),any(String.class));
+        verify(friendService,times(1)).sendFollow(any(String.class),any(String.class));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class FriendShipControllerTest {
     @DisplayName("팔로우 요청테스트 -> (실패 : 자기 자신에게 팔로우요청을 보냄)")
     public void sendFollowReq5() throws Exception {
         //given
-        doThrow(new CustomException(ExceptionCode.SELF_FRIEND_REQ)).when(friendShipService).sendFriendShipReq(any(String.class),any(String.class));
+        doThrow(new CustomException(ExceptionCode.SELF_FRIEND_REQ)).when(friendService).sendFollow(any(String.class),any(String.class));
 
         //when, then
         this.mockMvc.perform(post("/friends")
@@ -130,7 +130,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("자신에게 친구추가 요청을 보낼 수 없습니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1)).sendFriendShipReq(any(String.class),any(String.class));
+        verify(friendService,times(1)).sendFollow(any(String.class),any(String.class));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("팔로우요청을 보낼 유저의 이름을 입력해주세요."))
                 .andDo(print());
 
-        verify(friendShipService,times(0)).sendFriendShipReq(any(String.class),any(String.class));
+        verify(friendService,times(0)).sendFollow(any(String.class),any(String.class));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class FriendShipControllerTest {
         acceptFollowReqDto = new AcceptFollowReqDto("testName",true);
         Gson gson = new Gson();
         String requestBody = gson.toJson(acceptFollowReqDto);
-        given(friendShipService.acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class))).willReturn("팔로우 수락을 완료했습니다.");
+        given(friendService.acceptFollow(any(String.class),any(AcceptFollowReqDto.class))).willReturn("팔로우 수락을 완료했습니다.");
 
 
         //when, then
@@ -169,7 +169,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("팔로우 수락을 완료했습니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1)).acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class));
+        verify(friendService,times(1)).acceptFollow(any(String.class),any(AcceptFollowReqDto.class));
     }
 
     @Test
@@ -180,7 +180,7 @@ public class FriendShipControllerTest {
         acceptFollowReqDto = new AcceptFollowReqDto("testName",false);
         Gson gson = new Gson();
         String requestBody = gson.toJson(acceptFollowReqDto);
-        given(friendShipService.acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class))).willReturn("팔로우 거절을 완료했습니다.");
+        given(friendService.acceptFollow(any(String.class),any(AcceptFollowReqDto.class))).willReturn("팔로우 거절을 완료했습니다.");
 
         //when, then
         this.mockMvc.perform(post("/friends/accept")
@@ -190,7 +190,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("팔로우 거절을 완료했습니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1)).acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class));
+        verify(friendService,times(1)).acceptFollow(any(String.class),any(AcceptFollowReqDto.class));
     }
 
     @Test
@@ -212,8 +212,8 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.result.isAccept").value("수락여부를 보내주세요."))
                 .andDo(print());
 
-        verify(friendShipService,times(0))
-                .acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class));
+        verify(friendService,times(0))
+                .acceptFollow(any(String.class),any(AcceptFollowReqDto.class));
     }
 
     @Test
@@ -224,7 +224,7 @@ public class FriendShipControllerTest {
         acceptFollowReqDto = new AcceptFollowReqDto("test",true);
         Gson gson = new Gson();
         String requestBody = gson.toJson(acceptFollowReqDto);
-        given(friendShipService.acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class)))
+        given(friendService.acceptFollow(any(String.class),any(AcceptFollowReqDto.class)))
                 .willThrow(new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         //when, then
@@ -235,7 +235,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("사용자가 존재하지 않습니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1)).acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class));
+        verify(friendService,times(1)).acceptFollow(any(String.class),any(AcceptFollowReqDto.class));
     }
 
     @Test
@@ -246,7 +246,7 @@ public class FriendShipControllerTest {
         acceptFollowReqDto = new AcceptFollowReqDto("test",true);
         Gson gson = new Gson();
         String requestBody = gson.toJson(acceptFollowReqDto);
-        given(friendShipService.acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class))).willThrow(new CustomException(ExceptionCode.FRIENDSHIP_NOT_EXIST));
+        given(friendService.acceptFollow(any(String.class),any(AcceptFollowReqDto.class))).willThrow(new CustomException(ExceptionCode.FRIEND_NOT_EXIST));
 
         //when, then
         this.mockMvc.perform(post("/friends/accept")
@@ -256,7 +256,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("존재하지 않는 친구입니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1)).acceptFriendShipReq(any(String.class),any(AcceptFollowReqDto.class));
+        verify(friendService,times(1)).acceptFollow(any(String.class),any(AcceptFollowReqDto.class));
     }
 
     @Test
@@ -266,13 +266,13 @@ public class FriendShipControllerTest {
         //given
 
         //when, then
-        this.mockMvc.perform(delete("/friends/{friendShipId}","1")
+        this.mockMvc.perform(delete("/friends/{friendId}","1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.msg").value("팔로우삭제가 완료되었습니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1)).deleteFriendShip(any(String.class),any(Long.class));
+        verify(friendService,times(1)).unFollow(any(String.class),any(Long.class));
     }
 
     @Test
@@ -282,13 +282,13 @@ public class FriendShipControllerTest {
         //given
 
         //when, then
-        this.mockMvc.perform(delete("/friends/{friendShipId}","string")
+        this.mockMvc.perform(delete("/friends/{friendId}","string")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.msg").value("friendShipId이 Long타입이여야 합니다."))
+                .andExpect(jsonPath("$.msg").value("friendId이 Long타입이여야 합니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(0)).deleteFriendShip(any(String.class),any(Long.class));
+        verify(friendService,times(0)).unFollow(any(String.class),any(Long.class));
     }
 
     @Test
@@ -296,17 +296,17 @@ public class FriendShipControllerTest {
     @DisplayName("팔로우 삭제테스트 -> 실패(존재하지 않는 팔로우)")
     public void deleteFollowTest3() throws Exception {
         //given
-        doThrow(new CustomException(ExceptionCode.FRIENDSHIP_NOT_EXIST))
-                .when(friendShipService).deleteFriendShip(any(String.class),any(Long.class));
+        doThrow(new CustomException(ExceptionCode.FRIEND_NOT_EXIST))
+                .when(friendService).unFollow(any(String.class),any(Long.class));
 
         //when, then
-        this.mockMvc.perform(delete("/friends/{friendShipId}","1")
+        this.mockMvc.perform(delete("/friends/{friendId}","1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("존재하지 않는 친구입니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1)).deleteFriendShip(any(String.class),any(Long.class));
+        verify(friendService,times(1)).unFollow(any(String.class),any(Long.class));
     }
 
     @Test
@@ -315,16 +315,16 @@ public class FriendShipControllerTest {
     public void deleteFollowTest4() throws Exception {
         //given
         doThrow(new CustomException(ExceptionCode.ACCESS_FAIL_FRIENDSHIP))
-                .when(friendShipService).deleteFriendShip(any(String.class),any(Long.class));
+                .when(friendService).unFollow(any(String.class),any(Long.class));
 
         //when, then
-        this.mockMvc.perform(delete("/friends/{friendShipId}","1")
+        this.mockMvc.perform(delete("/friends/{friendId}","1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.msg").value("해당 친구에 대한 권한이 없습니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1)).deleteFriendShip(any(String.class),any(Long.class));
+        verify(friendService,times(1)).unFollow(any(String.class),any(Long.class));
     }
 
     @Test
@@ -342,7 +342,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("친구조회가 완료되었습니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1))
+        verify(friendService,times(1))
                 .findFriendList(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq(null));
     }
 
@@ -361,7 +361,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("친구조회가 완료되었습니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1))
+        verify(friendService,times(1))
                 .findFriendList(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq(null));
     }
 
@@ -381,7 +381,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("친구조회가 완료되었습니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1))
+        verify(friendService,times(1))
                 .findFriendList(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 
@@ -401,7 +401,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("friendSearchType이 FriendSearchType타입이여야 합니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(0))
+        verify(friendService,times(0))
                 .findFriendList(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 
@@ -421,7 +421,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("pageNum이 Long타입이여야 합니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(0))
+        verify(friendService,times(0))
                 .findFriendList(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 
@@ -441,7 +441,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("friendSearchType:팔로잉과 팔로워중 어느 친구목록을 조회할 지 입력해주세요."))
                 .andDo(print());
 
-        verify(friendShipService,times(0))
+        verify(friendService,times(0))
                 .findFriendList(any(String.class), any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 
@@ -451,7 +451,7 @@ public class FriendShipControllerTest {
     public void findFriendListTest7() throws Exception {
         //given
         doThrow(new CustomException(ExceptionCode.PAGE_NOT_FOUND))
-                .when(friendShipService).findFriendList(any(String.class),any(String.class),any(Long.class),
+                .when(friendService).findFriendList(any(String.class),any(String.class),any(Long.class),
                                                         any(FriendSearchType.class),eq("박"));
 
         //when, then
@@ -464,7 +464,7 @@ public class FriendShipControllerTest {
                 .andExpect(jsonPath("$.msg").value("존재하지 않는 페이지입니다."))
                 .andDo(print());
 
-        verify(friendShipService,times(1))
+        verify(friendService,times(1))
                 .findFriendList(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),
                                 eq("박"));
     }

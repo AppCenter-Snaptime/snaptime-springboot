@@ -8,9 +8,9 @@ import me.snaptime.config.JpaAuditingConfig;
 import me.snaptime.config.QueryDslConfig;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
-import me.snaptime.friendShip.common.FriendStatus;
-import me.snaptime.friendShip.domain.FriendShip;
-import me.snaptime.friendShip.repository.FriendShipRepository;
+import me.snaptime.friend.common.FriendStatus;
+import me.snaptime.friend.domain.Friend;
+import me.snaptime.friend.repository.FriendRepository;
 import me.snaptime.profilePhoto.domain.ProfilePhoto;
 import me.snaptime.snap.domain.Snap;
 import me.snaptime.user.domain.User;
@@ -45,7 +45,7 @@ public class SnapPagingRepositoryImplTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private FriendShipRepository friendShipRepository;
+    private FriendRepository friendRepository;
     @Autowired
     private AlbumRepository albumRepository;
     private User reqUser;
@@ -111,27 +111,27 @@ public class SnapPagingRepositoryImplTest {
 
         userRepository.saveAll(List.of(reqUser,user2,user3,user4));
 
-        FriendShip friendShip1 = FriendShip.builder()
+        Friend friend1 = Friend.builder()
                 .fromUser(reqUser)
                 .toUser(user2)
                 .friendStatus(FriendStatus.FOLLOW)
                 .build();
-        FriendShip friendShip2 = FriendShip.builder()
+        Friend friend2 = Friend.builder()
                 .fromUser(reqUser)
                 .toUser(user3)
                 .friendStatus(FriendStatus.WAITING)
                 .build();
-        FriendShip friendShip3 = FriendShip.builder()
+        Friend friend3 = Friend.builder()
                 .fromUser(reqUser)
                 .toUser(user4)
                 .friendStatus(FriendStatus.REJECTED)
                 .build();
-        FriendShip friendShip4 = FriendShip.builder()
+        Friend friend4 = Friend.builder()
                 .friendStatus(FriendStatus.FOLLOW)
                 .fromUser(user3)
                 .toUser(reqUser)
                 .build();
-        friendShipRepository.saveAll(List.of(friendShip1,friendShip2,friendShip3,friendShip4));
+        friendRepository.saveAll(List.of(friend1, friend2, friend3, friend4));
 
         List<Snap> snaps = new ArrayList<>();
         List<User> users = new ArrayList<>(List.of(reqUser,reqUser,user2,user2,user4,user2,user3,user3,user3,user3,user4));

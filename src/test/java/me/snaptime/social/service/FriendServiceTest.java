@@ -4,14 +4,14 @@ import com.querydsl.core.Tuple;
 import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
-import me.snaptime.friendShip.common.FriendSearchType;
-import me.snaptime.friendShip.common.FriendStatus;
-import me.snaptime.friendShip.domain.FriendShip;
-import me.snaptime.friendShip.dto.req.AcceptFollowReqDto;
-import me.snaptime.friendShip.dto.res.FindFriendResDto;
-import me.snaptime.friendShip.dto.res.FriendCntResDto;
-import me.snaptime.friendShip.repository.FriendShipRepository;
-import me.snaptime.friendShip.service.FriendShipService;
+import me.snaptime.friend.common.FriendSearchType;
+import me.snaptime.friend.common.FriendStatus;
+import me.snaptime.friend.domain.Friend;
+import me.snaptime.friend.dto.req.AcceptFollowReqDto;
+import me.snaptime.friend.dto.res.FindFriendResDto;
+import me.snaptime.friend.dto.res.FriendCntResDto;
+import me.snaptime.friend.repository.FriendRepository;
+import me.snaptime.friend.service.FriendService;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.util.NextPageChecker;
@@ -34,12 +34,12 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.util.AssertionErrors.fail;
 
 @ExtendWith(MockitoExtension.class)
-public class FriendShipServiceTest {
+public class FriendServiceTest {
 
     @InjectMocks
-    private FriendShipService friendShipService;
+    private FriendService friendService;
     @Mock
-    private FriendShipRepository friendShipRepository;
+    private FriendRepository friendRepository;
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -47,13 +47,13 @@ public class FriendShipServiceTest {
     @Mock
     private NextPageChecker nextPageChecker;
 
-    private FriendShip friendShip;
+    private Friend friend;
     private User user1;
 
 
     @BeforeEach
     void beforeEach(){
-        friendShip = FriendShip.builder()
+        friend = Friend.builder()
                 .friendStatus(FriendStatus.WAITING)
                 .build();
         user1 = User.builder()
@@ -71,15 +71,15 @@ public class FriendShipServiceTest {
         given(userRepository.findByLoginId(any(String.class)))
                 .willReturn(Optional.of(fromUser))
                 .willReturn(Optional.ofNullable(toUser));
-        given(friendShipRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.empty());
+        given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.empty());
 
         //when
-        friendShipService.sendFriendShipReq("loginId","testName");
+        friendService.sendFollow("loginId","testName");
 
         //then
         verify(userRepository,times(2)).findByLoginId(any(String.class));
-        verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
-        verify(friendShipRepository,times(2)).save(any(FriendShip.class));
+        verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
+        verify(friendRepository,times(2)).save(any(Friend.class));
     }
 
     @Test
@@ -94,14 +94,14 @@ public class FriendShipServiceTest {
 
         //when
         try{
-            friendShipService.sendFriendShipReq("loginId","testName");
+            friendService.sendFollow("loginId","testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.USER_NOT_EXIST);
             verify(userRepository,times(2)).findByLoginId(any(String.class));
-            verify(friendShipRepository,times(0)).findByToUserAndFromUser(any(User.class),any(User.class));
-            verify(friendShipRepository,times(0)).save(any(FriendShip.class));
+            verify(friendRepository,times(0)).findByToUserAndFromUser(any(User.class),any(User.class));
+            verify(friendRepository,times(0)).save(any(Friend.class));
         }
     }
 
@@ -111,23 +111,23 @@ public class FriendShipServiceTest {
         //given
         User fromUser = spy(user1);
         User toUser = spy(user1);
-        FriendShip friendShip = spy(this.friendShip);
-        given(friendShip.getFriendStatus()).willReturn(FriendStatus.REJECTED);
+        Friend friend = spy(this.friend);
+        given(friend.getFriendStatus()).willReturn(FriendStatus.REJECTED);
         given(userRepository.findByLoginId(any(String.class)))
                 .willReturn(Optional.ofNullable(fromUser))
                 .willReturn(Optional.of(toUser));
-        given(friendShipRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friendShip));
+        given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friend));
 
         //when
         try{
-            friendShipService.sendFriendShipReq("loginId","testName");
+            friendService.sendFollow("loginId","testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.REJECT_FRIEND_REQ);
             verify(userRepository,times(2)).findByLoginId(any(String.class));
-            verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
-            verify(friendShipRepository,times(0)).save(any(FriendShip.class));
+            verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
+            verify(friendRepository,times(0)).save(any(Friend.class));
         }
     }
 
@@ -137,23 +137,23 @@ public class FriendShipServiceTest {
         //given
         User fromUser = spy(user1);
         User toUser = spy(user1);
-        FriendShip friendShip = spy(this.friendShip);
-        given(friendShip.getFriendStatus()).willReturn(FriendStatus.FOLLOW);
+        Friend friend = spy(this.friend);
+        given(friend.getFriendStatus()).willReturn(FriendStatus.FOLLOW);
         given(userRepository.findByLoginId(any(String.class)))
                 .willReturn(Optional.ofNullable(fromUser))
                 .willReturn(Optional.of(toUser));
-        given(friendShipRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friendShip));
+        given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friend));
 
         //when
         try{
-            friendShipService.sendFriendShipReq("loginId","testName");
+            friendService.sendFollow("loginId","testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.ALREADY_FOLLOW);
             verify(userRepository,times(2)).findByLoginId(any(String.class));
-            verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
-            verify(friendShipRepository,times(0)).save(any(FriendShip.class));
+            verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
+            verify(friendRepository,times(0)).save(any(Friend.class));
         }
 
     }
@@ -169,18 +169,18 @@ public class FriendShipServiceTest {
         given(userRepository.findByLoginId(any(String.class)))
                 .willReturn(Optional.of(fromUser))
                 .willReturn(Optional.of(toUser));
-        given(friendShipRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.empty());
+        given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.empty());
 
         //when
         try{
-            friendShipService.sendFriendShipReq("loginId","testName");
+            friendService.sendFollow("loginId","testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.SELF_FRIEND_REQ);
             verify(userRepository,times(2)).findByLoginId(any(String.class));
-            verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
-            verify(friendShipRepository,times(0)).save(any(FriendShip.class));
+            verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
+            verify(friendRepository,times(0)).save(any(Friend.class));
         }
     }
 
@@ -193,17 +193,17 @@ public class FriendShipServiceTest {
         given(userRepository.findByLoginId(any(String.class)))
                 .willReturn(Optional.ofNullable(fromUser))
                 .willReturn(Optional.of(toUser));
-        given(friendShipRepository.findByToUserAndFromUser(toUser,fromUser)).willReturn(Optional.ofNullable(friendShip));
+        given(friendRepository.findByToUserAndFromUser(toUser,fromUser)).willReturn(Optional.ofNullable(friend));
 
         //when
-        String msg = friendShipService.acceptFriendShipReq("loginId",new AcceptFollowReqDto("testName",true));
+        String msg = friendService.acceptFollow("loginId",new AcceptFollowReqDto("testName",true));
 
         //then
         assertThat(msg).isEqualTo("팔로우 수락을 완료했습니다.");
-        assertThat(friendShip.getFriendStatus()).isEqualTo(FriendStatus.FOLLOW);
-        verify(friendShipRepository,times(1)).save(any(FriendShip.class));
+        assertThat(friend.getFriendStatus()).isEqualTo(FriendStatus.FOLLOW);
+        verify(friendRepository,times(1)).save(any(Friend.class));
         verify(userRepository,times(2)).findByLoginId(any(String.class));
-        verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
+        verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
     }
 
     @Test
@@ -212,25 +212,25 @@ public class FriendShipServiceTest {
         //given
         User fromUser = spy(user1);
         User toUser = spy(user1);
-        FriendShip friendShip = spy(this.friendShip);
-        FriendShip rejectedfriendShip = spy(this.friendShip);
+        Friend friend = spy(this.friend);
+        Friend rejectedfriend = spy(this.friend);
         given(userRepository.findByLoginId(any(String.class)))
                 .willReturn(Optional.ofNullable(fromUser))
                 .willReturn(Optional.of(toUser));
-        given(friendShipRepository.findByToUserAndFromUser(toUser,fromUser)).willReturn(Optional.ofNullable(friendShip));
-        given(friendShipRepository.findByToUserAndFromUser(fromUser,toUser)).willReturn(Optional.ofNullable(rejectedfriendShip));
+        given(friendRepository.findByToUserAndFromUser(toUser,fromUser)).willReturn(Optional.ofNullable(friend));
+        given(friendRepository.findByToUserAndFromUser(fromUser,toUser)).willReturn(Optional.ofNullable(rejectedfriend));
 
         //when
-        String msg = friendShipService.acceptFriendShipReq("loginId",new AcceptFollowReqDto("testName",false));
+        String msg = friendService.acceptFollow("loginId",new AcceptFollowReqDto("testName",false));
 
         //then
         assertThat(msg).isEqualTo("팔로우 거절을 완료했습니다.");
-        assertThat(rejectedfriendShip.getFriendStatus()).isEqualTo(FriendStatus.REJECTED);
-        assertThat(friendShip.getFriendStatus()).isEqualTo(FriendStatus.WAITING);
-        verify(friendShipRepository,times(1)).save(any(FriendShip.class));
-        verify(friendShipRepository,times(1)).delete(any(FriendShip.class));
+        assertThat(rejectedfriend.getFriendStatus()).isEqualTo(FriendStatus.REJECTED);
+        assertThat(friend.getFriendStatus()).isEqualTo(FriendStatus.WAITING);
+        verify(friendRepository,times(1)).save(any(Friend.class));
+        verify(friendRepository,times(1)).delete(any(Friend.class));
         verify(userRepository,times(2)).findByLoginId(any(String.class));
-        verify(friendShipRepository,times(2)).findByToUserAndFromUser(any(User.class),any(User.class));
+        verify(friendRepository,times(2)).findByToUserAndFromUser(any(User.class),any(User.class));
     }
 
     @Test
@@ -242,19 +242,19 @@ public class FriendShipServiceTest {
         given(userRepository.findByLoginId(any(String.class)))
                 .willReturn(Optional.ofNullable(fromUser))
                 .willReturn(Optional.of(toUser));
-        given(friendShipRepository.findByToUserAndFromUser(toUser,fromUser)).willReturn(Optional.empty());
+        given(friendRepository.findByToUserAndFromUser(toUser,fromUser)).willReturn(Optional.empty());
 
         //when
         try{
-            String msg = friendShipService.acceptFriendShipReq("loginId",new AcceptFollowReqDto("testName",false));
+            String msg = friendService.acceptFollow("loginId",new AcceptFollowReqDto("testName",false));
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
-            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIENDSHIP_NOT_EXIST);
-            verify(friendShipRepository,times(0)).save(any(FriendShip.class));
-            verify(friendShipRepository,times(0)).delete(any(FriendShip.class));
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIEND_NOT_EXIST);
+            verify(friendRepository,times(0)).save(any(Friend.class));
+            verify(friendRepository,times(0)).delete(any(Friend.class));
             verify(userRepository,times(2)).findByLoginId(any(String.class));
-            verify(friendShipRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
+            verify(friendRepository,times(1)).findByToUserAndFromUser(any(User.class),any(User.class));
         }
     }
 
@@ -262,17 +262,17 @@ public class FriendShipServiceTest {
     @DisplayName("팔로우 삭제테스트 : 성공")
     public void deleteFollowTest1(){
         //given
-        FriendShip friendShip = spy(this.friendShip);
-        given(friendShip.getFromUser()).willReturn(user1);
-        given(friendShipRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(friendShip));
+        Friend friend = spy(this.friend);
+        given(friend.getFromUser()).willReturn(user1);
+        given(friendRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(friend));
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user1));
 
         //when
-        friendShipService.deleteFriendShip("loginId",1l);
+        friendService.unFollow("loginId",1l);
 
         //then
-        verify(friendShipRepository,times(1)).delete(any(FriendShip.class));
-        verify(friendShipRepository,times(1)).findById(any(Long.class));
+        verify(friendRepository,times(1)).delete(any(Friend.class));
+        verify(friendRepository,times(1)).findById(any(Long.class));
         verify(userRepository,times(1)).findByLoginId(any(String.class));
     }
 
@@ -280,17 +280,17 @@ public class FriendShipServiceTest {
     @DisplayName("팔로우 삭제테스트 : 실패(존재하지 않는 팔로우)")
     public void deleteFollowTest2(){
         //given
-        given(friendShipRepository.findById(any(Long.class))).willReturn(Optional.empty());
+        given(friendRepository.findById(any(Long.class))).willReturn(Optional.empty());
 
         //when
         try{
-            friendShipService.deleteFriendShip("loginId",1l);
+            friendService.unFollow("loginId",1l);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
-            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIENDSHIP_NOT_EXIST);
-            verify(friendShipRepository,times(0)).delete(any(FriendShip.class));
-            verify(friendShipRepository,times(1)).findById(any(Long.class));
+            assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIEND_NOT_EXIST);
+            verify(friendRepository,times(0)).delete(any(Friend.class));
+            verify(friendRepository,times(1)).findById(any(Long.class));
             verify(userRepository,times(0)).findByLoginId(any(String.class));
         }
     }
@@ -302,22 +302,22 @@ public class FriendShipServiceTest {
         //given
         User fromUser = spy(this.user1);
         User reqUser = spy(this.user1);
-        FriendShip friendShip = spy(this.friendShip);
+        Friend friend = spy(this.friend);
         given(fromUser.getId()).willReturn(2L);
         given(reqUser.getId()).willReturn(1L);
-        given(friendShip.getFromUser()).willReturn(fromUser);
-        given(friendShipRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(friendShip));
+        given(friend.getFromUser()).willReturn(fromUser);
+        given(friendRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(friend));
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(reqUser));
 
         //when
         try{
-            friendShipService.deleteFriendShip("loginId",1l);
+            friendService.unFollow("loginId",1l);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.ACCESS_FAIL_FRIENDSHIP);
-            verify(friendShipRepository,times(0)).delete(any(FriendShip.class));
-            verify(friendShipRepository,times(1)).findById(any(Long.class));
+            verify(friendRepository,times(0)).delete(any(Friend.class));
+            verify(friendRepository,times(1)).findById(any(Long.class));
             verify(userRepository,times(1)).findByLoginId(any(String.class));
         }
     }
@@ -327,11 +327,11 @@ public class FriendShipServiceTest {
     public void findFriendShipCntTest1(){
         // given
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user1));
-        given(friendShipRepository.countByFromUserAndFriendStatus(any(User.class),any(FriendStatus.class))).willReturn(2l);
-        given(friendShipRepository.countByToUserAndFriendStatus(any(User.class),any(FriendStatus.class))).willReturn(1l);
+        given(friendRepository.countByFromUserAndFriendStatus(any(User.class),any(FriendStatus.class))).willReturn(2l);
+        given(friendRepository.countByToUserAndFriendStatus(any(User.class),any(FriendStatus.class))).willReturn(1l);
 
         // when
-        FriendCntResDto friendCntResDto = friendShipService.findFriendShipCnt("loginId");
+        FriendCntResDto friendCntResDto = friendService.findFriendCnt("loginId");
 
         // then
         assertThat(friendCntResDto.followerCnt()).isEqualTo(1l);
@@ -362,11 +362,11 @@ public class FriendShipServiceTest {
         given(tuple3.get(user.name)).willReturn("name3");
 
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user1));
-        given(friendShipRepository.findFriendList(any(User.class),any(FriendSearchType.class),any(Long.class),any(String.class)))
+        given(friendRepository.findFriendList(any(User.class),any(FriendSearchType.class),any(Long.class),any(String.class)))
                 .willReturn(List.of(tuple1,tuple2,tuple3));
 
         // when
-        FindFriendResDto result = friendShipService
+        FindFriendResDto result = friendService
                 .findFriendList("loginId","targetLoginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
 
         // then
@@ -386,7 +386,7 @@ public class FriendShipServiceTest {
 
         verify(userRepository,times(4)).findByLoginId(any(String.class));
         verify(urlComponent,times(3)).makeProfileURL(any(Long.class));
-        verify(friendShipRepository,times(1))
+        verify(friendRepository,times(1))
                 .findFriendList(any(User.class),any(FriendSearchType.class),any(Long.class),any(String.class));
 
     }

@@ -1,12 +1,12 @@
-package me.snaptime.friendShip.repository;
+package me.snaptime.friend.repository;
 
 import com.querydsl.core.Tuple;
-import me.snaptime.friendShip.common.FriendSearchType;
+import me.snaptime.friend.common.FriendSearchType;
 import me.snaptime.user.domain.User;
 
 import java.util.List;
 
-public interface FriendShipPagingRepository {
+public interface FriendPagingRepository {
 
     List<Tuple> findFriendList(User reqUser, FriendSearchType searchType, Long pageNum , String searchKeyword);
 }

@@ -1,4 +1,4 @@
-package me.snaptime.friendShip.dto.req;
+package me.snaptime.friend.dto.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

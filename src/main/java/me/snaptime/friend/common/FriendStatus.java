@@ -1,4 +1,4 @@
-package me.snaptime.friendShip.common;
+package me.snaptime.friend.common;
 
 public enum FriendStatus {
     /*

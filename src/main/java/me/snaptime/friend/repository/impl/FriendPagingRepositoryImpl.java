@@ -1,4 +1,4 @@
-package me.snaptime.friendShip.repository.impl;
+package me.snaptime.friend.repository.impl;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -8,9 +8,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
-import me.snaptime.friendShip.common.FriendSearchType;
-import me.snaptime.friendShip.common.FriendStatus;
-import me.snaptime.friendShip.repository.FriendShipPagingRepository;
+import me.snaptime.friend.common.FriendSearchType;
+import me.snaptime.friend.common.FriendStatus;
+import me.snaptime.friend.repository.FriendPagingRepository;
 import me.snaptime.user.domain.User;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,13 +18,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static me.snaptime.friendShip.domain.QFriendShip.friendShip;
+import static me.snaptime.friend.domain.QFriend.friend;
 import static me.snaptime.user.domain.QUser.user;
 
 
 @Repository
 @RequiredArgsConstructor
-public class FriendShipPagingRepositoryImpl implements FriendShipPagingRepository {
+public class FriendPagingRepositoryImpl implements FriendPagingRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -33,9 +33,9 @@ public class FriendShipPagingRepositoryImpl implements FriendShipPagingRepositor
         Pageable pageable= PageRequest.of((int) (pageNum-1),20);
 
         List<Tuple> result =  jpaQueryFactory.select(
-                        user.loginId,user.profilePhoto.id,user.name,friendShip.friendShipId
+                        user.loginId,user.profilePhoto.id,user.name,friend.friendId
                 )
-                .from(friendShip)
+                .from(friend)
                 .join(user).on(getJoinBuilder(searchType))
                 .where(getWhereBuilder(reqUser, searchType,searchKeyword))
                 .orderBy(createOrderSpecifier())
@@ -58,12 +58,12 @@ public class FriendShipPagingRepositoryImpl implements FriendShipPagingRepositor
         BooleanBuilder builder = new BooleanBuilder();
 
         if(friendSearchType == FriendSearchType.FOLLOWING){
-            builder.and(friendShip.fromUser.id.eq(reqUser.getId()));
-            builder.and(friendShip.friendStatus.eq(FriendStatus.FOLLOW));
+            builder.and(friend.fromUser.id.eq(reqUser.getId()));
+            builder.and(friend.friendStatus.eq(FriendStatus.FOLLOW));
         }
         else{
-            builder.and(friendShip.toUser.id.eq(reqUser.getId()));
-            builder.and(friendShip.friendStatus.eq(FriendStatus.FOLLOW));
+            builder.and(friend.toUser.id.eq(reqUser.getId()));
+            builder.and(friend.friendStatus.eq(FriendStatus.FOLLOW));
         }
         if(searchKeyword !=null){
             builder.and(user.name.contains(searchKeyword));
@@ -76,10 +76,10 @@ public class FriendShipPagingRepositoryImpl implements FriendShipPagingRepositor
     private BooleanBuilder getJoinBuilder(FriendSearchType friendSearchType){
         BooleanBuilder builder = new BooleanBuilder();
         if(friendSearchType == FriendSearchType.FOLLOWING){
-            return builder.and(friendShip.toUser.id.eq(user.id));
+            return builder.and(friend.toUser.id.eq(user.id));
         }
         else{
-            return builder.and(friendShip.fromUser.id.eq(user.id));
+            return builder.and(friend.fromUser.id.eq(user.id));
         }
     }
 }

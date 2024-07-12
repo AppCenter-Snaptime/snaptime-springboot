@@ -6,10 +6,10 @@ import me.snaptime.config.JpaAuditingConfig;
 import me.snaptime.config.QueryDslConfig;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
-import me.snaptime.friendShip.common.FriendSearchType;
-import me.snaptime.friendShip.common.FriendStatus;
-import me.snaptime.friendShip.domain.FriendShip;
-import me.snaptime.friendShip.repository.FriendShipRepository;
+import me.snaptime.friend.common.FriendSearchType;
+import me.snaptime.friend.common.FriendStatus;
+import me.snaptime.friend.domain.Friend;
+import me.snaptime.friend.repository.FriendRepository;
 import me.snaptime.profilePhoto.domain.ProfilePhoto;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
@@ -33,12 +33,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.fail;
 @DataJpaTest
 @Import({QueryDslConfig.class, JpaAuditingConfig.class})
 @TestPropertySource(locations = "classpath:application-test.yml")
-public class FriendShipPagingRepositoryTest {
+public class FriendPagingRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private FriendShipRepository friendShipRepository;
+    private FriendRepository friendRepository;
     private User reqUser;
 
     @MockBean
@@ -60,7 +60,7 @@ public class FriendShipPagingRepositoryTest {
                 .build();
         List<User> saveUserList = new ArrayList<>();
         List<ProfilePhoto> savePrifilePhotoList = new ArrayList<>();
-        List<FriendShip> saveFriendShipList = new ArrayList<>();
+        List<Friend> saveFriendList = new ArrayList<>();
         saveUserList.add(reqUser);
 
         /*
@@ -83,53 +83,53 @@ public class FriendShipPagingRepositoryTest {
                    .build();
 
            if(i<=10){
-               FriendShip friendShip1 = FriendShip.builder()
+               Friend friend1 = Friend.builder()
                        .friendStatus(FriendStatus.FOLLOW)
                        .fromUser(reqUser)
                        .toUser(tempUser)
                        .build();
-               FriendShip friendShip2 = FriendShip.builder()
+               Friend friend2 = Friend.builder()
                        .friendStatus(FriendStatus.WAITING)
                        .fromUser(tempUser)
                        .toUser(reqUser)
                        .build();
-               saveFriendShipList.add(friendShip1);
-               saveFriendShipList.add(friendShip2);
+               saveFriendList.add(friend1);
+               saveFriendList.add(friend2);
            }
            else if(i>10 && i<=20){
-               FriendShip friendShip1 = FriendShip.builder()
+               Friend friend1 = Friend.builder()
                        .friendStatus(FriendStatus.FOLLOW)
                        .fromUser(reqUser)
                        .toUser(tempUser)
                        .build();
-               FriendShip friendShip2 = FriendShip.builder()
+               Friend friend2 = Friend.builder()
                        .friendStatus(FriendStatus.FOLLOW)
                        .fromUser(tempUser)
                        .toUser(reqUser)
                        .build();
-               saveFriendShipList.add(friendShip1);
-               saveFriendShipList.add(friendShip2);
+               saveFriendList.add(friend1);
+               saveFriendList.add(friend2);
            }
            else{
-               FriendShip friendShip1 = FriendShip.builder()
+               Friend friend1 = Friend.builder()
                        .friendStatus(FriendStatus.WAITING)
                        .fromUser(reqUser)
                        .toUser(tempUser)
                        .build();
-               FriendShip friendShip2 = FriendShip.builder()
+               Friend friend2 = Friend.builder()
                        .friendStatus(FriendStatus.FOLLOW)
                        .fromUser(tempUser)
                        .toUser(reqUser)
                        .build();
-               saveFriendShipList.add(friendShip1);
-               saveFriendShipList.add(friendShip2);
+               saveFriendList.add(friend1);
+               saveFriendList.add(friend2);
            }
 
            saveUserList.add(tempUser);
            savePrifilePhotoList.add(profilePhoto);
        }
        userRepository.saveAll(saveUserList);
-       friendShipRepository.saveAll(saveFriendShipList);
+       friendRepository.saveAll(saveFriendList);
     }
 
     @Test
@@ -138,7 +138,7 @@ public class FriendShipPagingRepositoryTest {
         // given
 
         // when
-        List<Tuple> result = friendShipRepository.findFriendList(reqUser, FriendSearchType.FOLLOWING,1L,null);
+        List<Tuple> result = friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWING,1L,null);
 
         // then
         assertThat(result.size()).isEqualTo(20);
@@ -157,7 +157,7 @@ public class FriendShipPagingRepositoryTest {
         // given
 
         // when
-        List<Tuple> result = friendShipRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,1L,null);
+        List<Tuple> result = friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,1L,null);
 
         // then
         assertThat(result.size()).isEqualTo(20);
@@ -176,7 +176,7 @@ public class FriendShipPagingRepositoryTest {
         // given
 
         // when
-        List<Tuple> result = friendShipRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,1L,"20");
+        List<Tuple> result = friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,1L,"20");
 
         // then
         assertThat(result.size()).isEqualTo(1);
@@ -192,7 +192,7 @@ public class FriendShipPagingRepositoryTest {
 
         // when
         try{
-            friendShipRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,10L,"20");
+            friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,10L,"20");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.PAGE_NOT_FOUND);

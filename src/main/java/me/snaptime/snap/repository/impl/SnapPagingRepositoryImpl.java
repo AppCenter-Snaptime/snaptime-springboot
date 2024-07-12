@@ -8,7 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
-import me.snaptime.friendShip.common.FriendStatus;
+import me.snaptime.friend.common.FriendStatus;
 import me.snaptime.snap.repository.SnapPagingRepository;
 import me.snaptime.user.domain.User;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static me.snaptime.friendShip.domain.QFriendShip.friendShip;
+import static me.snaptime.friend.domain.QFriend.friend;
 import static me.snaptime.snap.domain.QSnap.snap;
 import static me.snaptime.user.domain.QUser.user;
 
@@ -38,8 +38,8 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
                         user.loginId, user.profilePhoto.id, user.name,
                         snap.id, snap.createdDate, snap.lastModifiedDate, snap.oneLineJournal, snap.fileName
                 )
-                .from(friendShip)
-                .rightJoin(user).on(friendShip.toUser.id.eq(user.id))
+                .from(friend)
+                .rightJoin(user).on(friend.toUser.id.eq(user.id))
                 .join(snap).on(snap.user.id.eq(user.id))
                 .where(getBuilder(reqUser))
                 .orderBy(createOrderSpecifier())
@@ -62,8 +62,8 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
     private BooleanBuilder getBuilder(User reqUser){
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(
-                friendShip.fromUser.id.eq(reqUser.getId())
-                        .and(friendShip.friendStatus.eq(FriendStatus.FOLLOW))
+                friend.fromUser.id.eq(reqUser.getId())
+                        .and(friend.friendStatus.eq(FriendStatus.FOLLOW))
                         .and(snap.isPrivate.isFalse())
         );
         builder.or(user.eq(reqUser));

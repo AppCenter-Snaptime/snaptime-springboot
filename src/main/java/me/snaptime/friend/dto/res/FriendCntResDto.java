@@ -1,4 +1,4 @@
-package me.snaptime.friendShip.dto.res;
+package me.snaptime.friend.dto.res;
 
 import lombok.Builder;
 

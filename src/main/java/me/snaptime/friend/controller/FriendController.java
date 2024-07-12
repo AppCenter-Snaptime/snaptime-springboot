@@ -1,4 +1,4 @@
-package me.snaptime.friendShip.controller;
+package me.snaptime.friend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -9,10 +9,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.CommonResponseDto;
-import me.snaptime.friendShip.common.FriendSearchType;
-import me.snaptime.friendShip.dto.req.AcceptFollowReqDto;
-import me.snaptime.friendShip.dto.res.FindFriendResDto;
-import me.snaptime.friendShip.service.FriendShipService;
+import me.snaptime.friend.common.FriendSearchType;
+import me.snaptime.friend.dto.req.AcceptFollowReqDto;
+import me.snaptime.friend.dto.res.FindFriendResDto;
+import me.snaptime.friend.service.FriendService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/friends")
 @RequiredArgsConstructor
 @Tag(name = "[Social] Friend API")
-public class FriendShipController {
+public class FriendController {
 
-    private final FriendShipService friendShipService;
+    private final FriendService friendService;
 
     @PostMapping
     @Operation(summary = "팔로우 요청", description = "팔로우할 유저의 loginId를 입력해주세요.<br>fromUser(요청자)의 팔로잉 +1, toUser의 팔로워 +1")
@@ -37,7 +37,7 @@ public class FriendShipController {
             @RequestParam(name = "fromUserLoginId") @NotBlank(message = "팔로우요청을 보낼 유저의 이름을 입력해주세요.")String fromUserLoginId) {
 
         String loginId = userDetails.getUsername();
-        friendShipService.sendFriendShipReq(loginId,fromUserLoginId);
+        friendService.sendFollow(loginId,fromUserLoginId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto("팔로우가 완료되었습니다.", null));
     }
 
@@ -48,19 +48,19 @@ public class FriendShipController {
             @RequestBody @Valid AcceptFollowReqDto acceptFollowReqDto) {
 
         String loginId = userDetails.getUsername();
-        String msg = friendShipService.acceptFriendShipReq(loginId, acceptFollowReqDto);
+        String msg = friendService.acceptFollow(loginId, acceptFollowReqDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto(msg, null));
     }
 
-    @DeleteMapping("/{friendShipId}")
-    @Operation(summary = "팔로우하는 친구삭제", description = "언팔로우 할 친구의 friendShipId를 보내주세요.<br>fromUser(삭제자)의 팔로잉 -1, toUser의 팔로워 -1")
-    @Parameter(name = "friendShipId", description = "팔로우 삭제할 친구관계 id", required = true, example = "1")
+    @DeleteMapping("/{friendId}")
+    @Operation(summary = "팔로우하는 친구삭제", description = "언팔로우 할 친구의 friendId를 보내주세요.<br>fromUser(삭제자)의 팔로잉 -1, toUser의 팔로워 -1")
+    @Parameter(name = "friendId", description = "팔로우 삭제할 친구관계 id", required = true, example = "1")
     public ResponseEntity<CommonResponseDto<Void>> deleteFollow(
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable final Long friendShipId) {
+            @PathVariable final Long friendId) {
 
         String loginId = userDetails.getUsername();
-        friendShipService.deleteFriendShip(loginId,friendShipId);
+        friendService.unFollow(loginId,friendId);
         return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("팔로우삭제가 완료되었습니다.", null));
     }
 
@@ -83,7 +83,7 @@ public class FriendShipController {
             @PathVariable(name = "pageNum") final Long pageNum){
 
         return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("친구조회가 완료되었습니다.",
-                friendShipService.findFriendList(userDetails.getUsername(), loginId,pageNum,friendSearchType,searchKeyword)));
+                friendService.findFriendList(userDetails.getUsername(), loginId,pageNum,friendSearchType,searchKeyword)));
     }
 
 }
