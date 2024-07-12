@@ -1,15 +1,10 @@
 package me.snaptime.util;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
-@Component
-@RequiredArgsConstructor
 public class TimeAgoCalculator {
 
     public static String findTimeAgo(LocalDateTime calculatedTime){
