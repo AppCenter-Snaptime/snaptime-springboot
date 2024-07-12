@@ -8,6 +8,7 @@ import me.snaptime.exception.ExceptionCode;
 import me.snaptime.snap.dto.res.FindSnapPagingResDto;
 import me.snaptime.snap.dto.res.SnapPagingInfo;
 import me.snaptime.snap.repository.SnapRepository;
+import me.snaptime.snap.service.SnapPagingService;
 import me.snaptime.snapLike.service.SnapLikeService;
 import me.snaptime.snapTag.service.SnapTagService;
 import me.snaptime.user.domain.User;
@@ -26,7 +27,7 @@ import static me.snaptime.user.domain.QUser.user;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class SnapPagingServiceImpl {
+public class SnapPagingServiceImpl implements SnapPagingService {
 
     private final UserRepository userRepository;
     private final SnapRepository snapRepository;
@@ -34,7 +35,6 @@ public class SnapPagingServiceImpl {
     private final SnapTagService snapTagService;
     private final SnapLikeService snapLikeService;
 
-    // snap 페이징 조회
     public FindSnapPagingResDto findSnapPaging(String loginId, Long pageNum){
         User reqUser = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));

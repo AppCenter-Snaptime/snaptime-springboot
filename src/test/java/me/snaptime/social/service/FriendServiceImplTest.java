@@ -11,7 +11,7 @@ import me.snaptime.friend.dto.req.AcceptFollowReqDto;
 import me.snaptime.friend.dto.res.FindFriendResDto;
 import me.snaptime.friend.dto.res.FriendCntResDto;
 import me.snaptime.friend.repository.FriendRepository;
-import me.snaptime.friend.service.FriendService;
+import me.snaptime.friend.service.impl.FriendServiceImpl;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.util.NextPageChecker;
@@ -34,10 +34,10 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.util.AssertionErrors.fail;
 
 @ExtendWith(MockitoExtension.class)
-public class FriendServiceTest {
+public class FriendServiceImplTest {
 
     @InjectMocks
-    private FriendService friendService;
+    private FriendServiceImpl friendServiceImpl;
     @Mock
     private FriendRepository friendRepository;
     @Mock
@@ -74,7 +74,7 @@ public class FriendServiceTest {
         given(friendRepository.findByToUserAndFromUser(any(User.class),any(User.class))).willReturn(Optional.empty());
 
         //when
-        friendService.sendFollow("loginId","testName");
+        friendServiceImpl.sendFollow("loginId","testName");
 
         //then
         verify(userRepository,times(2)).findByLoginId(any(String.class));
@@ -94,7 +94,7 @@ public class FriendServiceTest {
 
         //when
         try{
-            friendService.sendFollow("loginId","testName");
+            friendServiceImpl.sendFollow("loginId","testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -120,7 +120,7 @@ public class FriendServiceTest {
 
         //when
         try{
-            friendService.sendFollow("loginId","testName");
+            friendServiceImpl.sendFollow("loginId","testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -146,7 +146,7 @@ public class FriendServiceTest {
 
         //when
         try{
-            friendService.sendFollow("loginId","testName");
+            friendServiceImpl.sendFollow("loginId","testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -173,7 +173,7 @@ public class FriendServiceTest {
 
         //when
         try{
-            friendService.sendFollow("loginId","testName");
+            friendServiceImpl.sendFollow("loginId","testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -196,7 +196,7 @@ public class FriendServiceTest {
         given(friendRepository.findByToUserAndFromUser(toUser,fromUser)).willReturn(Optional.ofNullable(friend));
 
         //when
-        String msg = friendService.acceptFollow("loginId",new AcceptFollowReqDto("testName",true));
+        String msg = friendServiceImpl.acceptFollow("loginId",new AcceptFollowReqDto("testName",true));
 
         //then
         assertThat(msg).isEqualTo("팔로우 수락을 완료했습니다.");
@@ -221,7 +221,7 @@ public class FriendServiceTest {
         given(friendRepository.findByToUserAndFromUser(fromUser,toUser)).willReturn(Optional.ofNullable(rejectedfriend));
 
         //when
-        String msg = friendService.acceptFollow("loginId",new AcceptFollowReqDto("testName",false));
+        String msg = friendServiceImpl.acceptFollow("loginId",new AcceptFollowReqDto("testName",false));
 
         //then
         assertThat(msg).isEqualTo("팔로우 거절을 완료했습니다.");
@@ -246,7 +246,7 @@ public class FriendServiceTest {
 
         //when
         try{
-            String msg = friendService.acceptFollow("loginId",new AcceptFollowReqDto("testName",false));
+            String msg = friendServiceImpl.acceptFollow("loginId",new AcceptFollowReqDto("testName",false));
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -268,7 +268,7 @@ public class FriendServiceTest {
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user1));
 
         //when
-        friendService.unFollow("loginId",1l);
+        friendServiceImpl.unFollow("loginId",1l);
 
         //then
         verify(friendRepository,times(1)).delete(any(Friend.class));
@@ -284,7 +284,7 @@ public class FriendServiceTest {
 
         //when
         try{
-            friendService.unFollow("loginId",1l);
+            friendServiceImpl.unFollow("loginId",1l);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -311,7 +311,7 @@ public class FriendServiceTest {
 
         //when
         try{
-            friendService.unFollow("loginId",1l);
+            friendServiceImpl.unFollow("loginId",1l);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -331,7 +331,7 @@ public class FriendServiceTest {
         given(friendRepository.countByToUserAndFriendStatus(any(User.class),any(FriendStatus.class))).willReturn(1l);
 
         // when
-        FriendCntResDto friendCntResDto = friendService.findFriendCnt("loginId");
+        FriendCntResDto friendCntResDto = friendServiceImpl.findFriendCnt("loginId");
 
         // then
         assertThat(friendCntResDto.followerCnt()).isEqualTo(1l);
@@ -366,7 +366,7 @@ public class FriendServiceTest {
                 .willReturn(List.of(tuple1,tuple2,tuple3));
 
         // when
-        FindFriendResDto result = friendService
+        FindFriendResDto result = friendServiceImpl
                 .findFriendList("loginId","targetLoginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
 
         // then

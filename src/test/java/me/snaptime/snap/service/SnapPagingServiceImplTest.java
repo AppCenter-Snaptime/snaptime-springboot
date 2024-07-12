@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 public class SnapPagingServiceImplTest {
 
     @InjectMocks
-    private SnapPagingServiceImpl snapPagingService;
+    private SnapPagingServiceImpl snapPagingServiceImpl;
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -84,7 +84,7 @@ public class SnapPagingServiceImplTest {
         given(snapRepository.findSnapPaging(any(String.class),any(Long.class),any(User.class))).willReturn(List.of(tuple1,tuple2,tuple3));
 
         // when
-        FindSnapPagingResDto result = snapPagingService.findSnapPaging("testLoginId",1L);
+        FindSnapPagingResDto result = snapPagingServiceImpl.findSnapPaging("testLoginId",1L);
 
         // then
         assertThat(result.snapPagingInfoList().size()).isEqualTo(3);

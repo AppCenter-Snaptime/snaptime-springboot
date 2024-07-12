@@ -28,7 +28,6 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    // snap 페이징 조회
     @Override
     public List<Tuple> findSnapPaging(String loginId, Long pageNum, User reqUser) {
 
@@ -44,7 +43,7 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
                 .where(getBuilder(reqUser))
                 .orderBy(createOrderSpecifier())
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize()) //페이지의 크기
+                .limit(pageable.getPageSize()+1) //다음 페이지 유무체크를 위해 +1을 합니다.
                 .fetch();
 
         if(result.size() == 0)
@@ -53,12 +52,12 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
         return result;
     }
 
-    // 정렬 조건을 동적으로 생성하는 메소드, 추후에 기능추가 시 확장에 용이하게 하기 위해 해당 로직을 분리
+    // 정렬 조건을 동적으로 생성하는 메소드
     private OrderSpecifier createOrderSpecifier() {
         return new OrderSpecifier(Order.DESC, snap.createdDate);
     }
 
-    // 쿼리의 WHERE절을 생성하는 메소드, where절이 길어져 가독성을 위해 분리했습니다.
+    // 쿼리의 WHERE절을 생성하는 메소드
     private BooleanBuilder getBuilder(User reqUser){
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(

@@ -8,7 +8,7 @@ import me.snaptime.reply.dto.req.AddChildReplyReqDto;
 import me.snaptime.reply.dto.req.AddParentReplyReqDto;
 import me.snaptime.reply.repository.ChildReplyRepository;
 import me.snaptime.reply.repository.ParentReplyRepository;
-import me.snaptime.reply.service.ReplyService;
+import me.snaptime.reply.service.impl.ReplyServiceImpl;
 import me.snaptime.snap.domain.Snap;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.user.domain.User;
@@ -33,10 +33,10 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.util.AssertionErrors.fail;
 
 @ExtendWith(MockitoExtension.class)
-public class ReplyServiceTest {
+public class ReplyServiceImplTest {
 
     @InjectMocks
-    private ReplyService replyService;
+    private ReplyServiceImpl replyServiceImpl;
     @Mock
     private ParentReplyRepository parentReplyRepository;
     @Mock
@@ -75,7 +75,7 @@ public class ReplyServiceTest {
         given(snapRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(snap));
 
         //when
-        replyService.addParentReply("loginId", new AddParentReplyReqDto("댓글내용",1L));
+        replyServiceImpl.addParentReply("loginId", new AddParentReplyReqDto("댓글내용",1L));
 
         //then
         verify(parentReplyRepository,times(1)).save(any(ParentReply.class));
@@ -92,7 +92,7 @@ public class ReplyServiceTest {
 
         //when
         try{
-            replyService.addParentReply("loginId",new AddParentReplyReqDto("댓글내용",1L));
+            replyServiceImpl.addParentReply("loginId",new AddParentReplyReqDto("댓글내용",1L));
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -113,7 +113,7 @@ public class ReplyServiceTest {
         given(parentReplyRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(parentReply));
 
         //when
-        replyService.addChildReply("loginId",addChildReplyReqDto);
+        replyServiceImpl.addChildReply("loginId",addChildReplyReqDto);
 
         //then
         verify(parentReplyRepository,times(1)).findById(any(Long.class));
@@ -131,7 +131,7 @@ public class ReplyServiceTest {
 
         //when
         try{
-            replyService.addChildReply("loginId",addChildReplyReqDto);
+            replyServiceImpl.addChildReply("loginId",addChildReplyReqDto);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -153,7 +153,7 @@ public class ReplyServiceTest {
 
         //when
         try{
-            replyService.addChildReply("loginId",addChildReplyReqDto);
+            replyServiceImpl.addChildReply("loginId",addChildReplyReqDto);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
