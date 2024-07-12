@@ -42,7 +42,7 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath password = createString("password");
 
-    public final me.snaptime.profile.profilePhoto.domain.QProfilePhoto profilePhoto;
+    public final me.snaptime.profilePhoto.domain.QProfilePhoto profilePhoto;
 
     public final ListPath<String, StringPath> roles = this.<String, StringPath>createList("roles", String.class, StringPath.class, PathInits.DIRECT2);
 
@@ -64,7 +64,7 @@ public class QUser extends EntityPathBase<User> {
 
     public QUser(Class<? extends User> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.profilePhoto = inits.isInitialized("profilePhoto") ? new me.snaptime.profile.profilePhoto.domain.QProfilePhoto(forProperty("profilePhoto"), inits.get("profilePhoto")) : null;
+        this.profilePhoto = inits.isInitialized("profilePhoto") ? new me.snaptime.profilePhoto.domain.QProfilePhoto(forProperty("profilePhoto"), inits.get("profilePhoto")) : null;
     }
 
 }

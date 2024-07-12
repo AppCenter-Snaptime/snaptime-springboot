@@ -4,9 +4,9 @@ import me.snaptime.util.JsoupAction;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 
-
 @Component
-public class HaruFilm extends AbstractPhotoProvider {
+public class OnePercent extends AbstractPhotoProvider {
+
     @Override
     public String crawlingImageURL(String page_url) {
         Document crawledPage = JsoupAction.getDocument(page_url);
@@ -15,6 +15,6 @@ public class HaruFilm extends AbstractPhotoProvider {
 
     @Override
     public String getHostname() {
-        return "haru9.mx2.co.kr";
+        return "bc1.mx2.co.kr";
     }
 }

@@ -1,35 +1,30 @@
 package me.snaptime.component.crawling;
 
-import me.snaptime.component.crawling.provider.HaruFilm;
 import me.snaptime.component.crawling.provider.PhotoProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 
 @Component
 public class CrawlingComponentImpl implements CrawlingComponent {
-    private final HaruFilm haruFilm;
-    // private final LifeFourCuts lifeFourCuts;
+    private final Map<String, PhotoProvider> providers;
 
-    // 캐스팅을 사용해서 인터페이스를 하위타입으로 변경 받아 Bean에 주입한다.
-    public CrawlingComponentImpl(PhotoProvider provider) {
-        this.haruFilm = (HaruFilm) provider;
-        // this.lifeFourCuts = (LifeFourCuts) provider;
+    @Autowired
+    public CrawlingComponentImpl(List<PhotoProvider> providerList) {
+        this.providers = providerList.stream()
+                .collect(Collectors.toMap(provider -> provider.getClass().getSimpleName().toLowerCase(), Function.identity()));
     }
+
 
     @Override
-    public byte[] getImageFromHaruFilm(String page_url) {
-        String image_url = haruFilm.crawlingImageURL(page_url);
-        return haruFilm.getImageBytes(image_url);
+    public byte[] getImage(String providerName, String page_url) {
+        PhotoProvider provider = providers.get(providerName.toLowerCase());
+        String image_url = provider.crawlingImageURL(page_url);
+        return provider.getImageBytes(image_url);
     }
-
-    @Override
-    public String getImageFromLifeFourCuts(String page_url) {
-        return "";
-    }
-
-    @Override
-    public String getImageFromPhotoism(String page_url) {
-        return "";
-    }
-
-    //....
 }

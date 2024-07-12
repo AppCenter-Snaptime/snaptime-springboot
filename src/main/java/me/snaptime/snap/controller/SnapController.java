@@ -19,7 +19,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -150,12 +149,15 @@ public class SnapController {
 
     @Operation(summary = "하루필름 크롤링 테스트 API", description = "하루필름 크롤링 테스트 API입니다.")
     @GetMapping("/test")
-    public ResponseEntity<?> test(
-            final @RequestParam("url") String url,
-            final @AuthenticationPrincipal UserDetails userDetails
-    ) throws IOException {
-        byte[] image = crawlingComponent.getImageFromHaruFilm(url);
+    public ResponseEntity<?> test(final @RequestParam("url") String url) {
+        byte[] image = crawlingComponent.getImage("harufilm", url);
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(image);
     }
 
+    @Operation(summary = "1Percent 크롤링 테스트 API", description = "1")
+    @GetMapping("/test2")
+    ResponseEntity<?> test2(final @RequestParam String url) {
+        byte[] image = crawlingComponent.getImage("onepercent", url);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(image);
+    }
 }
