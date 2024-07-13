@@ -4,6 +4,7 @@ import me.snaptime.profilePhoto.domain.ProfilePhoto;
 import me.snaptime.profilePhoto.dto.res.ProfilePhotoResDto;
 import me.snaptime.profilePhoto.repository.ProfilePhotoRepository;
 import me.snaptime.profilePhoto.service.ProfilePhotoService;
+import me.snaptime.profilePhoto.service.impl.ProfilePhotoServiceImpl;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.util.ProfilePhotoNameGenerator;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.*;
 public class ProfilePhotoServiceTest {
 
     @InjectMocks
-    private ProfilePhotoService profilePhotoService;
+    private ProfilePhotoServiceImpl profilePhotoService;
 
     @Mock
     private UserRepository userRepository;
