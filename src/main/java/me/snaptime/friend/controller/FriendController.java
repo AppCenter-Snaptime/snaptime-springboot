@@ -30,37 +30,34 @@ public class FriendController {
     private final FriendService friendService;
 
     @PostMapping
-    @Operation(summary = "팔로우 요청", description = "팔로우할 유저의 loginId를 입력해주세요.<br>fromUser(요청자)의 팔로잉 +1, toUser의 팔로워 +1")
-    @Parameter(name = "fromUserLoginId", description = "팔로우할 유저의 loginId", required = true, example = "seyong")
+    @Operation(summary = "팔로우 요청", description = "팔로우할 유저의 loginId를 입력해주세요.<br>sender의 팔로잉 +1, receiver의 팔로워 +1")
+    @Parameter(name = "receiverLoginId", description = "팔로우할 유저의 loginId를 입력해주세요", required = true, example = "seyong")
     public ResponseEntity<CommonResponseDto<Void>> sendFollowReq(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam(name = "fromUserLoginId") @NotBlank(message = "팔로우요청을 보낼 유저의 이름을 입력해주세요.")String fromUserLoginId) {
+            @RequestParam(name = "receiverLoginId") @NotBlank(message = "팔로우요청을 보낼 유저의 이름을 입력해주세요.")String receiverLoginId) {
 
-        String loginId = userDetails.getUsername();
-        friendService.sendFollow(loginId,fromUserLoginId);
+        friendService.sendFollow(userDetails.getUsername(), receiverLoginId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto("팔로우가 완료되었습니다.", null));
     }
 
     @PostMapping("/accept")
-    @Operation(summary = "팔로우 수락or거절 요청", description = "팔로우요청을 수락or거절할 유저의 이름을 입력해주세요.<br>친구요청 수락(fromUser(수락자)의 팔로잉 +1, toUser의 팔로워 +1)<br>친구요청 거절(fromUser(수락자)의 팔로워 -1, toUser의 팔로잉 -1) ")
+    @Operation(summary = "팔로우 수락or거절 요청", description = "팔로우요청을 수락or거절할 유저의 이름을 입력해주세요.<br>친구요청 수락(sender(수락자)의 팔로잉 +1, receiver의 팔로워 +1)<br>친구요청 거절(sender(수락자)의 팔로워 -1, receiver의 팔로잉 -1) ")
     public ResponseEntity<CommonResponseDto<Void>> acceptFollowReq(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody @Valid AcceptFollowReqDto acceptFollowReqDto) {
 
-        String loginId = userDetails.getUsername();
-        String msg = friendService.acceptFollow(loginId, acceptFollowReqDto);
+        String msg = friendService.acceptFollow(userDetails.getUsername(), acceptFollowReqDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto(msg, null));
     }
 
-    @DeleteMapping("/{friendId}")
-    @Operation(summary = "팔로우하는 친구삭제", description = "언팔로우 할 친구의 friendId를 보내주세요.<br>fromUser(삭제자)의 팔로잉 -1, toUser의 팔로워 -1")
-    @Parameter(name = "friendId", description = "팔로우 삭제할 친구관계 id", required = true, example = "1")
+    @DeleteMapping
+    @Operation(summary = "팔로우하는 친구삭제", description = "언팔로우 할 친구의 loginId를 보내주세요.<br>deletor(언팔하는 유저)의 팔로잉 -1, deletedUser(언팔당하는 유저)의 팔로워 -1")
+    @Parameter(name = "deletedUserLoginId", description = "팔로우 삭제할 친구의 loginId를 입력해주세요.", required = true, example = "seyong")
     public ResponseEntity<CommonResponseDto<Void>> deleteFollow(
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable final Long friendId) {
+            @RequestParam @NotBlank(message = "언팔로우할 유저의 loginId를 입력해주세요.")final String deletedUserLoginId) {
 
-        String loginId = userDetails.getUsername();
-        friendService.unFollow(loginId,friendId);
+        friendService.unFollow(userDetails.getUsername(), deletedUserLoginId);
         return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("팔로우삭제가 완료되었습니다.", null));
     }
 

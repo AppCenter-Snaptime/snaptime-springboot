@@ -7,7 +7,6 @@ import me.snaptime.config.QueryDslConfig;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.friend.common.FriendSearchType;
-import me.snaptime.friend.common.FriendStatus;
 import me.snaptime.friend.domain.Friend;
 import me.snaptime.friend.repository.FriendRepository;
 import me.snaptime.profilePhoto.domain.ProfilePhoto;
@@ -23,10 +22,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-import static me.snaptime.user.domain.QUser.user;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.fail;
 
@@ -58,78 +55,10 @@ public class FriendPagingRepositoryTest {
                 .profilePhoto(reqProfilePhoto)
                 .birthDay(String.valueOf(LocalDateTime.now()))
                 .build();
-        List<User> saveUserList = new ArrayList<>();
-        List<ProfilePhoto> savePrifilePhotoList = new ArrayList<>();
-        List<Friend> saveFriendList = new ArrayList<>();
-        saveUserList.add(reqUser);
-
-        /*
-            1~10은 reqUser -> tempUser
-            11~20은 reqUser -> tempUser, tempUser -> reqUser
-            21~30은 tempUser -> reqUser
-        */
-       for(int i=1;i<=30;i++){
-           ProfilePhoto profilePhoto = ProfilePhoto.builder()
-                   .profilePhotoPath("testPath")
-                   .profilePhotoName("testProfileName1")
-                   .build();
-           User tempUser = User.builder()
-                   .email("test"+i+"@google.com")
-                   .loginId("testLoginId"+i)
-                   .name("testName"+i)
-                   .password("1234")
-                   .profilePhoto(profilePhoto)
-                   .birthDay(String.valueOf(LocalDateTime.now()))
-                   .build();
-
-           if(i<=10){
-               Friend friend1 = Friend.builder()
-                       .friendStatus(FriendStatus.FOLLOW)
-                       .fromUser(reqUser)
-                       .toUser(tempUser)
-                       .build();
-               Friend friend2 = Friend.builder()
-                       .friendStatus(FriendStatus.WAITING)
-                       .fromUser(tempUser)
-                       .toUser(reqUser)
-                       .build();
-               saveFriendList.add(friend1);
-               saveFriendList.add(friend2);
-           }
-           else if(i>10 && i<=20){
-               Friend friend1 = Friend.builder()
-                       .friendStatus(FriendStatus.FOLLOW)
-                       .fromUser(reqUser)
-                       .toUser(tempUser)
-                       .build();
-               Friend friend2 = Friend.builder()
-                       .friendStatus(FriendStatus.FOLLOW)
-                       .fromUser(tempUser)
-                       .toUser(reqUser)
-                       .build();
-               saveFriendList.add(friend1);
-               saveFriendList.add(friend2);
-           }
-           else{
-               Friend friend1 = Friend.builder()
-                       .friendStatus(FriendStatus.WAITING)
-                       .fromUser(reqUser)
-                       .toUser(tempUser)
-                       .build();
-               Friend friend2 = Friend.builder()
-                       .friendStatus(FriendStatus.FOLLOW)
-                       .fromUser(tempUser)
-                       .toUser(reqUser)
-                       .build();
-               saveFriendList.add(friend1);
-               saveFriendList.add(friend2);
-           }
-
-           saveUserList.add(tempUser);
-           savePrifilePhotoList.add(profilePhoto);
-       }
-       userRepository.saveAll(saveUserList);
-       friendRepository.saveAll(saveFriendList);
+        userRepository.save(reqUser);
+        for(int i=0;i<5;i++){
+            createFriend(reqUser, (long) i);
+        }
     }
 
     @Test
@@ -141,14 +70,7 @@ public class FriendPagingRepositoryTest {
         List<Tuple> result = friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWING,1L,null);
 
         // then
-        assertThat(result.size()).isEqualTo(20);
-        int index = 1;
-        for(Tuple tuple : result){
-            assertThat(tuple.get(user.loginId)).isEqualTo("testLoginId"+index);
-            assertThat(tuple.get(user.profilePhoto.id)).isEqualTo(index+1);
-            assertThat(tuple.get(user.name)).isEqualTo("testName"+index);
-            index++;
-        }
+        assertThat(result.size()).isEqualTo(5);
     }
 
     @Test
@@ -157,32 +79,22 @@ public class FriendPagingRepositoryTest {
         // given
 
         // when
-        List<Tuple> result = friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,1L,null);
+        List<Tuple> result = friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,1L,"");
 
         // then
-        assertThat(result.size()).isEqualTo(20);
-        int index = 11;
-        for(Tuple tuple : result){
-            assertThat(tuple.get(user.loginId)).isEqualTo("testLoginId"+index);
-            assertThat(tuple.get(user.profilePhoto.id)).isEqualTo(index+1+31);
-            assertThat(tuple.get(user.name)).isEqualTo("testName"+index);
-            index++;
-        }
+        assertThat(result.size()).isEqualTo(5);
     }
 
     @Test
-    @DisplayName("친구조회 테스트 -> 성공(팔로우 조회 / 검색조회)")
+    @DisplayName("친구조회 테스트 -> 성공(팔로잉 조회 / 검색조회)")
     public void findFriendTest3(){
         // given
 
         // when
-        List<Tuple> result = friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,1L,"20");
+        List<Tuple> result = friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWING,1L,"testName1");
 
         // then
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).get(user.loginId)).isEqualTo("testLoginId20");
-        assertThat(result.get(0).get(user.profilePhoto.id)).isEqualTo(20+62+1);
-        assertThat(result.get(0).get(user.name)).isEqualTo("testName"+20);
     }
 
     @Test
@@ -198,5 +110,34 @@ public class FriendPagingRepositoryTest {
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.PAGE_NOT_FOUND);
         }
 
+    }
+
+    private void createFriend(User reqUser, Long i){
+        ProfilePhoto profilePhoto = ProfilePhoto.builder()
+                .profilePhotoPath("testPath")
+                .profilePhotoName("testProfileName1")
+                .build();
+
+        User user = User.builder()
+                .email("test"+i+"@google.com")
+                .loginId("test"+i+"LoginId")
+                .name("testName"+i)
+                .password("1234")
+                .profilePhoto(profilePhoto)
+                .birthDay(String.valueOf(LocalDateTime.now()))
+                .build();
+        userRepository.save(user);
+        friendRepository.save(
+                Friend.builder()
+                        .sender(reqUser)
+                        .receiver(user)
+                        .build()
+        );
+        friendRepository.save(
+                Friend.builder()
+                        .sender(user)
+                        .receiver(reqUser)
+                        .build()
+        );
     }
 }

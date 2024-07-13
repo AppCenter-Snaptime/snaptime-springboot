@@ -19,24 +19,25 @@ public record SnapPagingInfo(
         String snapPhotoURL,
         LocalDateTime snapCreatedDate,
         LocalDateTime snapModifiedDate,
-        String loginId,
+        String writerLoginId,
         String profilePhotoURL,
-        String userName,
+        String writerUserName,
         List<FindTagUserResDto> findTagUserList,
         Long likeCnt,
         boolean isLikedSnap
 ) {
     public static SnapPagingInfo toDto(Tuple result, String profilePhotoURL, String snapPhotoURL,
                                        List<FindTagUserResDto> findTagUserList, Long likeCnt, boolean isLikedSnap){
+
         return SnapPagingInfo.builder()
                 .snapId(result.get(snap.id))
                 .oneLineJournal(String.valueOf(result.get(snap.oneLineJournal)))
                 .snapPhotoURL(snapPhotoURL)
                 .snapCreatedDate(result.get(snap.createdDate))
                 .snapModifiedDate(result.get(snap.lastModifiedDate))
-                .loginId(result.get(user.loginId))
+                .writerLoginId(result.get(user.loginId))
                 .profilePhotoURL(profilePhotoURL)
-                .userName(result.get(user.name))
+                .writerUserName(result.get(user.name))
                 .findTagUserList(findTagUserList)
                 .likeCnt(likeCnt)
                 .isLikedSnap(isLikedSnap)

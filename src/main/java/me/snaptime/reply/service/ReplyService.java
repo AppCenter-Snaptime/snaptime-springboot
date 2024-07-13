@@ -17,13 +17,13 @@ public interface ReplyService {
         댓글을 최신순으로 20개씩 조회합니다.
         커뮤니티기능이므로 페이징처리를 합니다.
     */
-    FindParentReplyResDto readParentReply(String loginId, Long snapId, Long pageNum);
+    FindParentReplyResDto readParentReply(Long snapId, Long pageNum);
 
     /*
         댓글에 달린 대댓글을 최신순으로 20개씩 조회합니다.
         커뮤니티기능이므로 페이징처리를 합니다.
     */
-    FindChildReplyResDto readChildReply(String loginId, Long parentReplyId, Long pageNum);
+    FindChildReplyResDto readChildReply(Long parentReplyId, Long pageNum);
 
     // 댓글을 변경합니다.
     void updateParentReply(String loginId ,Long parentReplyId, String newContent);

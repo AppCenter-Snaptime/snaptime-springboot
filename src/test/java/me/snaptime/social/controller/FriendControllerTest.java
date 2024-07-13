@@ -53,7 +53,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("fromUserLoginId","followName"))
+                        .param("receiverLoginId","followName"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.msg").value("팔로우가 완료되었습니다."))
                 .andDo(print());
@@ -71,7 +71,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("fromUserLoginId","followName"))
+                        .param("receiverLoginId","followName"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("사용자가 존재하지 않습니다."))
                 .andDo(print());
@@ -89,7 +89,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("fromUserLoginId","followName"))
+                        .param("receiverLoginId","followName"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("이미 팔로우관계입니다."))
                 .andDo(print());
@@ -107,7 +107,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("fromUserLoginId","followName"))
+                        .param("receiverLoginId","followName"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("팔로우요청이 거절되었습니다."))
                 .andDo(print());
@@ -125,7 +125,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("fromUserLoginId","followName"))
+                        .param("receiverLoginId","followName"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("자신에게 친구추가 요청을 보낼 수 없습니다."))
                 .andDo(print());
@@ -142,7 +142,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("fromUserLoginId",""))
+                        .param("receiverLoginId",""))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("팔로우요청을 보낼 유저의 이름을 입력해주세요."))
                 .andDo(print());
@@ -208,7 +208,7 @@ public class FriendControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("올바르지 않은 입력값입니다"))
-                .andExpect(jsonPath("$.result.fromUserLoginId").value("유저의 LoginId를 입력해주세요."))
+                .andExpect(jsonPath("$.result.receiverLoginId").value("유저의 LoginId를 입력해주세요."))
                 .andExpect(jsonPath("$.result.isAccept").value("수락여부를 보내주세요."))
                 .andDo(print());
 
@@ -266,29 +266,31 @@ public class FriendControllerTest {
         //given
 
         //when, then
-        this.mockMvc.perform(delete("/friends/{friendId}","1")
-                        .contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(delete("/friends")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("deletedUserLoginId","testLoginId"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.msg").value("팔로우삭제가 완료되었습니다."))
                 .andDo(print());
 
-        verify(friendService,times(1)).unFollow(any(String.class),any(Long.class));
+        verify(friendService,times(1)).unFollow(any(String.class),any(String.class));
     }
 
     @Test
     @WithMockUser
-    @DisplayName("팔로우 삭제테스트 -> 실패(PathVariable 타입예외)")
+    @DisplayName("팔로우 삭제테스트 -> 실패(파라미터 공백)")
     public void deleteFollowTest2() throws Exception {
         //given
 
         //when, then
-        this.mockMvc.perform(delete("/friends/{friendId}","string")
-                        .contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(delete("/friends")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("deletedUserLoginId",""))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.msg").value("friendId이 Long타입이여야 합니다."))
+                .andExpect(jsonPath("$.msg").value("언팔로우할 유저의 loginId를 입력해주세요."))
                 .andDo(print());
 
-        verify(friendService,times(0)).unFollow(any(String.class),any(Long.class));
+        verify(friendService,times(0)).unFollow(any(String.class),any(String.class));
     }
 
     @Test
@@ -297,16 +299,17 @@ public class FriendControllerTest {
     public void deleteFollowTest3() throws Exception {
         //given
         doThrow(new CustomException(ExceptionCode.FRIEND_NOT_EXIST))
-                .when(friendService).unFollow(any(String.class),any(Long.class));
+                .when(friendService).unFollow(any(String.class),any(String.class));
 
         //when, then
-        this.mockMvc.perform(delete("/friends/{friendId}","1")
-                        .contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(delete("/friends")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("deletedUserLoginId","testLoginId"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("존재하지 않는 친구입니다."))
                 .andDo(print());
 
-        verify(friendService,times(1)).unFollow(any(String.class),any(Long.class));
+        verify(friendService,times(1)).unFollow(any(String.class),any(String.class));
     }
 
     @Test
@@ -315,16 +318,17 @@ public class FriendControllerTest {
     public void deleteFollowTest4() throws Exception {
         //given
         doThrow(new CustomException(ExceptionCode.ACCESS_FAIL_FRIENDSHIP))
-                .when(friendService).unFollow(any(String.class),any(Long.class));
+                .when(friendService).unFollow(any(String.class),any(String.class));
 
         //when, then
-        this.mockMvc.perform(delete("/friends/{friendId}","1")
-                        .contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(delete("/friends")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("deletedUserLoginId","testLoginId"))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.msg").value("해당 친구에 대한 권한이 없습니다."))
                 .andDo(print());
 
-        verify(friendService,times(1)).unFollow(any(String.class),any(Long.class));
+        verify(friendService,times(1)).unFollow(any(String.class),any(String.class));
     }
 
     @Test

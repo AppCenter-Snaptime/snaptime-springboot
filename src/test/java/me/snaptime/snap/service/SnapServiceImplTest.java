@@ -54,7 +54,7 @@ public class SnapServiceImplTest {
         String filePath = testPath + FileNameGenerator.generatorName(givenMultipartFile.getOriginalFilename());
         boolean givenPrivate = true;
         User expectedUser = spy(User.builder()
-                .loginId("abcd")
+                .writerLoginId("abcd")
                 .email("test@test.com")
                 .birthDay("990303")
                 .password("1234")

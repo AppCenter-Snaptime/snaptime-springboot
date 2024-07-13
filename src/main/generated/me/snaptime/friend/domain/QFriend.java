@@ -24,11 +24,9 @@ public class QFriend extends EntityPathBase<Friend> {
 
     public final NumberPath<Long> friendId = createNumber("friendId", Long.class);
 
-    public final EnumPath<me.snaptime.friend.common.FriendStatus> friendStatus = createEnum("friendStatus", me.snaptime.friend.common.FriendStatus.class);
+    public final me.snaptime.user.domain.QUser receiver;
 
-    public final me.snaptime.user.domain.QUser fromUser;
-
-    public final me.snaptime.user.domain.QUser toUser;
+    public final me.snaptime.user.domain.QUser sender;
 
     public QFriend(String variable) {
         this(Friend.class, forVariable(variable), INITS);
@@ -48,8 +46,8 @@ public class QFriend extends EntityPathBase<Friend> {
 
     public QFriend(Class<? extends Friend> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.fromUser = inits.isInitialized("fromUser") ? new me.snaptime.user.domain.QUser(forProperty("fromUser"), inits.get("fromUser")) : null;
-        this.toUser = inits.isInitialized("toUser") ? new me.snaptime.user.domain.QUser(forProperty("toUser"), inits.get("toUser")) : null;
+        this.receiver = inits.isInitialized("receiver") ? new me.snaptime.user.domain.QUser(forProperty("receiver"), inits.get("receiver")) : null;
+        this.sender = inits.isInitialized("sender") ? new me.snaptime.user.domain.QUser(forProperty("sender"), inits.get("sender")) : null;
     }
 
 }

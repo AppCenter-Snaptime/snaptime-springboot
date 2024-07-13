@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.friend.common.FriendSearchType;
-import me.snaptime.friend.common.FriendStatus;
 import me.snaptime.friend.repository.FriendPagingRepository;
 import me.snaptime.user.domain.User;
 import org.springframework.data.domain.PageRequest;
@@ -29,15 +28,16 @@ public class FriendPagingRepositoryImpl implements FriendPagingRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Tuple> findFriendList(User reqUser, FriendSearchType searchType, Long pageNum, String searchKeyword) {
+    public List<Tuple> findFriendList(User targetUser, FriendSearchType searchType, Long pageNum, String searchKeyword) {
+
         Pageable pageable= PageRequest.of((int) (pageNum-1),20);
 
         List<Tuple> result =  jpaQueryFactory.select(
-                        user.loginId,user.profilePhoto.id,user.name,friend.friendId
+                        user.loginId, user.profilePhoto.id, user.name, friend.friendId
                 )
                 .from(friend)
                 .join(user).on(getJoinBuilder(searchType))
-                .where(getWhereBuilder(reqUser, searchType,searchKeyword))
+                .where(getWhereBuilder(targetUser, searchType,searchKeyword))
                 .orderBy(createOrderSpecifier())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1) //페이지의 크기
@@ -54,17 +54,16 @@ public class FriendPagingRepositoryImpl implements FriendPagingRepository {
     }
 
     // WHERE절을 동적으로 만들기 위한 메소드
-    private BooleanBuilder getWhereBuilder(User reqUser, FriendSearchType friendSearchType, String searchKeyword){
+    private BooleanBuilder getWhereBuilder(User targetUser, FriendSearchType friendSearchType, String searchKeyword){
         BooleanBuilder builder = new BooleanBuilder();
 
         if(friendSearchType == FriendSearchType.FOLLOWING){
-            builder.and(friend.fromUser.id.eq(reqUser.getId()));
-            builder.and(friend.friendStatus.eq(FriendStatus.FOLLOW));
+            builder.and(friend.sender.id.eq(targetUser.getId()));
         }
         else{
-            builder.and(friend.toUser.id.eq(reqUser.getId()));
-            builder.and(friend.friendStatus.eq(FriendStatus.FOLLOW));
+            builder.and(friend.receiver.id.eq(targetUser.getId()));
         }
+
         if(searchKeyword !=null){
             builder.and(user.name.contains(searchKeyword));
         }
@@ -76,10 +75,10 @@ public class FriendPagingRepositoryImpl implements FriendPagingRepository {
     private BooleanBuilder getJoinBuilder(FriendSearchType friendSearchType){
         BooleanBuilder builder = new BooleanBuilder();
         if(friendSearchType == FriendSearchType.FOLLOWING){
-            return builder.and(friend.toUser.id.eq(user.id));
+            return builder.and(friend.receiver.id.eq(user.id));
         }
         else{
-            return builder.and(friend.fromUser.id.eq(user.id));
+            return builder.and(friend.sender.id.eq(user.id));
         }
     }
 }

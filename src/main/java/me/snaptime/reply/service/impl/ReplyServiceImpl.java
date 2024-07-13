@@ -45,6 +45,7 @@ public class ReplyServiceImpl implements ReplyService {
     private final SnapRepository snapRepository;
     private final UrlComponent urlComponent;
 
+    @Override
     @Transactional
     public void addParentReply(String loginId, AddParentReplyReqDto addParentReplyReqDto){
         User user = findUserByLoginId(loginId);
@@ -93,9 +94,9 @@ public class ReplyServiceImpl implements ReplyService {
         }
     }
 
-    public FindParentReplyResDto readParentReply(String loginId, Long snapId, Long pageNum){
+    public FindParentReplyResDto readParentReply(Long snapId, Long pageNum){
 
-        List<Tuple> result = parentReplyRepository.findReplyList(loginId,snapId,pageNum);
+        List<Tuple> result = parentReplyRepository.findReplyList(snapId,pageNum);
         boolean hasNextPage = NextPageChecker.hasNextPage(result,20L);
 
         List<ParentReplyInfo> parentReplyInfoList = result.stream().map(entity ->
@@ -108,10 +109,10 @@ public class ReplyServiceImpl implements ReplyService {
         return FindParentReplyResDto.toDto(parentReplyInfoList, hasNextPage);
     }
 
-    public FindChildReplyResDto readChildReply(String loginId, Long parentReplyId, Long pageNum){
+    public FindChildReplyResDto readChildReply(Long parentReplyId, Long pageNum){
 
         QUser writerUser = new QUser("writerUser");
-        List<Tuple> result = childReplyRepository.findReplyList(loginId,parentReplyId,pageNum);
+        List<Tuple> result = childReplyRepository.findReplyList(parentReplyId,pageNum);
         boolean hasNextPage = NextPageChecker.hasNextPage(result,20L);
 
         List<ChildReplyInfo> childReplyInfoList = result.stream().map(entity ->

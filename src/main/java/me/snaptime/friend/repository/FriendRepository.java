@@ -1,6 +1,5 @@
 package me.snaptime.friend.repository;
 
-import me.snaptime.friend.common.FriendStatus;
 import me.snaptime.friend.domain.Friend;
 import me.snaptime.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,13 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface FriendRepository extends JpaRepository<Friend,Long>, FriendPagingRepository {
-    Optional<Friend> findByToUserAndFromUser(User toUser, User fromUser);
+    Optional<Friend> findBySenderAndReceiver(User sender, User receiver);
     
-    // 내가 팔로우 하는 사람의 수
-    Long countByFromUserAndFriendStatus(User fromUser, FriendStatus friendStatus);
+    // sender의 팔로잉 수 조회
+    Long countBySender(User sender);
 
-    // 나를 팔로우 하는 사람의 수
-    Long countByToUserAndFriendStatus(User toUser, FriendStatus friendStatus);
+    // receiver의 팔로워 수 조회
+    Long countByReceiver(User receiver);
 
-    boolean existsByToUserAndFromUser(User toUser, User fromUser);
+    boolean existsBySenderAndReceiver(User sender, User receiver);
 }

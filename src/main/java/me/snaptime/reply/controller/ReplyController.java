@@ -40,7 +40,7 @@ public class ReplyController {
     }
 
     @PostMapping("/child-replies")
-    @Operation(summary = "대댓글 등록요청", description = "대댓글을 등록할 부모댓글의 Id와 태그할 유저의 loginId,댓글내용을 입력해주세요<br>태그할 유저가 없다면 tagLoginId는 보내지 않아도 됩니다.")
+    @Operation(summary = "대댓글 등록요청", description = "대댓글을 등록할 부모댓글의 Id와 태그할 유저의 writerLoginId,댓글내용을 입력해주세요<br>태그할 유저가 없다면 tagLoginId는 보내지 않아도 됩니다.")
     public ResponseEntity<CommonResponseDto<Void>> addChildReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @RequestBody @Valid AddChildReplyReqDto addChildReplyReqDto){
@@ -57,12 +57,11 @@ public class ReplyController {
             @Parameter(name = "snapId", description = "조회할 snapId", required = true, example = "1"),
     })
     public ResponseEntity<CommonResponseDto<FindParentReplyResDto>> readParentReply(
-            @AuthenticationPrincipal final UserDetails userDetails,
             @RequestParam @NotNull(message = "댓글을 조회할 snapId를 입력해주세요.") final Long snapId,
             @PathVariable final Long pageNum){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto("댓글조회 성공했습니다.",
-                replyService.readParentReply(userDetails.getUsername(),snapId,pageNum)));
+                replyService.readParentReply(snapId,pageNum)));
     }
 
     @GetMapping("/child-replies/{pageNum}")
@@ -72,12 +71,11 @@ public class ReplyController {
             @Parameter(name = "parentReplyId", description = "대댓글을 조회할 부모댓글의Id", required = true, example = "1"),
     })
     public ResponseEntity<CommonResponseDto<FindChildReplyResDto>> readChildReply(
-            @AuthenticationPrincipal final UserDetails userDetails,
             @RequestParam @NotNull(message = "부모댓글의 Id를 입력해주세요.") final Long parentReplyId,
             @PathVariable final Long pageNum){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto("대댓글조회 성공했습니다.",
-                replyService.readChildReply(userDetails.getUsername(),parentReplyId,pageNum)));
+                replyService.readChildReply(parentReplyId,pageNum)));
     }
 
     @PatchMapping("/parent-replies/{parentReplyId}")
@@ -98,7 +96,7 @@ public class ReplyController {
     @PatchMapping("/child-replies/{childReplyId}")
     @Operation(summary = "대댓글 수정요청", description = "대댓글 ID와 수정할 댓글내용을 입력해주세요")
     @Parameters({
-            @Parameter(name = "childReplyId", description = "eo댓글ID", required = true, example = "1"),
+            @Parameter(name = "childReplyId", description = "대댓글ID", required = true, example = "1"),
             @Parameter(name = "newContent", description = "수정할 대댓글내용", required = true, example = "수정된 대댓글"),
     })
     public ResponseEntity<CommonResponseDto<Void>> updateChildReply(

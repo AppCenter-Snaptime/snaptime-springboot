@@ -27,6 +27,7 @@ public class SnapTagServiceImpl implements SnapTagService {
     private final UserRepository userRepository;
     private final SnapRepository snapRepository;
 
+    @Override
     @Transactional
     public void addTagUser(List<String> tagUserLoginIdList, Snap snap){
 
@@ -43,6 +44,7 @@ public class SnapTagServiceImpl implements SnapTagService {
         snapTagRepository.saveAll(snapTagList);
     }
 
+    @Override
     @Transactional
     public void deleteTagUser(List<String> tagUserLoginIdList, Long snapId){
 
@@ -60,6 +62,7 @@ public class SnapTagServiceImpl implements SnapTagService {
         );
     }
 
+    @Override
     @Transactional
     public void modifyTagUser(List<String> tagUserLoginIdList, Snap snap){
 
@@ -72,11 +75,13 @@ public class SnapTagServiceImpl implements SnapTagService {
        snapTagRepository.saveAll( findNewTagUserList(tagUserLoginIdList, snap) );
     }
 
+    @Override
     @Transactional
     public void deleteAllTagUser(Snap snap){
         snapTagRepository.deleteAll(snapTagRepository.findBySnap(snap));
     }
 
+    @Override
     public List<FindTagUserResDto> findTagUserList(Long snapId){
         Snap snap = snapRepository.findById(snapId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));

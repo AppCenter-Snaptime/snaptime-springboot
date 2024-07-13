@@ -25,16 +25,15 @@ public class ChildReplyPagingRepositoryImpl implements ChildReplyPagingRepositor
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Tuple> findReplyList(String loginId, Long parentReplyId, Long pageNum) {
+    public List<Tuple> findReplyList(Long parentReplyId, Long pageNum) {
         Pageable pageable= PageRequest.of((int) (pageNum-1),20);
         QUser tagUser = new QUser("tagUser");
         QUser writerUser = new QUser("writerUser");
-
-
+        
         List<Tuple> result =  jpaQueryFactory.select(
                         childReply.childReplyId,childReply.content,childReply.parentReply.parentReplyId,
                         writerUser.name,writerUser.loginId,tagUser.name,tagUser.loginId,
-                        writerUser.profilePhoto.id
+                        writerUser.profilePhoto.id, childReply.lastModifiedDate
                 )
                 .from(childReply)
                 .leftJoin(tagUser).on(childReply.replyTagUser.id.eq(tagUser.id))

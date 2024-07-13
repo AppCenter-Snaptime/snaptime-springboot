@@ -81,7 +81,7 @@ public class SnapPagingServiceImplTest {
         given(tuple2.get(snap.fileName)).willReturn("fileName2");
         given(tuple3.get(snap.fileName)).willReturn("fileName3");
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(reqUser));
-        given(snapRepository.findSnapPaging(any(String.class),any(Long.class),any(User.class))).willReturn(List.of(tuple1,tuple2,tuple3));
+        given(snapRepository.findSnapPaging(any(Long.class),any(User.class))).willReturn(List.of(tuple1,tuple2,tuple3));
 
         // when
         FindSnapPagingResDto result = snapPagingServiceImpl.findSnapPaging("testLoginId",1L);
@@ -100,7 +100,7 @@ public class SnapPagingServiceImplTest {
         assertThat(result.snapPagingInfoList().get(1).snapPhotoURL()).isEqualTo("photoURL2");
         assertThat(result.snapPagingInfoList().get(2).snapPhotoURL()).isEqualTo("photoURL3");
 
-        verify(snapRepository,times(1)).findSnapPaging(any(String.class),any(Long.class),any(User.class));
+        verify(snapRepository,times(1)).findSnapPaging(any(Long.class),any(User.class));
         verify(userRepository,times(1)).findByLoginId(any(String.class));
 
     }

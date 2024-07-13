@@ -7,17 +7,17 @@ import me.snaptime.friend.dto.res.FriendCntResDto;
 
 public interface FriendService {
 
-    // 친구요청 전송(fromUser(요청자)의 팔로잉 +1, toUser의 팔로워 +1)
-    void sendFollow(String loginId, String fromUserLoginId);
+    // 친구요청 전송(sender(요청자)의 팔로잉 +1, receiver의 팔로워 +1)
+    void sendFollow(String senderLoginId, String receiverLoginId);
 
-    // 친구요청 수락(fromUser(수락자)의 팔로잉 +1, toUser의 팔로워 +1)
-    // 친구요청 거절(fromUser(수락자)의 팔로워 -1, toUser의 팔로잉 -1)
-    String acceptFollow(String loginId, AcceptFollowReqDto acceptFollowReqDto);
+    // 친구요청 수락(sender(수락자)의 팔로잉 +1, receiver의 팔로워 +1)
+    // 친구요청 거절(sender(수락자)의 팔로워 -1, receiver의 팔로잉 -1)
+    String acceptFollow(String senderLoginId, AcceptFollowReqDto acceptFollowReqDto);
 
-    // 친구 삭제(fromUser(삭제자)의 팔로잉 -1, toUser의 팔로워 -1)
-    void unFollow(String loginId, Long friendShipId);
+    // 친구 삭제(deletingUser(삭제자)의 팔로잉 -1, deletedUser의 팔로워 -1)
+    void unFollow(String deletingUserLoginId, String deletedUserLoginId);
 
-    // 팔로워 or 팔로잉 친구리스트 조회
+    // myloginId유저가 targetLoginId의 팔로워 or 팔로잉 친구리스트 조회
     FindFriendResDto findFriendList(String loginId, String targetLoginId, Long pageNum,
                                     FriendSearchType searchType, String searchKeyword);
 

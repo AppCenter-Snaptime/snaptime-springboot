@@ -36,10 +36,11 @@ public class SnapPagingServiceImpl implements SnapPagingService {
     private final SnapLikeService snapLikeService;
 
     public FindSnapPagingResDto findSnapPaging(String loginId, Long pageNum){
+
         User reqUser = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        List<Tuple> result = snapRepository.findSnapPaging(loginId,pageNum,reqUser);
+        List<Tuple> result = snapRepository.findSnapPaging(pageNum,reqUser);
         boolean hasNextPage = NextPageChecker.hasNextPage(result,10L);
 
         List<SnapPagingInfo> snapPagingInfoList = result.stream().map(entity ->
