@@ -1,4 +1,4 @@
-package me.snaptime.user.service.impl;
+package me.snaptime.profile.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +11,10 @@ import me.snaptime.profile.dto.res.AlbumSnapResDto;
 import me.snaptime.profile.dto.res.ProfileCntResDto;
 import me.snaptime.profile.dto.res.ProfileTagSnapResDto;
 import me.snaptime.profile.dto.res.UserProfileResDto;
+import me.snaptime.profile.service.ProfileService;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
-import me.snaptime.user.service.UserProfileService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class UserProfileServiceImpl implements UserProfileService {
-
+public class ProfileServiceImpl implements ProfileService {
     private final UserRepository userRepository;
     private final UrlComponent urlComponent;
     private final SnapRepository snapRepository;
@@ -69,4 +68,5 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         return userRepository.findTagSnap(user);
     }
+
 }
