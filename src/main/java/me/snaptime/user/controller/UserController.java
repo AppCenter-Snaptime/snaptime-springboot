@@ -17,6 +17,8 @@ import me.snaptime.user.dto.req.UserReqDto;
 import me.snaptime.user.dto.req.UserUpdateDto;
 import me.snaptime.user.dto.res.SignInResDto;
 import me.snaptime.user.dto.res.UserResDto;
+import me.snaptime.user.service.SignService;
+import me.snaptime.user.service.UserProfileService;
 import me.snaptime.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final SignService signService;
+    private final UserProfileService userProfileService;
 
     @Operation(summary = "유저 정보 조회",description = "유저 번호로 유저 정보를 조회합니다. ")
     @GetMapping()
@@ -88,7 +92,7 @@ public class UserController {
             "<br> 이후에 유저의 Token 을 통해 profile 사진을 수정할 수 있습니다.")
     @PostMapping("/sign-up")
     public ResponseEntity<CommonResponseDto<UserResDto>> signUp(@Valid @RequestBody UserReqDto userReqDto){
-        UserResDto userResDto = userService.signUp(userReqDto);
+        UserResDto userResDto = signService.signUp(userReqDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new CommonResponseDto<>(
@@ -99,7 +103,7 @@ public class UserController {
     @Operation(summary = "로그인", description = "회원 가입 한 유저의 loginId와 password를 입력합니다.")
     @PostMapping("/sign-in")
     public ResponseEntity<CommonResponseDto<SignInResDto>> signIn(@Valid @RequestBody SignInReqDto signInReqDto){
-        SignInResDto signInResponseDto = userService.signIn(signInReqDto);
+        SignInResDto signInResponseDto = signService.signIn(signInReqDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
@@ -116,7 +120,7 @@ public class UserController {
                                                                                  @RequestParam("login_id")
                                                                                  @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String targetLoginId){
         String yourLoginId = principal.getUsername();
-        List<AlbumSnapResDto> albumSnapResDtoList = userService.getAlbumSnap(yourLoginId, targetLoginId);
+        List<AlbumSnapResDto> albumSnapResDtoList = userProfileService.getAlbumSnap(yourLoginId, targetLoginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 앨범과 스냅 조회를 성공적으로 완료하였습니다.",
@@ -131,7 +135,7 @@ public class UserController {
     @GetMapping("/profile")
     public ResponseEntity<CommonResponseDto<UserProfileResDto>> getUserProfile(@RequestParam("login_id")
                                                                                    @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String loginId){
-        UserProfileResDto userProfileResDto = userService.getUserProfile(loginId);
+        UserProfileResDto userProfileResDto = userProfileService.getUserProfile(loginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 이름과, 프로필 사진 조회를 성공적으로 완료하였습니다.",
@@ -144,7 +148,7 @@ public class UserController {
     @GetMapping("/profile/count")
     public ResponseEntity<CommonResponseDto<ProfileCntResDto>> getProfileCnt(@RequestParam("login_id")
                                                                                  @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String loginId){
-        ProfileCntResDto profileCntResDto = userService.getUserProfileCnt(loginId);
+        ProfileCntResDto profileCntResDto = userProfileService.getUserProfileCnt(loginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 팔로워, 팔로잉 수 조회를 성공적으로 완료하였습니다.",
@@ -159,7 +163,7 @@ public class UserController {
     public ResponseEntity<CommonResponseDto<List<ProfileTagSnapResDto>>> getTagSnap(@RequestParam("login_id")
                                                                                         @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String loginId){
 
-        List<ProfileTagSnapResDto> profileTagSnapResDto = userService.getTagSnap(loginId);
+        List<ProfileTagSnapResDto> profileTagSnapResDto = userProfileService.getTagSnap(loginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저가 태그된 Snap 들을 성공적으로 조회하였습니다.",
