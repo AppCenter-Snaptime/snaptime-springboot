@@ -40,7 +40,7 @@ public class ReplyController {
     }
 
     @PostMapping("/child-replies")
-    @Operation(summary = "대댓글 등록요청", description = "대댓글을 등록할 부모댓글의 Id와 태그할 유저의 writerLoginId,댓글내용을 입력해주세요<br>태그할 유저가 없다면 tagLoginId는 보내지 않아도 됩니다.")
+    @Operation(summary = "대댓글 등록요청", description = "대댓글을 등록할 부모댓글의 Id와 태그할 유저의 loginId,댓글내용을 입력해주세요<br>태그할 유저가 없다면 tagLoginId는 보내지 않아도 됩니다.")
     public ResponseEntity<CommonResponseDto<Void>> addChildReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @RequestBody @Valid AddChildReplyReqDto addChildReplyReqDto){
