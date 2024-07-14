@@ -1,4 +1,4 @@
-package me.snaptime.component.crawling.provider;
+package me.snaptime.crawling.service.provider;
 
 import me.snaptime.util.JsoupAction;
 import org.jsoup.nodes.Document;

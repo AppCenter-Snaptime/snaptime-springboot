@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.CommonResponseDto;
-import me.snaptime.component.crawling.CrawlingComponent;
+import me.snaptime.crawling.service.CrawlingService;
 import me.snaptime.snap.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.dto.req.ModifySnapReqDto;
 import me.snaptime.snap.dto.res.FindSnapResDto;
@@ -28,7 +28,7 @@ import java.util.List;
 @Slf4j
 public class SnapController {
     private final SnapService snapService;
-    private final CrawlingComponent crawlingComponent;
+    private final CrawlingService crawlingService;
 
     @Operation(summary = "Snap 생성", description = "Empty Value를 보내지마세요")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -150,14 +150,14 @@ public class SnapController {
     @Operation(summary = "하루필름 크롤링 테스트 API", description = "하루필름 크롤링 테스트 API입니다.")
     @GetMapping("/test")
     public ResponseEntity<?> test(final @RequestParam("url") String url) {
-        byte[] image = crawlingComponent.getImage("harufilm", url);
+        byte[] image = crawlingService.getImage("harufilm", url);
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(image);
     }
 
     @Operation(summary = "1Percent 크롤링 테스트 API", description = "1")
     @GetMapping("/test2")
     ResponseEntity<?> test2(final @RequestParam String url) {
-        byte[] image = crawlingComponent.getImage("onepercent", url);
+        byte[] image = crawlingService.getImage("onepercent", url);
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(image);
     }
 }
