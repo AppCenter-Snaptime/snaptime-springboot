@@ -1,4 +1,4 @@
-package me.snaptime.component.crawling.provider;
+package me.snaptime.crawling.service.provider;
 
 public interface PhotoProvider {
     String crawlingImageURL(String page_url);

@@ -1,8 +1,8 @@
-package me.snaptime.component.crawling;
+package me.snaptime.crawling.service;
 
-import me.snaptime.component.crawling.provider.PhotoProvider;
+import me.snaptime.crawling.service.provider.PhotoProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -10,12 +10,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
-@Component
-public class CrawlingComponentImpl implements CrawlingComponent {
+@Service
+public class CrawlingServiceImpl implements CrawlingService {
     private final Map<String, PhotoProvider> providers;
 
     @Autowired
-    public CrawlingComponentImpl(List<PhotoProvider> providerList) {
+    public CrawlingServiceImpl(List<PhotoProvider> providerList) {
         this.providers = providerList.stream()
                 .collect(Collectors.toMap(provider -> provider.getClass().getSimpleName().toLowerCase(), Function.identity()));
     }
