@@ -3,7 +3,6 @@ package me.snaptime.user.service;
 import me.snaptime.profilePhoto.domain.ProfilePhoto;
 import me.snaptime.profilePhoto.dto.res.ProfilePhotoResDto;
 import me.snaptime.profilePhoto.repository.ProfilePhotoRepository;
-import me.snaptime.profilePhoto.service.ProfilePhotoService;
 import me.snaptime.profilePhoto.service.impl.ProfilePhotoServiceImpl;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
