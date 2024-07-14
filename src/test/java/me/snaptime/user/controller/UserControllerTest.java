@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import me.snaptime.config.SecurityConfig;
 import me.snaptime.jwt.JwtProvider;
 import me.snaptime.jwt.UserDetailsServiceImpl;
+import me.snaptime.profile.service.impl.ProfileServiceImpl;
 import me.snaptime.user.dto.req.UserReqDto;
 import me.snaptime.user.dto.req.UserUpdateDto;
 import me.snaptime.user.dto.res.UserResDto;
-import me.snaptime.user.service.UserService;
+import me.snaptime.user.service.impl.SignServiceImpl;
+import me.snaptime.user.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,13 @@ public class UserControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UserService userService;
+    private UserServiceImpl userService;
+
+    @MockBean
+    private SignServiceImpl signService;
+
+    @MockBean
+    private ProfileServiceImpl profileService;
 
     @MockBean
     private UserDetailsServiceImpl userDetailsService;
@@ -81,7 +89,7 @@ public class UserControllerTest {
                 .birthDay("1999-10-29")
                 .build();
 
-        given(userService.signUp(any(UserReqDto.class)))
+        given(signService.signUp(any(UserReqDto.class)))
                 .willReturn(UserResDto.builder()
                         .id(1L)
                         .loginId("kang4746")
@@ -104,7 +112,7 @@ public class UserControllerTest {
                 .andDo(print());
 
         //then
-        verify(userService,times(1)).signUp(any(UserReqDto.class));
+        verify(signService,times(1)).signUp(any(UserReqDto.class));
     }
 
     @Test
@@ -114,7 +122,6 @@ public class UserControllerTest {
 
         //given
         UserUpdateDto userUpdateDto = UserUpdateDto.builder()
-                .loginId("jun4746")
                 .name("홍길순")
                 .email("strong@naver.com")
                 .birthDay("1999-10-29")
@@ -122,7 +129,7 @@ public class UserControllerTest {
 
         given(userService.updateUser(eq("kang4746"),any(UserUpdateDto.class)))
                 .willReturn(UserResDto.builder()
-                        .loginId("jun4746")
+                        .loginId("kang4746")
                         .name("홍길순")
                         .email("strong@gmail.com")
                         .birthDay("1999-10-29")
