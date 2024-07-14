@@ -10,6 +10,8 @@ import me.snaptime.user.dto.req.UserUpdateDto;
 import me.snaptime.user.dto.res.SignInResDto;
 import me.snaptime.user.dto.res.UserResDto;
 import me.snaptime.user.repository.UserRepository;
+import me.snaptime.user.service.impl.SignServiceImpl;
+import me.snaptime.user.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +34,10 @@ import static org.mockito.Mockito.*;
 class UserServiceTest {
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userService;
+
+    @InjectMocks
+    private SignServiceImpl signService;
 
     @Mock
     private UserRepository userRepository;
@@ -98,7 +103,7 @@ class UserServiceTest {
         Mockito.when(profilePhotoRepository.save(any(ProfilePhoto.class)))
                 .then(returnsFirstArg());
         //when
-        UserResDto userResDto = userService.signUp(givenRequest);
+        UserResDto userResDto = signService.signUp(givenRequest);
 
         //then
         Assertions.assertEquals(givenRequest.name(),userResDto.name());
@@ -125,7 +130,7 @@ class UserServiceTest {
                 .thenReturn("mockToken");
 
         //when
-        SignInResDto signInResponseDto = userService.signIn(signInRequestDto);
+        SignInResDto signInResponseDto = signService.signIn(signInRequestDto);
 
         //then
         Assertions.assertEquals("mockToken",signInResponseDto.accessToken());
@@ -161,7 +166,6 @@ class UserServiceTest {
     public void updateUser() {
         //given
         UserUpdateDto userUpdateDto = UserUpdateDto.builder()
-                .loginId("jun4746")
                 .name("")
                 .email("strong@naver.com")
                 .birthDay("")
@@ -175,7 +179,7 @@ class UserServiceTest {
 
         //then
         Assertions.assertEquals("홍길순",userResponseDto.name());
-        Assertions.assertEquals("jun4746",userResponseDto.loginId());
+        Assertions.assertEquals("kang4746",userResponseDto.loginId());
         Assertions.assertEquals("strong@naver.com",userResponseDto.email());
         Assertions.assertEquals("1999-10-29",userResponseDto.birthDay());
 

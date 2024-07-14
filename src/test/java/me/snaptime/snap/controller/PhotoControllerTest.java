@@ -2,7 +2,8 @@ package me.snaptime.snap.controller;
 
 import me.snaptime.snap.service.impl.SnapServiceImpl;
 import me.snaptime.user.dto.req.UserReqDto;
-import me.snaptime.user.service.UserService;
+import me.snaptime.user.service.SignService;
+import me.snaptime.user.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +29,10 @@ public class PhotoControllerTest {
     private SnapServiceImpl snapService;
 
     @MockBean
-    private UserService userService;
+    private UserServiceImpl userService;
+
+    @MockBean
+    private SignService signService;
 
 
     @DisplayName("Photo 조회 테스트")
@@ -36,7 +40,7 @@ public class PhotoControllerTest {
     @Test
     public void findPhotoTest() throws Exception {
         // given
-        userService.signUp(new UserReqDto(
+        signService.signUp(new UserReqDto(
                 "김원정", "mockUid", "test1234", "test@test.com", "990303"
         ));
         byte[] emptyByte = {};

@@ -13,12 +13,6 @@ public record UserUpdateDto(
         @NotBlank(message = "유저 이름 입력은 필수입니다.")
         String name,
         @Schema(
-                example = "kang4746",
-                description = "유저의 로그인 아이디를 입력해주세요"
-        )
-        @NotBlank(message = "유저 로그인 아이디 입력은 필수입니다.")
-        String loginId,
-        @Schema(
                 example = "strong@gmail.com",
                 description = "유저의 이메일을 입력해주세요"
         )
