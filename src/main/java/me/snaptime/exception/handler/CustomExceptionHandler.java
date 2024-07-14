@@ -1,7 +1,7 @@
 package me.snaptime.exception.handler;
 
 import jakarta.validation.ConstraintViolationException;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.CommonResponseDto;
 import me.snaptime.exception.CustomException;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +23,7 @@ import java.util.Map;
 
 
 @RestControllerAdvice
-@Log4j2
+@Slf4j
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler{
 
     //@Valid 유효성검사 실패 시

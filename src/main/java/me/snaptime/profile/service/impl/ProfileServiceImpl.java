@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
-import me.snaptime.friendShip.dto.res.FriendCntResDto;
-import me.snaptime.friendShip.service.FriendShipService;
+import me.snaptime.friend.dto.res.FriendCntResDto;
+import me.snaptime.friend.service.FriendService;
 import me.snaptime.profile.dto.res.AlbumSnapResDto;
 import me.snaptime.profile.dto.res.ProfileCntResDto;
 import me.snaptime.profile.dto.res.ProfileTagSnapResDto;
@@ -28,7 +28,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final UserRepository userRepository;
     private final UrlComponent urlComponent;
     private final SnapRepository snapRepository;
-    private final FriendShipService friendShipService;
+    private final FriendService friendService;
 
     @Override
     @Transactional(readOnly = true)
@@ -52,7 +52,7 @@ public class ProfileServiceImpl implements ProfileService {
     public ProfileCntResDto getUserProfileCnt(String loginId) {
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         Long userSnapCnt = snapRepository.countByUser(user);
-        FriendCntResDto friendCntResDto = friendShipService.findFriendShipCnt(loginId);
+        FriendCntResDto friendCntResDto = friendService.findFriendCnt(loginId);
 
         return ProfileCntResDto.builder()
                 .snapCnt(userSnapCnt)

@@ -6,13 +6,13 @@ import me.snaptime.snapTag.domain.SnapTag;
 @Builder
 public record FindTagUserResDto(
 
-        String loginId,
+        String tagUserLoginId,
         String userName
 
 ) {
     public static FindTagUserResDto toDto(SnapTag snapTag){
         return FindTagUserResDto.builder()
-                .loginId(snapTag.getTagUser().getLoginId())
+                .tagUserLoginId(snapTag.getTagUser().getLoginId())
                 .userName(snapTag.getTagUser().getName())
                 .build();
     }

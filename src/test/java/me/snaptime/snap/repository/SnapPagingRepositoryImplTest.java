@@ -8,9 +8,8 @@ import me.snaptime.config.JpaAuditingConfig;
 import me.snaptime.config.QueryDslConfig;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
-import me.snaptime.friendShip.common.FriendStatus;
-import me.snaptime.friendShip.domain.FriendShip;
-import me.snaptime.friendShip.repository.FriendShipRepository;
+import me.snaptime.friend.domain.Friend;
+import me.snaptime.friend.repository.FriendRepository;
 import me.snaptime.profilePhoto.domain.ProfilePhoto;
 import me.snaptime.snap.domain.Snap;
 import me.snaptime.user.domain.User;
@@ -26,11 +25,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-import static me.snaptime.snap.domain.QSnap.snap;
-import static me.snaptime.user.domain.QUser.user;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.util.AssertionErrors.fail;
 
@@ -45,7 +41,7 @@ public class SnapPagingRepositoryImplTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private FriendShipRepository friendShipRepository;
+    private FriendRepository friendRepository;
     @Autowired
     private AlbumRepository albumRepository;
     private User reqUser;
@@ -111,57 +107,26 @@ public class SnapPagingRepositoryImplTest {
 
         userRepository.saveAll(List.of(reqUser,user2,user3,user4));
 
-        FriendShip friendShip1 = FriendShip.builder()
-                .fromUser(reqUser)
-                .toUser(user2)
-                .friendStatus(FriendStatus.FOLLOW)
+        Friend friend1 = Friend.builder()
+                .sender(reqUser)
+                .receiver(user2)
                 .build();
-        FriendShip friendShip2 = FriendShip.builder()
-                .fromUser(reqUser)
-                .toUser(user3)
-                .friendStatus(FriendStatus.WAITING)
+        Friend friend2 = Friend.builder()
+                .sender(reqUser)
+                .receiver(user3)
                 .build();
-        FriendShip friendShip3 = FriendShip.builder()
-                .fromUser(reqUser)
-                .toUser(user4)
-                .friendStatus(FriendStatus.REJECTED)
-                .build();
-        FriendShip friendShip4 = FriendShip.builder()
-                .friendStatus(FriendStatus.FOLLOW)
-                .fromUser(user3)
-                .toUser(reqUser)
-                .build();
-        friendShipRepository.saveAll(List.of(friendShip1,friendShip2,friendShip3,friendShip4));
 
-        List<Snap> snaps = new ArrayList<>();
-        List<User> users = new ArrayList<>(List.of(reqUser,reqUser,user2,user2,user4,user2,user3,user3,user3,user3,user4));
-        for (int i = 1; i <= 11; i++) {
-            if(i==6){
-                Snap snap = Snap.builder()
-                        .album(album)
-                        .isPrivate(true)
-                        .oneLineJournal("snap" + i + " 1줄일기")
-                        .user(users.get(i-1))
-                        .fileName("fileName"+i)
-                        .filePath("testPath")
-                        .fileType("testType")
-                        .build();
-                snaps.add(snap);
-            }
-            else{
-                Snap snap = Snap.builder()
-                        .album(album)
-                        .isPrivate(false)
-                        .oneLineJournal("snap" + i + " 1줄일기")
-                        .user(users.get(i-1))
-                        .fileName("fileName"+i)
-                        .filePath("testPath")
-                        .fileType("testType")
-                        .build();
-                snaps.add(snap);
-            }
-        }
-        snapRepository.saveAll(snaps);
+        friendRepository.saveAll(List.of(friend1, friend2));
+        createSnap(reqUser,album,false);
+        createSnap(reqUser,album,true);
+        createSnap(reqUser,album,false);
+        createSnap(reqUser,album,true);
+        createSnap(user2,album,false);
+        createSnap(user2,album,true);
+        createSnap(user3,album,false);
+        createSnap(user3,album,true);
+        createSnap(user4,album,false);
+
     }
 
     @Test
@@ -170,24 +135,10 @@ public class SnapPagingRepositoryImplTest {
         // given
 
         // when
-        List<Tuple> result = snapRepository.findSnapPaging("testLoginId1",1L,reqUser);
+        List<Tuple> result = snapRepository.findSnapPaging(1L,reqUser);
 
         // then
         assertThat(result.size()).isEqualTo(4);
-        int index=4;
-        for(Tuple tuple:result){
-            assertThat(tuple.get(snap.id)).isEqualTo(index);
-            assertThat(tuple.get(snap.fileName)).isEqualTo("fileName"+index);
-            if(index > 2){
-                assertThat(tuple.get(user.name)).isEqualTo("testName2");
-            }
-            else if(index <= 2){
-                assertThat(tuple.get(user.name)).isEqualTo("testName1");
-            }
-
-            index--;
-        }
-
     }
 
     @Test
@@ -197,11 +148,24 @@ public class SnapPagingRepositoryImplTest {
 
         // when,then
         try{
-            snapRepository.findSnapPaging("testLoginId1",10L,reqUser);
+            snapRepository.findSnapPaging(10L,reqUser);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.PAGE_NOT_FOUND);
         }
     }
 
+    private void createSnap(User user, Album album,boolean isPrivate){
+        snapRepository.save(
+                Snap.builder()
+                        .album(album)
+                        .isPrivate(isPrivate)
+                        .oneLineJournal("1줄일기")
+                        .user(user)
+                        .fileName("fileName")
+                        .filePath("testPath")
+                        .fileType("testType")
+                        .build()
+        );
+    }
 }

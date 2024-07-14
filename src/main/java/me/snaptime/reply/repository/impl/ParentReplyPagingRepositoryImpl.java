@@ -25,7 +25,7 @@ public class ParentReplyPagingRepositoryImpl implements ParentReplyPagingReposit
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Tuple> findReplyList(String loginId, Long snapId,Long pageNum) {
+    public List<Tuple> findReplyList(Long snapId,Long pageNum) {
         Pageable pageable= PageRequest.of((int) (pageNum-1),20);
 
         List<Tuple> result =  jpaQueryFactory.select(

@@ -1,18 +1,17 @@
 package me.snaptime.util;
 
 import com.querydsl.core.Tuple;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
-@RequiredArgsConstructor
 public class NextPageChecker {
 
     public static boolean hasNextPage(List<Tuple> resultList, Long pageSize){
 
         boolean hasNextPage = resultList.size() <= pageSize ? false : true;
+        if(hasNextPage)
+            resultList.remove(pageSize);
+
         return hasNextPage;
     }
 }

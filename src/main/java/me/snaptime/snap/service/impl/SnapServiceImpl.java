@@ -146,7 +146,7 @@ public class SnapServiceImpl implements SnapService {
         * 새로운 유저를 찾아 태그 목록에 추가한다.
         * */
         List<String> originalTagIds = snapTagService.findTagUserList(snapId).
-                stream().map(FindTagUserResDto::loginId).toList();
+                stream().map(FindTagUserResDto::tagUserLoginId).toList();
 
         log.info("originalTagIds: {}", originalTagIds);
         List<String> newTagIds = new ArrayList<>();
