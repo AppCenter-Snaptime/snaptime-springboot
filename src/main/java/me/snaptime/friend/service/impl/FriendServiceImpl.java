@@ -65,7 +65,7 @@ public class FriendServiceImpl implements FriendService {
     @Transactional
     public String acceptFollow(User sender, User receiver, boolean isAccept){
 
-        // receiver가 sender에게 친구요청을 보낸게 맞는지 체크
+        // sender가 receiver에게 친구요청을 보낸게 맞는지 체크
         Optional<Friend> friendOptional = friendRepository.findBySenderAndReceiver(sender,receiver);
         if(friendOptional.isEmpty())
             throw new CustomException(ExceptionCode.FRIEND_REQ_NOT_FOUND);

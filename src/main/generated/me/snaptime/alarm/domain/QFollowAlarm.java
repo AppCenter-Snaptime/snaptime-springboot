@@ -22,11 +22,19 @@ public class QFollowAlarm extends EntityPathBase<FollowAlarm> {
 
     public static final QFollowAlarm followAlarm = new QFollowAlarm("followAlarm");
 
+    public final me.snaptime.common.QBaseTimeEntity _super = new me.snaptime.common.QBaseTimeEntity(this);
+
     public final EnumPath<me.snaptime.alarm.common.AlarmType> alarmType = createEnum("alarmType", me.snaptime.alarm.common.AlarmType.class);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
 
     public final NumberPath<Long> followAlarmId = createNumber("followAlarmId", Long.class);
 
     public final BooleanPath isRead = createBoolean("isRead");
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
 
     public final me.snaptime.user.domain.QUser receiver;
 

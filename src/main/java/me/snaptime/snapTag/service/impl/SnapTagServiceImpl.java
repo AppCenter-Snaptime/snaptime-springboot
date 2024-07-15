@@ -1,6 +1,8 @@
 package me.snaptime.snapTag.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import me.snaptime.alarm.common.AlarmType;
+import me.snaptime.alarm.service.CreateAlarmService;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.snap.domain.Snap;
@@ -26,6 +28,7 @@ public class SnapTagServiceImpl implements SnapTagService {
     private final SnapTagRepository snapTagRepository;
     private final UserRepository userRepository;
     private final SnapRepository snapRepository;
+    private final CreateAlarmService createAlarmService;
 
     @Override
     @Transactional
@@ -35,6 +38,7 @@ public class SnapTagServiceImpl implements SnapTagService {
             User tagedUser = userRepository.findByLoginId(loginId)
                     .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
+            createAlarmService.createSnapAlarm(snap.getUser(), tagedUser,snap, AlarmType.SNAPTAG);
             return SnapTag.builder()
                     .snap(snap)
                     .tagUser(tagedUser)
@@ -107,6 +111,7 @@ public class SnapTagServiceImpl implements SnapTagService {
                     .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
             if(!snapTagRepository.existsBySnapAndTagUser(snap,user)){
+                createAlarmService.createSnapAlarm(snap.getUser(), user, snap, AlarmType.SNAPTAG);
                 return SnapTag.builder()
                         .snap(snap)
                         .tagUser(user)

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.snaptime.alarm.common.AlarmType;
+import me.snaptime.common.BaseTimeEntity;
 import me.snaptime.snap.domain.Snap;
 import me.snaptime.user.domain.User;
 import org.hibernate.annotations.OnDelete;
@@ -14,7 +15,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReplyAlarm {
+public class ReplyAlarm extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +23,7 @@ public class ReplyAlarm {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    // 행위(댓글 등록, 댓글에 태그)을 통해 receiver에게 알림을 보내는 유저
+    // 행위(댓글 등록)을 통해 receiver에게 알림을 보내는 유저
     private User sender;
 
     @ManyToOne
@@ -39,7 +40,8 @@ public class ReplyAlarm {
     @Column(nullable = false, name = "alarm_type")
     private AlarmType alarmType;
 
-    private String messgae;
+    @Column(nullable = false, name = "reply_message")
+    private String replyMessage;
 
     @Column(name = "is_read",nullable = false)
     private boolean isRead = false;

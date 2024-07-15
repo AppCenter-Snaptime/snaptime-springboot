@@ -49,13 +49,13 @@ public class CreateAlarmServiceImpl implements CreateAlarmService {
 
     @Override
     @Transactional
-    public void createReplyAlarm(User sender, User receiver, Snap snap, AlarmType alarmType, String message) {
+    public void createReplyAlarm(User sender, User receiver, Snap snap, String message) {
         ReplyAlarm replyAlarm = ReplyAlarm.builder()
                 .sender(sender)
                 .receiver(receiver)
                 .snap(snap)
                 .messgae(message)
-                .alarmType(alarmType)
+                .alarmType(AlarmType.REPLY)
                 .build();
 
         replyAlarmRepository.save(replyAlarm);

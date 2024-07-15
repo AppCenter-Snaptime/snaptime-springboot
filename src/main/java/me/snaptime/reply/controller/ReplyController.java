@@ -60,7 +60,7 @@ public class ReplyController {
             @RequestParam @NotNull(message = "댓글을 조회할 snapId를 입력해주세요.") final Long snapId,
             @PathVariable final Long pageNum){
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto("댓글조회 성공했습니다.",
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("댓글조회 성공했습니다.",
                 replyService.readParentReply(snapId,pageNum)));
     }
 
@@ -74,7 +74,7 @@ public class ReplyController {
             @RequestParam @NotNull(message = "부모댓글의 Id를 입력해주세요.") final Long parentReplyId,
             @PathVariable final Long pageNum){
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto("대댓글조회 성공했습니다.",
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("대댓글조회 성공했습니다.",
                 replyService.readChildReply(parentReplyId,pageNum)));
     }
 

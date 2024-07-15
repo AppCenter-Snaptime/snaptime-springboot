@@ -2,6 +2,7 @@ package me.snaptime.reply.service.impl;
 
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
+import me.snaptime.alarm.service.CreateAlarmService;
 import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
@@ -44,6 +45,7 @@ public class ReplyServiceImpl implements ReplyService {
     private final UserRepository userRepository;
     private final SnapRepository snapRepository;
     private final UrlComponent urlComponent;
+    private final CreateAlarmService createAlarmService;
 
     @Override
     @Transactional
@@ -59,6 +61,8 @@ public class ReplyServiceImpl implements ReplyService {
                         .content(addParentReplyReqDto.content())
                         .build()
         );
+
+        createAlarmService.createReplyAlarm(user, snap.getUser(), snap, addParentReplyReqDto.content());
     }
 
     @Transactional

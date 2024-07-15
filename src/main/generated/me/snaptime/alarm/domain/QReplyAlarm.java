@@ -22,15 +22,23 @@ public class QReplyAlarm extends EntityPathBase<ReplyAlarm> {
 
     public static final QReplyAlarm replyAlarm = new QReplyAlarm("replyAlarm");
 
+    public final me.snaptime.common.QBaseTimeEntity _super = new me.snaptime.common.QBaseTimeEntity(this);
+
     public final EnumPath<me.snaptime.alarm.common.AlarmType> alarmType = createEnum("alarmType", me.snaptime.alarm.common.AlarmType.class);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
 
     public final BooleanPath isRead = createBoolean("isRead");
 
-    public final StringPath messgae = createString("messgae");
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
 
     public final me.snaptime.user.domain.QUser receiver;
 
     public final NumberPath<Long> replyAlarmId = createNumber("replyAlarmId", Long.class);
+
+    public final StringPath replyMessage = createString("replyMessage");
 
     public final me.snaptime.user.domain.QUser sender;
 
