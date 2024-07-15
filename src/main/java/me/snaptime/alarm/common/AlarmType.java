@@ -3,7 +3,8 @@ package me.snaptime.alarm.common;
 public enum AlarmType {
 
     REPLY,
-    TAG,
+    SNAPTAG,
+    REPLYTAG,
     LIKE,
     FOLLOW
 }

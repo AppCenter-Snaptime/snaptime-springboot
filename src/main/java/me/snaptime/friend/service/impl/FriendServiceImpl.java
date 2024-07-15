@@ -2,12 +2,12 @@ package me.snaptime.friend.service.impl;
 
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
+import me.snaptime.alarm.service.CreateAlarmService;
 import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.friend.common.FriendSearchType;
 import me.snaptime.friend.domain.Friend;
-import me.snaptime.friend.dto.req.AcceptFollowReqDto;
 import me.snaptime.friend.dto.res.FindFriendResDto;
 import me.snaptime.friend.dto.res.FriendCntResDto;
 import me.snaptime.friend.dto.res.FriendInfo;
@@ -34,6 +34,7 @@ public class FriendServiceImpl implements FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final UrlComponent urlComponent;
+    private final CreateAlarmService createAlarmService;
 
     @Override
     @Transactional
@@ -53,27 +54,26 @@ public class FriendServiceImpl implements FriendService {
             throw new CustomException(ExceptionCode.SELF_FRIEND_REQ);
 
         friendRepository.save(Friend.builder()
-                        .receiver(receiver)
                         .sender(sender)
+                        .receiver(receiver)
                         .build());
+
+        createAlarmService.createFollowAlarm(sender,receiver);
     }
 
     @Override
     @Transactional
-    public String acceptFollow(String senderLoginId, AcceptFollowReqDto acceptFollowReqDto){
-
-        User sender = findUserByLoginId(senderLoginId);
-        User receiver = findUserByLoginId(acceptFollowReqDto.receiverLoginId());
+    public String acceptFollow(User sender, User receiver, boolean isAccept){
 
         // receiver가 sender에게 친구요청을 보낸게 맞는지 체크
-        Optional<Friend> friendOptional = friendRepository.findBySenderAndReceiver(receiver,sender);
+        Optional<Friend> friendOptional = friendRepository.findBySenderAndReceiver(sender,receiver);
         if(friendOptional.isEmpty())
             throw new CustomException(ExceptionCode.FRIEND_REQ_NOT_FOUND);
 
-        if(acceptFollowReqDto.isAccept()){
+        if(isAccept){
             Friend friend = Friend.builder()
-                    .sender(sender)
-                    .receiver(receiver)
+                    .sender(receiver)
+                    .receiver(sender)
                     .build();
             friendRepository.save(friend);
 

@@ -20,6 +20,10 @@ public enum ExceptionCode {
     REPLY_NOT_FOUND(HttpStatus.BAD_REQUEST,"존재하지 않는 댓글입니다."),
     ACCESS_FAIL_REPLY(HttpStatus.FORBIDDEN,"댓글에 대한 권한이 없습니다."),
 
+    // Alarm Exception
+    ALARM_NOT_EXIST(HttpStatus.BAD_REQUEST, "존재하지 않는 알림입니다."),
+    ACCESS_FAIL_ALARM(HttpStatus.FORBIDDEN, "알림에 대한 권한이 없습니다."),
+
     // SignIn Exception
     PASSWORD_NOT_EQUAL(HttpStatus.BAD_REQUEST,"잘못된 비밀번호를 입력하셨습니다."),
 

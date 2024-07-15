@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.snaptime.alarm.common.AlarmType;
+import me.snaptime.snap.domain.Snap;
 import me.snaptime.user.domain.User;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -13,35 +14,40 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FriendAlarm {
+public class ReplyAlarm {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long snapAlarmId;
+    private Long replyAlarmId;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "to_user_id")
+    // 행위(댓글 등록, 댓글에 태그)을 통해 receiver에게 알림을 보내는 유저
+    private User sender;
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     // 알림을 받는 유저
-    private User toUser;
+    private User receiver;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "from_user_id")
-    // 행위(팔로잉 요청)를 통해서 toUser에게 알림이 가도록 하는 유저
-    private User fromUser;
+    @JoinColumn(name="snap_id",nullable = false)
+    private Snap snap;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "alarm_type")
     private AlarmType alarmType;
 
+    private String messgae;
+
     @Column(name = "is_read",nullable = false)
     private boolean isRead = false;
 
     @Builder
-    protected FriendAlarm(User toUser, User fromUser, AlarmType alarmType){
-        this.toUser=toUser;
-        this.fromUser=fromUser;
+    protected ReplyAlarm(User sender, User receiver, Snap snap, String messgae, AlarmType alarmType){
+        this.sender=sender;
+        this.receiver=receiver;
         this.alarmType=alarmType;
     }
 

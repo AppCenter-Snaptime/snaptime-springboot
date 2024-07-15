@@ -1,12 +1,12 @@
 package me.snaptime.social.service;
 
 import com.querydsl.core.Tuple;
+import me.snaptime.alarm.service.CreateAlarmService;
 import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.friend.common.FriendSearchType;
 import me.snaptime.friend.domain.Friend;
-import me.snaptime.friend.dto.req.AcceptFollowReqDto;
 import me.snaptime.friend.dto.res.FindFriendResDto;
 import me.snaptime.friend.dto.res.FriendCntResDto;
 import me.snaptime.friend.repository.FriendRepository;
@@ -45,6 +45,8 @@ public class FriendServiceImplTest {
     private UrlComponent urlComponent;
     @Mock
     private NextPageChecker nextPageChecker;
+    @Mock
+    private CreateAlarmService createAlarmService;
 
     private Friend friend;
     private User user1;
@@ -165,23 +167,15 @@ public class FriendServiceImplTest {
     @DisplayName("팔로우 수락테스트 : 수락성공")
     public void acceptFriendReqTest1(){
         //given
-        User sender = spy(user1);
-        User receiver = spy(user1);
-
-        given(userRepository.findByLoginId(any(String.class)))
-                .willReturn(Optional.ofNullable(sender))
-                .willReturn(Optional.of(receiver));
-
-        given(friendRepository.findBySenderAndReceiver(receiver,sender)).willReturn(Optional.ofNullable(friend));
+        given(friendRepository.findBySenderAndReceiver(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friend));
 
         //when
-        String msg = friendServiceImpl.acceptFollow("senderLoginId",new AcceptFollowReqDto("testName",true));
+        String msg = friendServiceImpl.acceptFollow(user1,user1,true);
 
         //then
         assertThat(msg).isEqualTo("팔로우 수락을 완료했습니다.");
         verify(friendRepository,times(1)).save(any(Friend.class));
         verify(friendRepository,times(0)).delete(any(Friend.class));
-        verify(userRepository,times(2)).findByLoginId(any(String.class));
         verify(friendRepository,times(1)).findBySenderAndReceiver(any(User.class),any(User.class));
     }
 
@@ -189,25 +183,15 @@ public class FriendServiceImplTest {
     @DisplayName("팔로우 수락테스트 : 거절성공")
     public void acceptFriendReqTest2(){
         //given
-        User sender = spy(user1);
-        User receiver = spy(user1);
-        Friend friend = spy(this.friend);
-        Friend rejectedfriend = spy(this.friend);
-
-        given(userRepository.findByLoginId(any(String.class)))
-                .willReturn(Optional.ofNullable(sender))
-                .willReturn(Optional.of(receiver));
-
-        given(friendRepository.findBySenderAndReceiver(receiver,sender)).willReturn(Optional.ofNullable(friend));
+        given(friendRepository.findBySenderAndReceiver(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friend));
 
         //when
-        String msg = friendServiceImpl.acceptFollow("senderLoginId",new AcceptFollowReqDto("testName",false));
+        String msg = friendServiceImpl.acceptFollow(user1,user1,false);
 
         //then
         assertThat(msg).isEqualTo("팔로우 거절을 완료했습니다.");
         verify(friendRepository,times(1)).delete(any(Friend.class));
         verify(friendRepository,times(0)).save(any(Friend.class));
-        verify(userRepository,times(2)).findByLoginId(any(String.class));
         verify(friendRepository,times(1)).findBySenderAndReceiver(any(User.class),any(User.class));
     }
 
@@ -215,25 +199,17 @@ public class FriendServiceImplTest {
     @DisplayName("팔로우 수락테스트 : 실패(존재하지 않는 친구관계)")
     public void acceptFriendReqTest3(){
         //given
-        User sender = spy(user1);
-        User receiver = spy(user1);
-
-        given(userRepository.findByLoginId(any(String.class)))
-                .willReturn(Optional.ofNullable(sender))
-                .willReturn(Optional.of(receiver));
-
-        given(friendRepository.findBySenderAndReceiver(receiver,sender)).willReturn(Optional.empty());
+        given(friendRepository.findBySenderAndReceiver(any(User.class),any(User.class))).willReturn(Optional.empty());
 
         //when
         try{
-            String msg = friendServiceImpl.acceptFollow("senderLoginId",new AcceptFollowReqDto("testName",false));
+            String msg = friendServiceImpl.acceptFollow(user1,user1,true);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIEND_REQ_NOT_FOUND);
             verify(friendRepository,times(0)).save(any(Friend.class));
             verify(friendRepository,times(0)).delete(any(Friend.class));
-            verify(userRepository,times(2)).findByLoginId(any(String.class));
             verify(friendRepository,times(1)).findBySenderAndReceiver(any(User.class),any(User.class));
         }
     }
