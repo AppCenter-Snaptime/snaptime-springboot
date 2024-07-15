@@ -19,4 +19,5 @@ public class ConnectionAction {
             throw new CustomException(ExceptionCode.URL_HAVING_PROBLEM);
         }
     }
+
 }
