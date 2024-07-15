@@ -45,4 +45,14 @@ public class CrawlingController {
         byte[] image = crawlingService.getImage("studio808", url);
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(image);
     }
+
+    @Operation(summary = "PhotoSignature 크롤링 API", description = "PhotoSignature 크롤링 API입니다.")
+    @Parameter(name = "url", description = "QR Code의 URL")
+    @GetMapping("/photosignature")
+    ResponseEntity<?> photosignature(final @RequestParam String url) {
+        byte[] image = crawlingService.getImage("photosignature", url);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(image);
+    }
+
+
 }

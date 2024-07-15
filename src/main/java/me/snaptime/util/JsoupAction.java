@@ -23,4 +23,9 @@ public class JsoupAction {
         Elements image = doc.select(cssQuery);
         return image.attr("src");
     }
+
+    public static String returnHrefBySelectedElements(Document doc, String cssQuery) {
+        Elements a = doc.select(cssQuery);
+        return a.attr("href");
+    }
 }
