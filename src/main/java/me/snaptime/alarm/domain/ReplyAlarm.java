@@ -15,20 +15,15 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SnapAlarm extends BaseTimeEntity {
+public class ReplyAlarm extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long snapAlarmId;
+    private Long replyAlarmId;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name="snap_id",nullable = false)
-    private Snap snap;
-
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    // 행위(스냅태그,좋아요)을 통해 receiver에게 알림을 보내는 유저
+    // 행위(댓글 등록)을 통해 receiver에게 알림을 보내는 유저
     private User sender;
 
     @ManyToOne
@@ -36,18 +31,25 @@ public class SnapAlarm extends BaseTimeEntity {
     // 알림을 받는 유저
     private User receiver;
 
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name="snap_id",nullable = false)
+    private Snap snap;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "alarm_type")
     private AlarmType alarmType;
+
+    @Column(nullable = false, name = "reply_message")
+    private String replyMessage;
 
     @Column(name = "is_read",nullable = false)
     private boolean isRead = false;
 
     @Builder
-    protected SnapAlarm(Snap snap, User sender, User receiver, AlarmType alarmType){
+    protected ReplyAlarm(User sender, User receiver, Snap snap, String messgae, AlarmType alarmType){
         this.sender=sender;
         this.receiver=receiver;
-        this.snap = snap;
         this.alarmType=alarmType;
     }
 

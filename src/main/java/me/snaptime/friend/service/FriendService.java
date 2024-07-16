@@ -1,9 +1,9 @@
 package me.snaptime.friend.service;
 
 import me.snaptime.friend.common.FriendSearchType;
-import me.snaptime.friend.dto.req.AcceptFollowReqDto;
 import me.snaptime.friend.dto.res.FindFriendResDto;
 import me.snaptime.friend.dto.res.FriendCntResDto;
+import me.snaptime.user.domain.User;
 
 public interface FriendService {
 
@@ -12,7 +12,8 @@ public interface FriendService {
 
     // 친구요청 수락(sender(수락자)의 팔로잉 +1, receiver의 팔로워 +1)
     // 친구요청 거절(sender(수락자)의 팔로워 -1, receiver의 팔로잉 -1)
-    String acceptFollow(String senderLoginId, AcceptFollowReqDto acceptFollowReqDto);
+
+    String acceptFollow(User sender, User receiver, boolean isAccept);
 
     // 친구 삭제(deletingUser(삭제자)의 팔로잉 -1, deletedUser의 팔로워 -1)
     void unFollow(String deletingUserLoginId, String deletedUserLoginId);

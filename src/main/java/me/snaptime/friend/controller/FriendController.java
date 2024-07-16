@@ -4,13 +4,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.CommonResponseDto;
 import me.snaptime.friend.common.FriendSearchType;
-import me.snaptime.friend.dto.req.AcceptFollowReqDto;
 import me.snaptime.friend.dto.res.FindFriendResDto;
 import me.snaptime.friend.service.FriendService;
 import org.springframework.http.HttpStatus;
@@ -38,16 +36,6 @@ public class FriendController {
 
         friendService.sendFollow(userDetails.getUsername(), receiverLoginId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto("팔로우가 완료되었습니다.", null));
-    }
-
-    @PostMapping("/accept")
-    @Operation(summary = "팔로우 수락or거절 요청", description = "팔로우요청을 수락or거절할 유저의 이름을 입력해주세요.<br>친구요청 수락(sender(수락자)의 팔로잉 +1, receiver의 팔로워 +1)<br>친구요청 거절(sender(수락자)의 팔로워 -1, receiver의 팔로잉 -1) ")
-    public ResponseEntity<CommonResponseDto<Void>> acceptFollowReq(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody @Valid AcceptFollowReqDto acceptFollowReqDto) {
-
-        String msg = friendService.acceptFollow(userDetails.getUsername(), acceptFollowReqDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponseDto(msg, null));
     }
 
     @DeleteMapping
