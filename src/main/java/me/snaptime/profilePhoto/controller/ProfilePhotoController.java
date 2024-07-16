@@ -21,16 +21,16 @@ import static org.apache.tomcat.util.http.fileupload.FileUploadBase.MULTIPART_FO
 @Tag(name ="[ProfilePhoto] ProfilePhoto API", description = "프로필 사진 생성, 프로필 사진 조회, 프로필 사진 수정, 프로필 사진 삭제")
 @Slf4j
 @RestController
-@RequestMapping("/profile_photos")
+@RequestMapping("/profile-photos")
 @RequiredArgsConstructor
 public class ProfilePhotoController {
 
     private final ProfilePhotoService profilePhotoService;
 
     @Operation(summary = "프로필 사진 조회",description = "유저의 번호로 유저의 프로필 사진을 조회 합니다.")
-    @Parameter(name = "profile_photo_id", description = "조회 할 프로필 사진의 id")
-    @GetMapping("/{profile_photo_id}")
-    public ResponseEntity<?> downloadProfileToFileSystem(@PathVariable("profile_photo_id") Long profilePhotoId) {
+    @Parameter(name = "profilePhotoId", description = "조회 할 프로필 사진의 id")
+    @GetMapping("/{profile-photo-id}")
+    public ResponseEntity<?> downloadProfileToFileSystem(@PathVariable("profilePhotoId") Long profilePhotoId) {
         log.info("[downloadProfile] 유저의 프로필 사진을 조회합니다. profilePhotoId : {}",profilePhotoId);
 
         byte[] downloadProfile = profilePhotoService.downloadPhotoFromFileSystem(profilePhotoId);
