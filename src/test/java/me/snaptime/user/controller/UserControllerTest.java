@@ -139,7 +139,7 @@ public class UserControllerTest {
         String content = gson.toJson(userUpdateDto);
 
         //when
-        mockMvc.perform(put("/users")
+        mockMvc.perform(patch("/users")
                         .content(content).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.msg").exists())
                 .andExpect(jsonPath("$.result.loginId").exists())
