@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.snaptime.alarm.common.AlarmType;
+import me.snaptime.common.BaseTimeEntity;
 import me.snaptime.user.domain.User;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -13,23 +14,21 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FriendAlarm {
+public class FollowAlarm extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long snapAlarmId;
+    private Long followAlarmId;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "to_user_id")
+    // 행위(팔로우 요청)을 통해 receiver에게 알림을 보내는 유저
+    private User sender;
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     // 알림을 받는 유저
-    private User toUser;
-
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "from_user_id")
-    // 행위(팔로잉 요청)를 통해서 toUser에게 알림이 가도록 하는 유저
-    private User fromUser;
+    private User receiver;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "alarm_type")
@@ -39,9 +38,9 @@ public class FriendAlarm {
     private boolean isRead = false;
 
     @Builder
-    protected FriendAlarm(User toUser, User fromUser, AlarmType alarmType){
-        this.toUser=toUser;
-        this.fromUser=fromUser;
+    protected FollowAlarm(User sender, User receiver, AlarmType alarmType){
+        this.sender=sender;
+        this.receiver=receiver;
         this.alarmType=alarmType;
     }
 

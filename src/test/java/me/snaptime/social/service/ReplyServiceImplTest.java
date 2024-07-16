@@ -1,5 +1,6 @@
 package me.snaptime.social.service;
 
+import me.snaptime.alarm.service.CreateAlarmService;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.reply.domain.ChildReply;
@@ -49,6 +50,8 @@ public class ReplyServiceImplTest {
     private NextPageChecker nextPageChecker;
     @Mock
     private TimeAgoCalculator timeAgoCalculator;
+    @Mock
+    private CreateAlarmService createAlarmService;
 
     private User user;
     private Snap snap;

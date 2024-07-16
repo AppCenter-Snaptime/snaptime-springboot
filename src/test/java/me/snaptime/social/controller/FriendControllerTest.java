@@ -1,12 +1,10 @@
 package me.snaptime.social.controller;
 
-import com.google.gson.Gson;
 import me.snaptime.config.SecurityConfig;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.friend.common.FriendSearchType;
 import me.snaptime.friend.controller.FriendController;
-import me.snaptime.friend.dto.req.AcceptFollowReqDto;
 import me.snaptime.friend.service.FriendService;
 import me.snaptime.jwt.JwtProvider;
 import me.snaptime.jwt.UserDetailsServiceImpl;
@@ -21,7 +19,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -40,8 +37,6 @@ public class FriendControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    private AcceptFollowReqDto acceptFollowReqDto;
 
 
     @Test
@@ -148,115 +143,6 @@ public class FriendControllerTest {
                 .andDo(print());
 
         verify(friendService,times(0)).sendFollow(any(String.class),any(String.class));
-    }
-
-    @Test
-    @WithMockUser
-    @DisplayName("팔로우 수락테스트 -> (수락성공)")
-    public void acceptFollowReq1() throws Exception {
-        //given
-        acceptFollowReqDto = new AcceptFollowReqDto("testName",true);
-        Gson gson = new Gson();
-        String requestBody = gson.toJson(acceptFollowReqDto);
-        given(friendService.acceptFollow(any(String.class),any(AcceptFollowReqDto.class))).willReturn("팔로우 수락을 완료했습니다.");
-
-
-        //when, then
-        this.mockMvc.perform(post("/friends/accept")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.msg").value("팔로우 수락을 완료했습니다."))
-                .andDo(print());
-
-        verify(friendService,times(1)).acceptFollow(any(String.class),any(AcceptFollowReqDto.class));
-    }
-
-    @Test
-    @WithMockUser
-    @DisplayName("팔로우 수락테스트 -> (거절성공)")
-    public void acceptFollowReq2() throws Exception {
-        //given
-        acceptFollowReqDto = new AcceptFollowReqDto("testName",false);
-        Gson gson = new Gson();
-        String requestBody = gson.toJson(acceptFollowReqDto);
-        given(friendService.acceptFollow(any(String.class),any(AcceptFollowReqDto.class))).willReturn("팔로우 거절을 완료했습니다.");
-
-        //when, then
-        this.mockMvc.perform(post("/friends/accept")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.msg").value("팔로우 거절을 완료했습니다."))
-                .andDo(print());
-
-        verify(friendService,times(1)).acceptFollow(any(String.class),any(AcceptFollowReqDto.class));
-    }
-
-    @Test
-    @WithMockUser
-    @DisplayName("팔로우 수락테스트 -> (실패 : 유효성검사 실패)")
-    public void acceptFollowReq3() throws Exception {
-        //given
-        acceptFollowReqDto = new AcceptFollowReqDto("",null);
-        Gson gson = new Gson();
-        String requestBody = gson.toJson(acceptFollowReqDto);
-
-        //when, then
-        this.mockMvc.perform(post("/friends/accept")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.msg").value("올바르지 않은 입력값입니다"))
-                .andExpect(jsonPath("$.result.receiverLoginId").value("유저의 LoginId를 입력해주세요."))
-                .andExpect(jsonPath("$.result.isAccept").value("수락여부를 보내주세요."))
-                .andDo(print());
-
-        verify(friendService,times(0))
-                .acceptFollow(any(String.class),any(AcceptFollowReqDto.class));
-    }
-
-    @Test
-    @WithMockUser
-    @DisplayName("팔로우 수락테스트 -> (실패 : 존재하지 않는 유저)")
-    public void acceptFollowReq4() throws Exception {
-        //given
-        acceptFollowReqDto = new AcceptFollowReqDto("test",true);
-        Gson gson = new Gson();
-        String requestBody = gson.toJson(acceptFollowReqDto);
-        given(friendService.acceptFollow(any(String.class),any(AcceptFollowReqDto.class)))
-                .willThrow(new CustomException(ExceptionCode.USER_NOT_EXIST));
-
-        //when, then
-        this.mockMvc.perform(post("/friends/accept")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.msg").value("사용자가 존재하지 않습니다."))
-                .andDo(print());
-
-        verify(friendService,times(1)).acceptFollow(any(String.class),any(AcceptFollowReqDto.class));
-    }
-
-    @Test
-    @WithMockUser
-    @DisplayName("팔로우 수락테스트 -> (실패 : 존재하지 않는 친구관계)")
-    public void acceptFollowReq5() throws Exception {
-        //given
-        acceptFollowReqDto = new AcceptFollowReqDto("test",true);
-        Gson gson = new Gson();
-        String requestBody = gson.toJson(acceptFollowReqDto);
-        given(friendService.acceptFollow(any(String.class),any(AcceptFollowReqDto.class))).willThrow(new CustomException(ExceptionCode.FRIEND_NOT_EXIST));
-
-        //when, then
-        this.mockMvc.perform(post("/friends/accept")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.msg").value("존재하지 않는 친구입니다."))
-                .andDo(print());
-
-        verify(friendService,times(1)).acceptFollow(any(String.class),any(AcceptFollowReqDto.class));
     }
 
     @Test

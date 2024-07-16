@@ -11,16 +11,16 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QSnapAlarm is a Querydsl query type for SnapAlarm
+ * QReplyAlarm is a Querydsl query type for ReplyAlarm
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QSnapAlarm extends EntityPathBase<SnapAlarm> {
+public class QReplyAlarm extends EntityPathBase<ReplyAlarm> {
 
-    private static final long serialVersionUID = -1738323013L;
+    private static final long serialVersionUID = -383534861L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QSnapAlarm snapAlarm = new QSnapAlarm("snapAlarm");
+    public static final QReplyAlarm replyAlarm = new QReplyAlarm("replyAlarm");
 
     public final me.snaptime.common.QBaseTimeEntity _super = new me.snaptime.common.QBaseTimeEntity(this);
 
@@ -36,29 +36,31 @@ public class QSnapAlarm extends EntityPathBase<SnapAlarm> {
 
     public final me.snaptime.user.domain.QUser receiver;
 
+    public final NumberPath<Long> replyAlarmId = createNumber("replyAlarmId", Long.class);
+
+    public final StringPath replyMessage = createString("replyMessage");
+
     public final me.snaptime.user.domain.QUser sender;
 
     public final me.snaptime.snap.domain.QSnap snap;
 
-    public final NumberPath<Long> snapAlarmId = createNumber("snapAlarmId", Long.class);
-
-    public QSnapAlarm(String variable) {
-        this(SnapAlarm.class, forVariable(variable), INITS);
+    public QReplyAlarm(String variable) {
+        this(ReplyAlarm.class, forVariable(variable), INITS);
     }
 
-    public QSnapAlarm(Path<? extends SnapAlarm> path) {
+    public QReplyAlarm(Path<? extends ReplyAlarm> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QSnapAlarm(PathMetadata metadata) {
+    public QReplyAlarm(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QSnapAlarm(PathMetadata metadata, PathInits inits) {
-        this(SnapAlarm.class, metadata, inits);
+    public QReplyAlarm(PathMetadata metadata, PathInits inits) {
+        this(ReplyAlarm.class, metadata, inits);
     }
 
-    public QSnapAlarm(Class<? extends SnapAlarm> type, PathMetadata metadata, PathInits inits) {
+    public QReplyAlarm(Class<? extends ReplyAlarm> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.receiver = inits.isInitialized("receiver") ? new me.snaptime.user.domain.QUser(forProperty("receiver"), inits.get("receiver")) : null;
         this.sender = inits.isInitialized("sender") ? new me.snaptime.user.domain.QUser(forProperty("sender"), inits.get("sender")) : null;

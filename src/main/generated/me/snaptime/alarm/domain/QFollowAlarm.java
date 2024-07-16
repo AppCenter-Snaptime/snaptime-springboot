@@ -11,16 +11,16 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QSnapAlarm is a Querydsl query type for SnapAlarm
+ * QFollowAlarm is a Querydsl query type for FollowAlarm
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QSnapAlarm extends EntityPathBase<SnapAlarm> {
+public class QFollowAlarm extends EntityPathBase<FollowAlarm> {
 
-    private static final long serialVersionUID = -1738323013L;
+    private static final long serialVersionUID = -1019878604L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QSnapAlarm snapAlarm = new QSnapAlarm("snapAlarm");
+    public static final QFollowAlarm followAlarm = new QFollowAlarm("followAlarm");
 
     public final me.snaptime.common.QBaseTimeEntity _super = new me.snaptime.common.QBaseTimeEntity(this);
 
@@ -28,6 +28,8 @@ public class QSnapAlarm extends EntityPathBase<SnapAlarm> {
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
+
+    public final NumberPath<Long> followAlarmId = createNumber("followAlarmId", Long.class);
 
     public final BooleanPath isRead = createBoolean("isRead");
 
@@ -38,31 +40,26 @@ public class QSnapAlarm extends EntityPathBase<SnapAlarm> {
 
     public final me.snaptime.user.domain.QUser sender;
 
-    public final me.snaptime.snap.domain.QSnap snap;
-
-    public final NumberPath<Long> snapAlarmId = createNumber("snapAlarmId", Long.class);
-
-    public QSnapAlarm(String variable) {
-        this(SnapAlarm.class, forVariable(variable), INITS);
+    public QFollowAlarm(String variable) {
+        this(FollowAlarm.class, forVariable(variable), INITS);
     }
 
-    public QSnapAlarm(Path<? extends SnapAlarm> path) {
+    public QFollowAlarm(Path<? extends FollowAlarm> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QSnapAlarm(PathMetadata metadata) {
+    public QFollowAlarm(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QSnapAlarm(PathMetadata metadata, PathInits inits) {
-        this(SnapAlarm.class, metadata, inits);
+    public QFollowAlarm(PathMetadata metadata, PathInits inits) {
+        this(FollowAlarm.class, metadata, inits);
     }
 
-    public QSnapAlarm(Class<? extends SnapAlarm> type, PathMetadata metadata, PathInits inits) {
+    public QFollowAlarm(Class<? extends FollowAlarm> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.receiver = inits.isInitialized("receiver") ? new me.snaptime.user.domain.QUser(forProperty("receiver"), inits.get("receiver")) : null;
         this.sender = inits.isInitialized("sender") ? new me.snaptime.user.domain.QUser(forProperty("sender"), inits.get("sender")) : null;
-        this.snap = inits.isInitialized("snap") ? new me.snaptime.snap.domain.QSnap(forProperty("snap"), inits.get("snap")) : null;
     }
 
 }
