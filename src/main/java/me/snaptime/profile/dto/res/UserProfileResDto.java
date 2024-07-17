@@ -7,16 +7,16 @@ import me.snaptime.user.domain.User;
 public record UserProfileResDto(
         Long userId,
         String userName,
-        String profileURL
-//        Boolean isFollow
+        String profileURL,
+        Boolean isFollow
 ){
-    public static UserProfileResDto toDto(User user, String profileURL /*, boolean isFollow*/)
+    public static UserProfileResDto toDto(User user, String profileURL , Boolean isFollow)
     {
         return UserProfileResDto.builder()
                 .userId(user.getId())
                 .userName(user.getName())
                 .profileURL(profileURL)
-                //.isFollow(isFollow)
+                .isFollow(isFollow)
                 .build();
     }
 }

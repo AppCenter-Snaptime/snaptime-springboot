@@ -41,13 +41,22 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     @Transactional(readOnly = true)
     public UserProfileResDto getUserProfile(String ownLoginId, String targetLoginId) {
+
+        Boolean isFollow = null;
         User targetUser = userRepository.findByLoginId(targetLoginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-        User ownUser = userRepository.findByLoginId(ownLoginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-//        boolean isFollow = friendRepository.checkFriend(ownUser,targetUser);
+
+        if(ownLoginId.equals(targetLoginId)){
+            isFollow = null; /* 자기 자신을 조회한 경우 */
+        }
+        else{
+            User ownUser = userRepository.findByLoginId(ownLoginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+            if (friendService.checkIsFollow(ownUser,targetUser)) isFollow = true; /* 팔로우 한 상대를 조회*/
+            else isFollow = false; /* 팔로우 하지 않은 상대를 조회 */
+        }
 
         String profileURL = urlComponent.makeProfileURL(targetUser.getProfilePhoto().getId());
 
-        return UserProfileResDto.toDto(targetUser, profileURL /*, isFollow*/);
+        return UserProfileResDto.toDto(targetUser, profileURL, isFollow);
     }
 
     @Override
