@@ -18,6 +18,6 @@ public class UrlComponentImpl implements UrlComponent {
     @Override
     public String makeProfileURL(Long id) {
         return request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort() +
-                "/profile_photos/"+id;
+                "/profile-photos/"+id;
     }
 }

@@ -1,4 +1,4 @@
-package me.snaptime.user.repository.impl;
+package me.snaptime.profile.repository.impl;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import me.snaptime.component.url.UrlComponent;
 import me.snaptime.profile.dto.res.AlbumSnapResDto;
 import me.snaptime.profile.dto.res.ProfileTagSnapResDto;
+import me.snaptime.profile.repository.ProfileRepository;
 import me.snaptime.user.domain.User;
-import me.snaptime.user.repository.UserCustomRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import static me.snaptime.user.domain.QUser.user;
 
 @Repository
 @RequiredArgsConstructor
-public class UserCustomRepositoryImpl implements UserCustomRepository {
+public class ProfileRepositoryImpl implements ProfileRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
     private final UrlComponent urlComponent;

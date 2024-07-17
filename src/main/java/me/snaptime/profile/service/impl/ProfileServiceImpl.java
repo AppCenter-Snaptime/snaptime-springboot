@@ -11,6 +11,7 @@ import me.snaptime.profile.dto.res.AlbumSnapResDto;
 import me.snaptime.profile.dto.res.ProfileCntResDto;
 import me.snaptime.profile.dto.res.ProfileTagSnapResDto;
 import me.snaptime.profile.dto.res.UserProfileResDto;
+import me.snaptime.profile.repository.ProfileRepository;
 import me.snaptime.profile.service.ProfileService;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.user.domain.User;
@@ -25,6 +26,7 @@ import java.util.List;
 @Service
 @Transactional
 public class ProfileServiceImpl implements ProfileService {
+    private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
     private final UrlComponent urlComponent;
     private final SnapRepository snapRepository;
@@ -35,7 +37,7 @@ public class ProfileServiceImpl implements ProfileService {
     public List<AlbumSnapResDto> getAlbumSnap(String ownLoginId, String targetLoginId) {
         User targetUser = userRepository.findByLoginId(targetLoginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        return userRepository.findAlbumSnap(targetUser, ownLoginId.equals(targetLoginId));
+        return profileRepository.findAlbumSnap(targetUser, ownLoginId.equals(targetLoginId));
     }
 
     @Override
@@ -74,7 +76,7 @@ public class ProfileServiceImpl implements ProfileService {
     public List<ProfileTagSnapResDto> getTagSnap(String loginId) {
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        return userRepository.findTagSnap(user);
+        return profileRepository.findTagSnap(user);
     }
 
 }

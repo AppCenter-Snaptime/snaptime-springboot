@@ -1,6 +1,13 @@
 package me.snaptime.profile.repository;
 
-public interface ProfileRepository {
+import me.snaptime.profile.dto.res.AlbumSnapResDto;
+import me.snaptime.profile.dto.res.ProfileTagSnapResDto;
+import me.snaptime.user.domain.User;
 
-    // 프로필 repo 로직을 이쪽으로 옮겨주세요. UserCustomRepository를 UserRepository와 분리하면 될거같습니다.
+import java.util.List;
+
+public interface ProfileRepository{
+
+    List<AlbumSnapResDto> findAlbumSnap(User targetUser, Boolean checkPermission);
+    List<ProfileTagSnapResDto> findTagSnap(User reqUser);
 }
