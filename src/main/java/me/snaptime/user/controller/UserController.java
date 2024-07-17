@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.CommonResponseDto;
 import me.snaptime.user.dto.req.SignInReqDto;
 import me.snaptime.user.dto.req.UserReqDto;
-import me.snaptime.user.dto.req.UserUpdateDto;
+import me.snaptime.user.dto.req.UserUpdateReqDto;
 import me.snaptime.user.dto.res.SignInResDto;
 import me.snaptime.user.dto.res.UserResDto;
 import me.snaptime.user.service.SignService;
@@ -46,9 +46,9 @@ public class UserController {
     @Operation(summary = "유저 정보 수정",description = "해당 유저의 정보를 수정합니다. " +
             "<br> 유저 loginId 수정 이후에는, Token의 loginId 정보와 현재 유저의 loginId가 다르므로," +
             "<br> Token을 버리고 재 login을 유도해야 합니다.")
-    @PutMapping()
+    @PatchMapping()
     public ResponseEntity<CommonResponseDto<UserResDto>> changeUser(@AuthenticationPrincipal UserDetails principal,
-                                                                    @Valid @RequestBody UserUpdateDto userUpdateDto){
+                                                                    @Valid @RequestBody UserUpdateReqDto userUpdateDto){
         UserResDto userResDto = userService.updateUser(principal.getUsername(), userUpdateDto);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
@@ -56,7 +56,7 @@ public class UserController {
                         userResDto));
     }
     @Operation(summary = "유저 비밀번호 수정",description = "해당 유저의 비밀번호를 수정합니다.")
-    @PutMapping("/password")
+    @PatchMapping("/password")
     public ResponseEntity<CommonResponseDto<Void>> changeUser(@AuthenticationPrincipal UserDetails principal,
                                                               @RequestParam("password")
                                                               @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String password) {

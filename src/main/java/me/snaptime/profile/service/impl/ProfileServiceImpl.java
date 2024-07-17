@@ -32,19 +32,27 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AlbumSnapResDto> getAlbumSnap(String yourLoginId, String targetLoginId) {
+    public List<AlbumSnapResDto> getAlbumSnap(String ownLoginId, String targetLoginId) {
         User targetUser = userRepository.findByLoginId(targetLoginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        return userRepository.findAlbumSnap(targetUser, yourLoginId.equals(targetLoginId));
+        return userRepository.findAlbumSnap(targetUser, ownLoginId.equals(targetLoginId));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public UserProfileResDto getUserProfile(String loginId) {
-        User reqUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-        String profileURL = urlComponent.makeProfileURL(reqUser.getProfilePhoto().getId());
+    public UserProfileResDto getUserProfile(String ownLoginId, String targetLoginId) {
 
-        return UserProfileResDto.toDto(reqUser, profileURL);
+        Boolean isFollow = null;
+        User targetUser = userRepository.findByLoginId(targetLoginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+
+        if(!ownLoginId.equals(targetLoginId)){
+            User ownUser = userRepository.findByLoginId(ownLoginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+            isFollow = friendService.checkIsFollow(ownUser,targetUser);
+        }
+
+        String profileURL = urlComponent.makeProfileURL(targetUser.getProfilePhoto().getId());
+
+        return UserProfileResDto.toDto(targetUser, profileURL, isFollow);
     }
 
     @Override

@@ -6,7 +6,7 @@ import me.snaptime.profilePhoto.repository.ProfilePhotoRepository;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.dto.req.SignInReqDto;
 import me.snaptime.user.dto.req.UserReqDto;
-import me.snaptime.user.dto.req.UserUpdateDto;
+import me.snaptime.user.dto.req.UserUpdateReqDto;
 import me.snaptime.user.dto.res.SignInResDto;
 import me.snaptime.user.dto.res.UserResDto;
 import me.snaptime.user.repository.UserRepository;
@@ -165,7 +165,7 @@ class UserServiceTest {
     @DisplayName("given_when_then 방식으로 updateUser 서비스 성공 테스트")
     public void updateUser() {
         //given
-        UserUpdateDto userUpdateDto = UserUpdateDto.builder()
+        UserUpdateReqDto userUpdateDto = UserUpdateReqDto.builder()
                 .name("")
                 .email("strong@naver.com")
                 .birthDay("")

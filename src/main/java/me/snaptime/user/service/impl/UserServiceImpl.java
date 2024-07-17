@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.user.domain.User;
-import me.snaptime.user.dto.req.UserUpdateDto;
+import me.snaptime.user.dto.req.UserUpdateReqDto;
 import me.snaptime.user.dto.res.UserResDto;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.user.service.UserService;
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
         return UserResDto.toDto(user);
     }
 
-    public UserResDto updateUser(String loginId, UserUpdateDto userUpdateDto) {
+    public UserResDto updateUser(String loginId, UserUpdateReqDto userUpdateDto) {
 
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
