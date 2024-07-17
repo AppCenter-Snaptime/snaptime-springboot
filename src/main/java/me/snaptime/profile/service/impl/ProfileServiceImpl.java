@@ -45,9 +45,7 @@ public class ProfileServiceImpl implements ProfileService {
         Boolean isFollow = null;
         User targetUser = userRepository.findByLoginId(targetLoginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        if(ownLoginId.equals(targetLoginId)){
-        }
-        else{
+        if(!ownLoginId.equals(targetLoginId)){
             User ownUser = userRepository.findByLoginId(ownLoginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
             isFollow = friendService.checkIsFollow(ownUser,targetUser);
         }
