@@ -110,7 +110,7 @@ public class FriendServiceImpl implements FriendService {
 
         List<FriendInfo> friendInfoList = result.stream().map(entity ->
         {
-            boolean isMyFriend = checkIsFriend(reqUser ,findUserByLoginId(entity.get(user.loginId)));
+            boolean isMyFriend = checkIsFollow(reqUser ,findUserByLoginId(entity.get(user.loginId)));
             String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.id));
             return FriendInfo.toDto(entity,profilePhotoURL,isMyFriend);
         }).collect(Collectors.toList());
@@ -130,8 +130,8 @@ public class FriendServiceImpl implements FriendService {
         return FriendCntResDto.toDto(followerCnt,followingCnt);
     }
 
-    // 자신이 해당유저를 팔로우했는 지 유무 반환
-    private boolean checkIsFriend(User reqUser, User targetUser){
+    @Override
+    public boolean checkIsFollow(User reqUser, User targetUser){
         return friendRepository.existsBySenderAndReceiver(reqUser, targetUser);
     }
 

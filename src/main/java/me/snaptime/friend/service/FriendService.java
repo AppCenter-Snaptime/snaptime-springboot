@@ -25,5 +25,10 @@ public interface FriendService {
     // 유저 프로필 조회 시 팔로잉,팔로워 수를 반환하는 메소드
     FriendCntResDto findFriendCnt(String loginId);
 
+    /*
+        reqUser가 targetUser를 팔로우했는 지 여부 반환
+    */
+    boolean checkIsFollow(User reqUser, User targetUser);
+
 
 }
