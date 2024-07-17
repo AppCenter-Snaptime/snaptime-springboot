@@ -6,7 +6,7 @@ import me.snaptime.jwt.JwtProvider;
 import me.snaptime.jwt.UserDetailsServiceImpl;
 import me.snaptime.profile.service.impl.ProfileServiceImpl;
 import me.snaptime.user.dto.req.UserReqDto;
-import me.snaptime.user.dto.req.UserUpdateDto;
+import me.snaptime.user.dto.req.UserUpdateReqDto;
 import me.snaptime.user.dto.res.UserResDto;
 import me.snaptime.user.service.impl.SignServiceImpl;
 import me.snaptime.user.service.impl.UserServiceImpl;
@@ -121,13 +121,13 @@ public class UserControllerTest {
     void updateUserTest() throws Exception{
 
         //given
-        UserUpdateDto userUpdateDto = UserUpdateDto.builder()
+        UserUpdateReqDto userUpdateDto = UserUpdateReqDto.builder()
                 .name("홍길순")
                 .email("strong@naver.com")
                 .birthDay("1999-10-29")
                 .build();
 
-        given(userService.updateUser(eq("kang4746"),any(UserUpdateDto.class)))
+        given(userService.updateUser(eq("kang4746"),any(UserUpdateReqDto.class)))
                 .willReturn(UserResDto.builder()
                         .loginId("kang4746")
                         .name("홍길순")
@@ -148,7 +148,7 @@ public class UserControllerTest {
                 .andDo(print());
 
         //then
-        verify(userService,times(1)).updateUser(eq("kang4746"),any(UserUpdateDto.class));
+        verify(userService,times(1)).updateUser(eq("kang4746"),any(UserUpdateReqDto.class));
     }
 
     @Test

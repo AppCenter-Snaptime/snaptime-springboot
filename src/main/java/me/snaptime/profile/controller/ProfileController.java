@@ -57,9 +57,10 @@ public class ProfileController {
             "<br> 토큰이 없어도 해당 Api 엔드포인트를 요청할 수 있습니다.")
     @Parameter(name = "loginId", description = "이름과 프로필 사진을 가져오기 위한 loginId", required = true)
     @GetMapping("/profile")
-    public ResponseEntity<CommonResponseDto<UserProfileResDto>> getUserProfile(@RequestParam("loginId")
+    public ResponseEntity<CommonResponseDto<UserProfileResDto>> getUserProfile(@AuthenticationPrincipal UserDetails principal,
+                                                                               @RequestParam("loginId")
                                                                                @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String loginId){
-        UserProfileResDto userProfileResDto = profileService.getUserProfile(loginId);
+        UserProfileResDto userProfileResDto = profileService.getUserProfile(principal.getUsername(),loginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 이름과, 프로필 사진 조회를 성공적으로 완료하였습니다.",

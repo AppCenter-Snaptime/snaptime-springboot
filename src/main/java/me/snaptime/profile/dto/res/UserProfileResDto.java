@@ -8,13 +8,15 @@ public record UserProfileResDto(
         Long userId,
         String userName,
         String profileURL
+//        Boolean isFollow
 ){
-    public static UserProfileResDto toDto(User user, String profileURL)
+    public static UserProfileResDto toDto(User user, String profileURL /*, boolean isFollow*/)
     {
         return UserProfileResDto.builder()
                 .userId(user.getId())
                 .userName(user.getName())
                 .profileURL(profileURL)
+                //.isFollow(isFollow)
                 .build();
     }
 }

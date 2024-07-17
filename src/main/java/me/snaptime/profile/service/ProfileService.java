@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface ProfileService {
     /* 호출자의 loginId, 피호출자의 loginId를 통해 피호출자의 album과 snap을 조회 */
-    public List<AlbumSnapResDto> getAlbumSnap(String yourLoginId, String targetLoginId);
+    public List<AlbumSnapResDto> getAlbumSnap(String ownLoginId, String targetLoginId);
     /* loginId에 해당하는 User의 profile 사진을 조회 */
-    public UserProfileResDto getUserProfile(String loginId);
+    public UserProfileResDto getUserProfile(String ownLoginId, String targetLoginId);
     /* loginId에 해당하는 User의 스냅, 팔로우, 팔로워 수 리턴 */
     public ProfileCntResDto getUserProfileCnt(String loginId);
     /* loginId에 해당하는 User가 Tag된 snap들을 조회합니다 */
