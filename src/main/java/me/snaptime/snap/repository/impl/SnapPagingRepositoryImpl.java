@@ -33,12 +33,12 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
         Pageable pageable= PageRequest.of((int) (pageNum-1),10);
 
         List<Tuple> result =  jpaQueryFactory.select(
-                        user.loginId, user.profilePhoto.id, user.name,
+                        user.loginId, user.profilePhoto.profilePhotoId, user.name,
                         snap.id, snap.createdDate, snap.lastModifiedDate, snap.oneLineJournal, snap.fileName
                 ).distinct()
                 .from(friend)
-                .rightJoin(user).on(friend.receiver.id.eq(user.id))
-                .join(snap).on(snap.user.id.eq(user.id))
+                .rightJoin(user).on(friend.receiver.userId.eq(user.userId))
+                .join(snap).on(snap.user.userId.eq(user.userId))
                 .where(getBuilder(reqUser))
                 .orderBy(createOrderSpecifier())
                 .offset(pageable.getOffset())
@@ -60,7 +60,7 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
     private BooleanBuilder getBuilder(User reqUser){
         BooleanBuilder builder = new BooleanBuilder();
 
-        builder.and( friend.sender.id.eq(reqUser.getId()).and(snap.isPrivate.isFalse()) );
+        builder.and( friend.sender.userId.eq(reqUser.getUserId()).and(snap.isPrivate.isFalse()) );
         builder.or( user.eq(reqUser).and(snap.isPrivate.isFalse()) );
 
         return builder;

@@ -13,7 +13,7 @@ public record UserProfileResDto(
     public static UserProfileResDto toDto(User user, String profileURL , Boolean isFollow)
     {
         return UserProfileResDto.builder()
-                .userId(user.getId())
+                .userId(user.getUserId())
                 .userName(user.getName())
                 .profileURL(profileURL)
                 .isFollow(isFollow)

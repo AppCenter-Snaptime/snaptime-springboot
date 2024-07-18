@@ -9,5 +9,5 @@ import java.util.List;
 public interface ProfileRepository{
 
     List<AlbumSnapResDto> findAlbumSnap(User targetUser, Boolean checkPermission);
-    List<ProfileTagSnapResDto> findTagSnap(User reqUser);
+    List<ProfileTagSnapResDto> findTagSnap(User targetUser);
 }

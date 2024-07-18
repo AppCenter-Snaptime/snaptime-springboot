@@ -6,6 +6,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +25,11 @@ public class JwtProvider {
 
     private Key secretKey;
 
-    private Long accessTokenValidTime= 1000L * 60 * 60*24;
+    @Value("${accessTokenValidTime}")
+    private Long accessTokenValidTime;
+
+    @Value("${refreshTokenValidTime}")
+    private Long refreshTokenValidTime;
 
     @PostConstruct
     protected void init(){
@@ -33,10 +38,11 @@ public class JwtProvider {
         log.info("[init] JwtTokenProvider 내 secretKey 초기화 완료");
     }
 
-    public String createAccessToken(String loginId, List<String> roles){
+    public String createAccessToken(Long userId, String loginId, List<String> roles){
         log.info("[createAccessToken] 엑세스 토큰 생성 시작");
 
         Claims claims = Jwts.claims().setSubject(loginId);
+        claims.put("userId",userId);
         claims.put("type","access");
         claims.put("roles",roles);
         Date now = new Date();
@@ -49,6 +55,32 @@ public class JwtProvider {
 
         log.info("[createAccessToken] 엑세스 토큰 생성 완료");
         return token;
+    }
+
+    public String createRefreshToken(Long id, String loginId, List<String> roles){
+        log.info("[createRefreshToken] 리프레시 토큰 생성 시작");
+
+        Claims claims = Jwts.claims().setSubject(loginId);
+        claims.put("userId", id);
+        claims.put("type", "refresh");
+        claims.put("roles", roles);
+        Date now = new Date();
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + refreshTokenValidTime))
+                .signWith(secretKey)
+                .compact();
+
+        log.info("[createAccessToken] 엑세스 토큰 생성 완료");
+        return token;
+    }
+
+    public Long getUserId(String token) {
+        log.info("[getUserId] 토큰 기반 회원 구별 정보 추출");
+        Long userId = Long.valueOf(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("userId").toString());
+        log.info("[getUserId] 토큰 기반 회원 구별 정보 추출 완료, userId : {}", userId);
+        return userId;
     }
 
     // 필터에서 인증 성공 후, SecurityContextHolder 에 저장할 Authentication 을 생성

@@ -34,23 +34,22 @@ public class ProfileRepositoryImpl implements ProfileRepository {
     //snap에 isPrivate이 존재한다, 내가 조회 -> 전부 리턴 | 남이 조회 -> isPrivate= True 인 snap 제외
     @Override
     public List<AlbumSnapResDto> findAlbumSnap(User targetUser, Boolean checkPermission) {
-        List<Tuple> albumList = jpaQueryFactory
+        List<Tuple> albums = jpaQueryFactory
                 .select(album.id, album.name).distinct()
                 .from(user)
-                .join(album).on(user.id.eq(album.user.id))
-                .where(user.id.eq(targetUser.getId()))
+                .join(album).on(user.userId.eq(album.user.userId))
+                .where(user.userId.eq(targetUser.getUserId()))
                 .fetch();
 
         Map<Long,String> albumMap = new HashMap<>();
 
-        albumList.forEach(tuple ->{
+        albums.forEach(tuple ->{
             Long albumId = tuple.get(album.id);
             String albumName = tuple.get(album.name);
             albumMap.put(albumId,albumName);
         });
 
-        List<AlbumSnapResDto> albumSnapResDtoList = new ArrayList<>();
-
+        List<AlbumSnapResDto> albumSnapResDtos = new ArrayList<>();
 
         //snap이 없어도 album은 존재할 수 있기 때문에 album 수 만큼 반복한다.
         for (Long albumId : albumMap.keySet()) {
@@ -64,7 +63,7 @@ public class ProfileRepositoryImpl implements ProfileRepository {
                     .fetch();
 
             //stream 사용하는 걸로 수정
-            List<String> snapUrlList = albumSnapTwo.stream()
+            List<String> snapUrls = albumSnapTwo.stream()
                     .map(tuple -> {
                         String fileName = tuple.get(snap.fileName);
                         Boolean isPrivate = tuple.get(snap.isPrivate);
@@ -73,33 +72,33 @@ public class ProfileRepositoryImpl implements ProfileRepository {
                     .toList();
 
             //다른 사람의 프로필 검색 일 때, snap이 없거나, private이면 앨범도 private
-            if(!checkPermission && snapUrlList.isEmpty()){
+            if(!checkPermission && snapUrls.isEmpty()){
                 continue;
             }
 
             String albumName = albumMap.get(albumId);
 
-            albumSnapResDtoList.add(AlbumSnapResDto.builder()
+            albumSnapResDtos.add(AlbumSnapResDto.builder()
                     .albumId(albumId)
                     .albumName(albumName)
-                    .snapUrlList(snapUrlList)
+                    .snapUrlList(snapUrls)
                     .build());
         }
 
-        return albumSnapResDtoList;
+        return albumSnapResDtos;
     }
 
     @Override
-    public List<ProfileTagSnapResDto> findTagSnap(User reqUser) {
-        List<Tuple> tagSnapList = jpaQueryFactory
+    public List<ProfileTagSnapResDto> findTagSnap(User targetUser) {
+        List<Tuple> tagSnaps = jpaQueryFactory
                 .select(snap.id,snap.user.loginId, snap.fileName, snap.isPrivate, snap.createdDate).distinct()
                 .from(snap)
                 .join(snapTag).on(snapTag.snap.id.eq(snap.id))
-                .where(snapTag.tagUser.loginId.eq(reqUser.getLoginId()))
+                .where(snapTag.tagUser.loginId.eq(targetUser.getLoginId()))
                 .orderBy(snap.createdDate.desc())
                 .fetch();
 
-        List<ProfileTagSnapResDto> tagSnapUrlList = tagSnapList.stream()
+        List<ProfileTagSnapResDto> tagSnapUrls = tagSnaps.stream()
                 .map(tuple -> {
                     return ProfileTagSnapResDto.builder()
                             .taggedSnapId(tuple.get(snap.id))
@@ -109,7 +108,7 @@ public class ProfileRepositoryImpl implements ProfileRepository {
                 })
                 .toList();
 
-        return tagSnapUrlList;
+        return tagSnapUrls;
     }
 
     // 자신이 자신의 profile을 조회할 때, 자신이 다른사람의 profile을 조회할 때를 구별하기 위함.
@@ -125,7 +124,6 @@ public class ProfileRepositoryImpl implements ProfileRepository {
             builder.and(snap.isPrivate.isFalse());
             builder.and(snap.fileName.isNotNull());
         }
-
         return builder;
     }
 }

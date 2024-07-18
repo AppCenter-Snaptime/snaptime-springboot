@@ -2,6 +2,7 @@ package me.snaptime.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +49,8 @@ public class UserController {
             "<br> Token을 버리고 재 login을 유도해야 합니다.")
     @PatchMapping()
     public ResponseEntity<CommonResponseDto<UserResDto>> changeUser(@AuthenticationPrincipal UserDetails principal,
-                                                                    @Valid @RequestBody UserUpdateReqDto userUpdateDto){
-        UserResDto userResDto = userService.updateUser(principal.getUsername(), userUpdateDto);
+                                                                    @Valid @RequestBody UserUpdateReqDto userUpdateReqDto){
+        UserResDto userResDto = userService.updateUser(principal.getUsername(), userUpdateReqDto);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 정보 수정이 성공적으로 완료되었습니다.",
@@ -94,11 +95,23 @@ public class UserController {
     @Operation(summary = "로그인", description = "회원 가입 한 유저의 loginId와 password를 입력합니다.")
     @PostMapping("/sign-in")
     public ResponseEntity<CommonResponseDto<SignInResDto>> signIn(@Valid @RequestBody SignInReqDto signInReqDto){
-        SignInResDto signInResponseDto = signService.signIn(signInReqDto);
+        SignInResDto signInResDto = signService.signIn(signInReqDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 로그인을 성공적으로 완료하였습니다.",
-                        signInResponseDto));
+                        signInResDto));
+    }
+
+    @Operation(summary = "엑세스 토큰 재발급", description = "RefreshToken 을 통해 AccessToken 재발급")
+    @PostMapping("/reissue")
+    public ResponseEntity<CommonResponseDto<SignInResDto>> reissue(HttpServletRequest request){
+        SignInResDto signInResDto = signService.reissueAccessToken(request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "리프레시 토큰으로 엑세스 토큰 재발급 성공",
+                        signInResDto
+                ));
     }
 }
