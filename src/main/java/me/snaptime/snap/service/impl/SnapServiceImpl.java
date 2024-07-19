@@ -18,7 +18,6 @@ import me.snaptime.snap.dto.req.ModifySnapReqDto;
 import me.snaptime.snap.dto.res.FindSnapResDto;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snap.service.SnapService;
-import me.snaptime.snapTag.dto.res.FindTagUserResDto;
 import me.snaptime.snapTag.service.SnapTagService;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
@@ -28,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -129,50 +127,23 @@ public class SnapServiceImpl implements SnapService {
                     }
                     // Snap의 암호화 상태를 활성으로 변경한다.
                     foundSnap.updateIsPrivate(true);
+                    // 태그 목록을 삭제한다.
+                    snapTagService.deleteAllTagUser(foundSnap);
                 } else {
                     // 사용자가 이미지 수정을 요구하였으나, 암호화를 원하지 않는다면
                     // fileComponent를 통해 원래 경로에 사진을 저장한다.
                     fileComponent.updateFileSystemPhoto(foundSnap.getFilePath(), foundPhotoByte);
                     // Snap의 암호화 상태를 비활성화로 변경한다.
                     foundSnap.updateIsPrivate(false);
+
+                    if (tagUserLoginIds != null) {
+                        snapTagService.modifyTagUser(tagUserLoginIds, foundSnap);
+                    }
                 }
             } catch (IOException e) {
                 throw new CustomException(ExceptionCode.SNAP_MODIFY_ERROR);
             }
         }
-
-        // 태그 목록 수정
-        /*
-        * 새로운 유저를 찾아 태그 목록에 추가한다.
-        * */
-        List<String> originalTagIds = snapTagService.findTagUserList(snapId).
-                stream().map(FindTagUserResDto::tagUserLoginId).toList();
-
-        log.info("originalTagIds: {}", originalTagIds);
-        List<String> newTagIds = new ArrayList<>();
-        List<String> missingTagIds = new ArrayList<>();
-        if (tagUserLoginIds != null){ // 새롭게 추가된 Ids를 찾아 newTagIds 목록에 추가한다.
-            for (String tagId : tagUserLoginIds) {
-                if (!originalTagIds.contains(tagId)) {
-                    newTagIds.add(tagId);
-                }
-            }
-            log.info("new Tag Ids {}", newTagIds);
-            snapTagService.addTagUser(newTagIds, foundSnap);
-
-            // 원래 있었다가 이번 목록에서 사라진 Ids를 찾아 목록에 추가한다.
-            for (String tagId : originalTagIds) {
-                if (!tagUserLoginIds.contains(tagId)) {
-                    missingTagIds.add(tagId);
-                }
-            }
-            log.info("missing Tag Ids {}", missingTagIds);
-            snapTagService.deleteTagUser(missingTagIds, snapId);
-        } else {
-            snapTagService.deleteTagUser(originalTagIds, snapId);
-        }
-        log.info("태그상태 현황 : {}", snapTagService.findTagUserList(snapId));
-        foundSnap.updateOneLineJournal(modifySnapReqDto.oneLineJournal());
         Snap snap = snapRepository.save(foundSnap);
         return snap.getId();
     }
@@ -195,6 +166,8 @@ public class SnapServiceImpl implements SnapService {
             Encryption encryption = encryptionComponent.setEncryption(foundUser);
             byte[] encryptedByte = encryptionComponent.encryptData(encryption, foundPhotoByte);
             fileComponent.updateFileSystemPhoto(foundSnap.getFilePath(), encryptedByte);
+            // 태그 목록을 삭제한다.
+            snapTagService.deleteAllTagUser(foundSnap);
         } else {
             // private -> public (복호화)
             Encryption encryption = encryptionComponent.getEncryption(foundUser);
