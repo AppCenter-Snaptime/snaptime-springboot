@@ -7,12 +7,12 @@ import java.util.List;
 @Builder
 public record FindFriendResDto(
 
-        List<FriendInfo> friendInfoList,
+        List<FriendInfo> friendInfos,
         boolean hasNextPage
 ) {
-    public static FindFriendResDto toDto(List<FriendInfo> friendInfoList, boolean hasNextPage){
+    public static FindFriendResDto toDto(List<FriendInfo> friendInfos, boolean hasNextPage){
         return FindFriendResDto.builder()
-                .friendInfoList(friendInfoList)
+                .friendInfos(friendInfos)
                 .hasNextPage(hasNextPage)
                 .build();
     }

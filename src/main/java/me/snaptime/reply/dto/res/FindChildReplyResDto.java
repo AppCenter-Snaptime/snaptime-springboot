@@ -7,14 +7,14 @@ import java.util.List;
 @Builder
 public record FindChildReplyResDto(
 
-        List<ChildReplyInfo> childReplyInfoList,
+        List<ChildReplyInfo> childReplyInfos,
         boolean hasNextPage
 
 ) {
-    public static FindChildReplyResDto toDto(List<ChildReplyInfo> childReplyInfoList, boolean hasNextPage){
+    public static FindChildReplyResDto toDto(List<ChildReplyInfo> childReplyInfos, boolean hasNextPage){
 
         return FindChildReplyResDto.builder()
-                .childReplyInfoList(childReplyInfoList)
+                .childReplyInfos(childReplyInfos)
                 .hasNextPage(hasNextPage)
                 .build();
     }

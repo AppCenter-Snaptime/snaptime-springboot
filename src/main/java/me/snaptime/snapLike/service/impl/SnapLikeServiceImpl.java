@@ -29,27 +29,27 @@ public class SnapLikeServiceImpl implements SnapLikeService {
 
     @Override
     @Transactional
-    public String toggleSnapLike(String loginId, Long snapId){
-        User user = userRepository.findByLoginId(loginId)
+    public String toggleSnapLike(String reqLoginId, Long snapId){
+        User reqUser = userRepository.findByLoginId(reqLoginId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         Snap snap = snapRepository.findById(snapId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
 
-        Optional<SnapLike> optionalSnapLike = snapLikeRepository.findBySnapAndUser(snap,user);
+        Optional<SnapLike> snapLikeOptional = snapLikeRepository.findBySnapAndUser(snap,reqUser);
 
-        if(optionalSnapLike.isEmpty()){
+        if(snapLikeOptional.isEmpty()){
             snapLikeRepository.save(
                     SnapLike.builder()
                             .snap(snap)
-                            .user(user)
+                            .user(reqUser)
                             .build()
             );
-            createAlarmService.createSnapAlarm(user,snap.getUser(),snap, AlarmType.LIKE);
+            createAlarmService.createSnapAlarm(reqUser,snap.getUser(),snap, AlarmType.LIKE);
             return "좋아요를 눌렀습니다.";
         }
         else{
-            snapLikeRepository.delete(optionalSnapLike.get());
+            snapLikeRepository.delete(snapLikeOptional.get());
             return "좋아요를 취소하였습니다.";
         }
     }
@@ -63,14 +63,14 @@ public class SnapLikeServiceImpl implements SnapLikeService {
     }
 
     @Override
-    public boolean isLikedSnap(Long snapId, String loginId){
+    public boolean isLikedSnap(Long snapId, String reqLoginId){
         Snap snap = snapRepository.findById(snapId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
 
-        User user = userRepository.findByLoginId(loginId)
+        User reqUser = userRepository.findByLoginId(reqLoginId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        return snapLikeRepository.existsBySnapAndUser(snap,user);
+        return snapLikeRepository.existsBySnapAndUser(snap,reqUser);
     }
 
 }

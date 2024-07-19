@@ -7,13 +7,13 @@ import java.util.List;
 @Builder
 public record FindSnapPagingResDto(
 
-    List<SnapPagingInfo> snapPagingInfoList,
+    List<SnapPagingInfo> snapPagingInfos,
     boolean hasNextPage
 ) {
-    public static FindSnapPagingResDto toDto(List<SnapPagingInfo> snapPagingInfoList, boolean hasNextPage){
+    public static FindSnapPagingResDto toDto(List<SnapPagingInfo> snapPagingInfos, boolean hasNextPage){
 
         return FindSnapPagingResDto.builder()
-                .snapPagingInfoList(snapPagingInfoList)
+                .snapPagingInfos(snapPagingInfos)
                 .hasNextPage(hasNextPage)
                 .build();
     }

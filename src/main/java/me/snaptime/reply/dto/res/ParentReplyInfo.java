@@ -17,13 +17,13 @@ public record ParentReplyInfo(
         Long replyId,
         String timeAgo
 ) {
-    public static ParentReplyInfo toDto(Tuple result, String profilePhotoURL,String timeAgo){
+    public static ParentReplyInfo toDto(Tuple tuple, String profilePhotoURL,String timeAgo){
         return ParentReplyInfo.builder()
-                .writerLoginId(result.get(user.loginId))
+                .writerLoginId(tuple.get(user.loginId))
                 .writerProfilePhotoURL(profilePhotoURL)
-                .writerUserName(result.get(user.name))
-                .content(result.get(parentReply.content))
-                .replyId(result.get(parentReply.parentReplyId))
+                .writerUserName(tuple.get(user.name))
+                .content(tuple.get(parentReply.content))
+                .replyId(tuple.get(parentReply.parentReplyId))
                 .timeAgo(timeAgo)
                 .build();
     }

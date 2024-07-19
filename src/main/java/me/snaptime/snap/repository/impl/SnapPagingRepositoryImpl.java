@@ -32,7 +32,7 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
 
         Pageable pageable= PageRequest.of((int) (pageNum-1),10);
 
-        List<Tuple> result =  jpaQueryFactory.select(
+        List<Tuple> tuples =  jpaQueryFactory.select(
                         user.loginId, user.profilePhoto.id, user.name,
                         snap.id, snap.createdDate, snap.lastModifiedDate, snap.oneLineJournal, snap.fileName
                 ).distinct()
@@ -45,10 +45,10 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
                 .limit(pageable.getPageSize()+1) //다음 페이지 유무체크를 위해 +1을 합니다.
                 .fetch();
 
-        if(result.size() == 0)
+        if(tuples.size() == 0)
             throw new CustomException(ExceptionCode.PAGE_NOT_FOUND);
 
-        return result;
+        return tuples;
     }
 
     // 정렬 조건을 동적으로 생성하는 메소드

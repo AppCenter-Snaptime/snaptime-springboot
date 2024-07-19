@@ -16,6 +16,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class ChildReply extends BaseTimeEntity {
 
     @Id
+    @Column(name = "child_reply_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long childReplyId;
 

@@ -98,24 +98,24 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public FindFriendResDto findFriendList(String reqLoginId, String targetLoginId, Long pageNum,
-                                           FriendSearchType searchType, String searchKeyword){
+    public FindFriendResDto findFriends(String reqLoginId, String targetLoginId, Long pageNum,
+                                        FriendSearchType searchType, String searchKeyword){
 
         User reqUser = findUserByLoginId(reqLoginId);
         User targetUser = findUserByLoginId(targetLoginId);
-        List<Tuple> result = friendRepository.findFriendList(targetUser,searchType,pageNum,searchKeyword);
+        List<Tuple> tuples = friendRepository.findFriendList(targetUser,searchType,pageNum,searchKeyword);
 
         // 다음 페이지 유무 체크
-        boolean hasNextPage = NextPageChecker.hasNextPage(result,20L);
+        boolean hasNextPage = NextPageChecker.hasNextPage(tuples,20L);
 
-        List<FriendInfo> friendInfoList = result.stream().map(entity ->
+        List<FriendInfo> friendInfos = tuples.stream().map(tuple ->
         {
-            boolean isMyFriend = checkIsFollow(reqUser ,findUserByLoginId(entity.get(user.loginId)));
-            String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.id));
-            return FriendInfo.toDto(entity,profilePhotoURL,isMyFriend);
+            boolean isMyFriend = checkIsFollow(reqUser ,findUserByLoginId(tuple.get(user.loginId)));
+            String profilePhotoURL = urlComponent.makeProfileURL(tuple.get(user.profilePhoto.id));
+            return FriendInfo.toDto(tuple,profilePhotoURL,isMyFriend);
         }).collect(Collectors.toList());
 
-        return FindFriendResDto.toDto(friendInfoList, hasNextPage);
+        return FindFriendResDto.toDto(friendInfos, hasNextPage);
     }
 
     @Override

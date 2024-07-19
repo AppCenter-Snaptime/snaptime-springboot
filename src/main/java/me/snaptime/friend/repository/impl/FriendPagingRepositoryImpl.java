@@ -32,7 +32,7 @@ public class FriendPagingRepositoryImpl implements FriendPagingRepository {
 
         Pageable pageable= PageRequest.of((int) (pageNum-1),20);
 
-        List<Tuple> result =  jpaQueryFactory.select(
+        List<Tuple> tuples =  jpaQueryFactory.select(
                         user.loginId, user.profilePhoto.id, user.name, friend.friendId
                 )
                 .from(friend)
@@ -43,10 +43,10 @@ public class FriendPagingRepositoryImpl implements FriendPagingRepository {
                 .limit(pageable.getPageSize()+1) //페이지의 크기
                 .fetch();
 
-        if(result.size() == 0)
+        if(tuples.size() == 0)
             throw new CustomException(ExceptionCode.PAGE_NOT_FOUND);
 
-        return result;
+        return tuples;
     }
 
     private OrderSpecifier createOrderSpecifier() {

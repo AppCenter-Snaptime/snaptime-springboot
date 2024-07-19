@@ -19,6 +19,7 @@ import java.util.List;
 public class ParentReply extends BaseTimeEntity {
 
     @Id
+    @Column(name = "parent_reply_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long parentReplyId;
 

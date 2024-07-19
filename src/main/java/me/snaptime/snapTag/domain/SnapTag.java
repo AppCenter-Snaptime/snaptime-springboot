@@ -16,6 +16,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class SnapTag {
 
     @Id
+    @Column(name = "snap_tag_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long snapTagId;
 

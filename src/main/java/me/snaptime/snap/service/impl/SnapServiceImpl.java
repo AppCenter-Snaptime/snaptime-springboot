@@ -145,7 +145,7 @@ public class SnapServiceImpl implements SnapService {
         /*
         * 새로운 유저를 찾아 태그 목록에 추가한다.
         * */
-        List<String> originalTagIds = snapTagService.findTagUserList(snapId).
+        List<String> originalTagIds = snapTagService.findTagUsers(snapId).
                 stream().map(FindTagUserResDto::tagUserLoginId).toList();
 
         log.info("originalTagIds: {}", originalTagIds);
@@ -171,7 +171,7 @@ public class SnapServiceImpl implements SnapService {
         } else {
             snapTagService.deleteTagUser(originalTagIds, snapId);
         }
-        log.info("태그상태 현황 : {}", snapTagService.findTagUserList(snapId));
+        log.info("태그상태 현황 : {}", snapTagService.findTagUsers(snapId));
         foundSnap.updateOneLineJournal(modifySnapReqDto.oneLineJournal());
         Snap snap = snapRepository.save(foundSnap);
         return snap.getId();

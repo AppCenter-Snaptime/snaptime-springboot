@@ -304,7 +304,7 @@ public class FriendServiceImplTest {
 
         // when
         FindFriendResDto result = friendServiceImpl
-                .findFriendList("writerLoginId","targetLoginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
+                .findFriends("writerLoginId","targetLoginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
 
         // then
         assertThat(result.friendInfoList().get(0).foundLoginId()).isEqualTo("testLoginId1");

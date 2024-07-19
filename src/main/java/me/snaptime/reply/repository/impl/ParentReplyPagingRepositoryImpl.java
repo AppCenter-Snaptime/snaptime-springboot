@@ -28,7 +28,7 @@ public class ParentReplyPagingRepositoryImpl implements ParentReplyPagingReposit
     public List<Tuple> findReplyList(Long snapId,Long pageNum) {
         Pageable pageable= PageRequest.of((int) (pageNum-1),20);
 
-        List<Tuple> result =  jpaQueryFactory.select(
+        List<Tuple> tuples =  jpaQueryFactory.select(
                         user.loginId,user.profilePhoto.id,user.name,
                         parentReply.content,parentReply.parentReplyId,parentReply.lastModifiedDate
                 )
@@ -40,10 +40,10 @@ public class ParentReplyPagingRepositoryImpl implements ParentReplyPagingReposit
                 .limit(pageable.getPageSize()+1) //페이지의 크기
                 .fetch();
 
-        if(result.size() == 0)
+        if(tuples.size() == 0)
             throw new CustomException(ExceptionCode.PAGE_NOT_FOUND);
 
-        return result;
+        return tuples;
     }
 
     private OrderSpecifier createOrderSpecifier() {

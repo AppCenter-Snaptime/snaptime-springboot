@@ -22,23 +22,23 @@ public record SnapPagingInfo(
         String writerLoginId,
         String profilePhotoURL,
         String writerUserName,
-        List<FindTagUserResDto> findTagUserList,
+        List<FindTagUserResDto> findTagUsers,
         Long likeCnt,
         boolean isLikedSnap
 ) {
-    public static SnapPagingInfo toDto(Tuple result, String profilePhotoURL, String snapPhotoURL,
-                                       List<FindTagUserResDto> findTagUserList, Long likeCnt, boolean isLikedSnap){
+    public static SnapPagingInfo toDto(Tuple tuple, String profilePhotoURL, String snapPhotoURL,
+                                       List<FindTagUserResDto> findTagUsers, Long likeCnt, boolean isLikedSnap){
 
         return SnapPagingInfo.builder()
-                .snapId(result.get(snap.id))
-                .oneLineJournal(String.valueOf(result.get(snap.oneLineJournal)))
+                .snapId(tuple.get(snap.id))
+                .oneLineJournal(String.valueOf(tuple.get(snap.oneLineJournal)))
                 .snapPhotoURL(snapPhotoURL)
-                .snapCreatedDate(result.get(snap.createdDate))
-                .snapModifiedDate(result.get(snap.lastModifiedDate))
-                .writerLoginId(result.get(user.loginId))
+                .snapCreatedDate(tuple.get(snap.createdDate))
+                .snapModifiedDate(tuple.get(snap.lastModifiedDate))
+                .writerLoginId(tuple.get(user.loginId))
                 .profilePhotoURL(profilePhotoURL)
-                .writerUserName(result.get(user.name))
-                .findTagUserList(findTagUserList)
+                .writerUserName(tuple.get(user.name))
+                .findTagUsers(findTagUsers)
                 .likeCnt(likeCnt)
                 .isLikedSnap(isLikedSnap)
                 .build();
