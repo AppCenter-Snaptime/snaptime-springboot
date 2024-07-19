@@ -77,11 +77,11 @@ public class AlarmServiceImpl implements AlarmService {
         replyAlarm.readAlarm();
         replyAlarmRepository.save(replyAlarm);
 
-        return replyService.readParentReplyPage(replyAlarm.getSnap().getId(), 1L);
+        return replyService.findParentReplyPage(replyAlarm.getSnap().getId(), 1L);
     }
 
     @Override
-    public Object getAlarms(Long reqLoginId) {
+    public Object findAlarms(Long reqLoginId) {
         return null;
     }
 

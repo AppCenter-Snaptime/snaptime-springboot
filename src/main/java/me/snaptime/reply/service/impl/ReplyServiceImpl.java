@@ -98,7 +98,7 @@ public class ReplyServiceImpl implements ReplyService {
         }
     }
 
-    public FindParentReplyResDto readParentReplyPage(Long snapId, Long pageNum){
+    public FindParentReplyResDto findParentReplyPage(Long snapId, Long pageNum){
 
         List<Tuple> tuples = parentReplyRepository.findReplyList(snapId,pageNum);
         boolean hasNextPage = NextPageChecker.hasNextPage(tuples,20L);
@@ -113,7 +113,7 @@ public class ReplyServiceImpl implements ReplyService {
         return FindParentReplyResDto.toDto(parentReplyInfoList, hasNextPage);
     }
 
-    public FindChildReplyResDto readChildReplyPage(Long parentReplyId, Long pageNum){
+    public FindChildReplyResDto findChildReplyPage(Long parentReplyId, Long pageNum){
 
         QUser writerUser = new QUser("writerUser");
         List<Tuple> tuples = childReplyRepository.findReplyList(parentReplyId,pageNum);

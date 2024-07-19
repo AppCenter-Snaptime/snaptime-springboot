@@ -63,7 +63,7 @@ public class ReplyController {
             @PathVariable final Long pageNum){
 
         return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("댓글조회 성공했습니다.",
-                replyService.readParentReplyPage(snapId,pageNum)));
+                replyService.findParentReplyPage(snapId,pageNum)));
     }
 
     @GetMapping("/child-replies/{pageNum}")
@@ -78,7 +78,7 @@ public class ReplyController {
             @PathVariable final Long pageNum){
 
         return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto(
-                "대댓글조회 성공했습니다.", replyService.readChildReplyPage(parentReplyId,pageNum)));
+                "대댓글조회 성공했습니다.", replyService.findChildReplyPage(parentReplyId,pageNum)));
     }
 
     @PatchMapping("/parent-replies/{parentReplyId}")
