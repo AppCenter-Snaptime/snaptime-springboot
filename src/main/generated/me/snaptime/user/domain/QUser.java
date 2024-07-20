@@ -31,8 +31,6 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath email = createString("email");
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
 
@@ -45,6 +43,8 @@ public class QUser extends EntityPathBase<User> {
     public final me.snaptime.profilePhoto.domain.QProfilePhoto profilePhoto;
 
     public final ListPath<String, StringPath> roles = this.<String, StringPath>createList("roles", String.class, StringPath.class, PathInits.DIRECT2);
+
+    public final NumberPath<Long> userId = createNumber("userId", Long.class);
 
     public QUser(String variable) {
         this(User.class, forVariable(variable), INITS);

@@ -35,6 +35,10 @@ public class FriendControllerTest {
     @MockBean
     private UserDetailsServiceImpl userDetailsService;
 
+    //프로퍼티 값 주입을 위함. accessTokenValidTime, refreshTokenValidTime
+    @MockBean
+    private JwtProvider jwtProvider;
+
     @Autowired
     private MockMvc mockMvc;
 

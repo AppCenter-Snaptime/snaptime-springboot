@@ -71,9 +71,9 @@ public class SnapPagingServiceImplTest {
         given(tuple1.get(snap.id)).willReturn(1L);
         given(tuple2.get(snap.id)).willReturn(2L);
         given(tuple3.get(snap.id)).willReturn(3L);
-        given(tuple1.get(user.profilePhoto.id)).willReturn(1L);
-        given(tuple2.get(user.profilePhoto.id)).willReturn(2L);
-        given(tuple3.get(user.profilePhoto.id)).willReturn(3L);
+        given(tuple1.get(user.profilePhoto.profilePhotoId)).willReturn(1L);
+        given(tuple2.get(user.profilePhoto.profilePhotoId)).willReturn(2L);
+        given(tuple3.get(user.profilePhoto.profilePhotoId)).willReturn(3L);
         given(tuple1.get(snap.oneLineJournal)).willReturn("일기1");
         given(tuple2.get(snap.oneLineJournal)).willReturn("일기2");
         given(tuple3.get(snap.oneLineJournal)).willReturn("일기3");

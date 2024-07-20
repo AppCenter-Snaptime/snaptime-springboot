@@ -105,7 +105,7 @@ public class ReplyServiceImpl implements ReplyService {
 
         List<ParentReplyInfo> parentReplyInfoList = result.stream().map(entity ->
         {
-            String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.id));
+            String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.profilePhotoId));
             String timeAgo = TimeAgoCalculator.findTimeAgo(entity.get(parentReply.lastModifiedDate));
             return ParentReplyInfo.toDto(entity,profilePhotoURL,timeAgo);
         }).collect(Collectors.toList());
@@ -121,7 +121,7 @@ public class ReplyServiceImpl implements ReplyService {
 
         List<ChildReplyInfo> childReplyInfoList = result.stream().map(entity ->
         {
-            String profilePhotoURL = urlComponent.makeProfileURL(entity.get(writerUser.profilePhoto.id));
+            String profilePhotoURL = urlComponent.makeProfileURL(entity.get(writerUser.profilePhoto.profilePhotoId));
             String timeAgo = TimeAgoCalculator.findTimeAgo(entity.get(childReply.lastModifiedDate));
 
             return ChildReplyInfo.toDto(entity,profilePhotoURL,timeAgo);

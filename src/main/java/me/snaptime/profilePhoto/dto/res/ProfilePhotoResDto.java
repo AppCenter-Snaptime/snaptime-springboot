@@ -5,13 +5,13 @@ import me.snaptime.profilePhoto.domain.ProfilePhoto;
 
 @Builder
 public record ProfilePhotoResDto(
-        Long id,
+        Long profilePhotoId,
         String profilePhotoName,
         String profilePhotoPath
 ){
     public static ProfilePhotoResDto toDto(ProfilePhoto profilePhoto){
         return ProfilePhotoResDto.builder()
-                .id(profilePhoto.getId())
+                .profilePhotoId(profilePhoto.getProfilePhotoId())
                 .profilePhotoName(profilePhoto.getProfilePhotoName())
                 .profilePhotoPath(profilePhoto.getProfilePhotoPath())
                 .build();

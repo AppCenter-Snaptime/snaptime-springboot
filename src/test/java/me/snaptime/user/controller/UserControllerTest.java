@@ -49,6 +49,10 @@ public class UserControllerTest {
     @MockBean
     private UserDetailsServiceImpl userDetailsService;
 
+    //프로퍼티 값 주입을 위함. accessTokenValidTime, refreshTokenValidTime
+    @MockBean
+    private JwtProvider jwtProvider;
+
     @Test
     @WithMockUser(username = "kang4746",password = "test1234",roles = "USER")
     @DisplayName("유저 정보 조회 컨트롤러 테스트")
@@ -91,7 +95,7 @@ public class UserControllerTest {
 
         given(signService.signUp(any(UserReqDto.class)))
                 .willReturn(UserResDto.builder()
-                        .id(1L)
+                        .userId(1L)
                         .loginId("kang4746")
                         .name("홍길순")
                         .email("strong@gmail.com")
@@ -105,7 +109,7 @@ public class UserControllerTest {
         mockMvc.perform(post("/users/sign-up").content(content).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.msg").exists())
-                .andExpect(jsonPath("$.result.id").exists())
+                .andExpect(jsonPath("$.result.userId").exists())
                 .andExpect(jsonPath("$.result.loginId").exists())
                 .andExpect(jsonPath("$.result.email").exists())
                 .andExpect(jsonPath("$.result.birthDay").exists())

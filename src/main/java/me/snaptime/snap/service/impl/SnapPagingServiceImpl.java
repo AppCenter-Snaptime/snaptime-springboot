@@ -46,7 +46,7 @@ public class SnapPagingServiceImpl implements SnapPagingService {
         List<SnapPagingInfo> snapPagingInfoList = result.stream().map(entity ->
         {
             Long snapId = entity.get(snap.id);
-            String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.id));
+            String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.profilePhotoId));
             String snapPhotoURL = urlComponent.makePhotoURL(entity.get(snap.fileName),false);
 
             return SnapPagingInfo.toDto(entity,profilePhotoURL,snapPhotoURL,
