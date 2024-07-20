@@ -74,7 +74,7 @@ public class AlbumServiceImpl implements AlbumService {
                                     FindSnapResDto.entityToResDto(
                                             snap,
                                             urlComponent.makePhotoURL(snap.getFileName(), false),
-                                            urlComponent.makeProfileURL(snap.getUser().getProfilePhoto().getId())
+                                            urlComponent.makeProfileURL(snap.getUser().getProfilePhoto().getProfilePhotoId())
                                     )
                             )
                             .collect(Collectors.toList()))
@@ -90,7 +90,7 @@ public class AlbumServiceImpl implements AlbumService {
                                 FindSnapResDto.entityToResDto(
                                         snap,
                                         urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate()),
-                                        urlComponent.makeProfileURL(snap.getUser().getProfilePhoto().getId())
+                                        urlComponent.makeProfileURL(snap.getUser().getProfilePhoto().getProfilePhotoId())
                                 )
                         )
                         .collect(Collectors.toList()))
@@ -169,7 +169,7 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public void isUserHavePermission(User user, Long album_id) {
         Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
-        if(!(Objects.equals(foundAlbum.getUser().getId(), user.getId()))){
+        if(!(Objects.equals(foundAlbum.getUser().getUserId(), user.getUserId()))){
             throw new CustomException(ExceptionCode.ALBUM_USER_NOT_MATCH);
         }
     }

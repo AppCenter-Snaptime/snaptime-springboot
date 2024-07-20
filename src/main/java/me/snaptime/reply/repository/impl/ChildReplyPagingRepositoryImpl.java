@@ -33,11 +33,11 @@ public class ChildReplyPagingRepositoryImpl implements ChildReplyPagingRepositor
         List<Tuple> tuples =  jpaQueryFactory.select(
                         childReply.childReplyId,childReply.content,childReply.parentReply.parentReplyId,
                         writerUser.name,writerUser.loginId,tagUser.name,tagUser.loginId,
-                        writerUser.profilePhoto.id, childReply.lastModifiedDate
+                        writerUser.profilePhoto.profilePhotoId, childReply.lastModifiedDate
                 )
                 .from(childReply)
-                .leftJoin(tagUser).on(childReply.replyTagUser.id.eq(tagUser.id))
-                .join(writerUser).on(childReply.user.id.eq(writerUser.id))
+                .leftJoin(tagUser).on(childReply.replyTagUser.userId.eq(tagUser.userId))
+                .join(writerUser).on(childReply.user.userId.eq(writerUser.userId))
                 .where(childReply.parentReply.parentReplyId.eq(parentReplyId))
                 .orderBy(createOrderSpecifier())
                 .offset(pageable.getOffset())

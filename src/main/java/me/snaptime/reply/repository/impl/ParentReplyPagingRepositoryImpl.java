@@ -29,11 +29,11 @@ public class ParentReplyPagingRepositoryImpl implements ParentReplyPagingReposit
         Pageable pageable= PageRequest.of((int) (pageNum-1),20);
 
         List<Tuple> tuples =  jpaQueryFactory.select(
-                        user.loginId,user.profilePhoto.id,user.name,
+                        user.loginId,user.profilePhoto.profilePhotoId,user.name,
                         parentReply.content,parentReply.parentReplyId,parentReply.lastModifiedDate
                 )
                 .from(parentReply)
-                .join(user).on(parentReply.user.id.eq(user.id))
+                .join(user).on(parentReply.user.userId.eq(user.userId))
                 .where(parentReply.snap.id.eq(snapId))
                 .orderBy(createOrderSpecifier())
                 .offset(pageable.getOffset())

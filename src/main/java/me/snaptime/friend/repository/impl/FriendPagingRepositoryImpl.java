@@ -33,7 +33,7 @@ public class FriendPagingRepositoryImpl implements FriendPagingRepository {
         Pageable pageable= PageRequest.of((int) (pageNum-1),20);
 
         List<Tuple> tuples =  jpaQueryFactory.select(
-                        user.loginId, user.profilePhoto.id, user.name, friend.friendId
+                        user.loginId, user.profilePhoto.profilePhotoId, user.name, friend.friendId
                 )
                 .from(friend)
                 .join(user).on(getJoinBuilder(searchType))
@@ -50,7 +50,7 @@ public class FriendPagingRepositoryImpl implements FriendPagingRepository {
     }
 
     private OrderSpecifier createOrderSpecifier() {
-        return new OrderSpecifier(Order.ASC, user.id);
+        return new OrderSpecifier(Order.ASC, user.userId);
     }
 
     // WHERE절을 동적으로 만들기 위한 메소드
@@ -58,10 +58,10 @@ public class FriendPagingRepositoryImpl implements FriendPagingRepository {
         BooleanBuilder builder = new BooleanBuilder();
 
         if(friendSearchType == FriendSearchType.FOLLOWING){
-            builder.and(friend.sender.id.eq(targetUser.getId()));
+            builder.and(friend.sender.userId.eq(targetUser.getUserId()));
         }
         else{
-            builder.and(friend.receiver.id.eq(targetUser.getId()));
+            builder.and(friend.receiver.userId.eq(targetUser.getUserId()));
         }
 
         if(searchKeyword !=null){
@@ -75,10 +75,10 @@ public class FriendPagingRepositoryImpl implements FriendPagingRepository {
     private BooleanBuilder getJoinBuilder(FriendSearchType friendSearchType){
         BooleanBuilder builder = new BooleanBuilder();
         if(friendSearchType == FriendSearchType.FOLLOWING){
-            return builder.and(friend.receiver.id.eq(user.id));
+            return builder.and(friend.receiver.userId.eq(user.userId));
         }
         else{
-            return builder.and(friend.sender.id.eq(user.id));
+            return builder.and(friend.sender.userId.eq(user.userId));
         }
     }
 }

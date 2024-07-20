@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface ProfilePhotoRepository extends JpaRepository<ProfilePhoto,Long>{
-    Optional<ProfilePhoto> findProfilePhotoByUser(User user);
+    Optional<ProfilePhoto> findProfilePhotoByUser(User reqUser);
 
 }

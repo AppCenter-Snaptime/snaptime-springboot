@@ -27,10 +27,10 @@ public class QProfilePhoto extends EntityPathBase<ProfilePhoto> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
+
+    public final NumberPath<Long> profilePhotoId = createNumber("profilePhotoId", Long.class);
 
     public final StringPath profilePhotoName = createString("profilePhotoName");
 

@@ -10,9 +10,6 @@ public interface SnapTagService {
     // snap에 태그유저를 등록합니다.
     void addTagUser(List<String> tagUserLoginIds, Snap snap);
 
-    // snap에 태그된 유저를 삭제합니다. (삭제예정)
-    void deleteTagUser(List<String> tagUserLoginIds, Long snapId);
-
     // 스냅 수정 시 태그정보를 갱신합니다.
     void modifyTagUser(List<String> tagUserLoginIds, Snap snap);
 

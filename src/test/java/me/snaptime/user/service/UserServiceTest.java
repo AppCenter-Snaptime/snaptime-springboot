@@ -3,6 +3,8 @@ package me.snaptime.user.service;
 import me.snaptime.jwt.JwtProvider;
 import me.snaptime.profilePhoto.domain.ProfilePhoto;
 import me.snaptime.profilePhoto.repository.ProfilePhotoRepository;
+import me.snaptime.redis.RefreshToken;
+import me.snaptime.redis.RefreshTokenRepository;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.dto.req.SignInReqDto;
 import me.snaptime.user.dto.req.UserReqDto;
@@ -46,6 +48,9 @@ class UserServiceTest {
     private ProfilePhotoRepository profilePhotoRepository;
 
     @Mock
+    private RefreshTokenRepository refreshTokenRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Mock
@@ -74,7 +79,7 @@ class UserServiceTest {
         UserResDto userResDto = userService.getUser("kang4746");
 
         //then
-        Assertions.assertEquals(givenUser.getId(),userResDto.id());
+        Assertions.assertEquals(givenUser.getUserId(),userResDto.userId());
         Assertions.assertEquals(givenUser.getName(),userResDto.name());
         Assertions.assertEquals(givenUser.getLoginId(),userResDto.loginId());
         Assertions.assertEquals(givenUser.getEmail(),userResDto.email());
@@ -117,29 +122,34 @@ class UserServiceTest {
     @DisplayName("given_when_then 방식으로 signIn 서비스 성공 테스트")
     public void signIn(){
         //given
-        SignInReqDto signInRequestDto = SignInReqDto.builder()
+        SignInReqDto signInReqDto = SignInReqDto.builder()
                 .loginId("kang4746")
                 .password("test1234")
                 .build();
 
         Mockito.when(userRepository.findByLoginId("kang4746"))
                 .thenReturn(Optional.of(givenUser));
-        Mockito.when(passwordEncoder.matches(signInRequestDto.password(), givenUser.getPassword()))
+        Mockito.when(passwordEncoder.matches(signInReqDto.password(), givenUser.getPassword()))
                 .thenReturn(true);
-        Mockito.when(jwtProvider.createAccessToken(givenUser.getLoginId(), givenUser.getRoles()))
-                .thenReturn("mockToken");
+        Mockito.when(jwtProvider.createAccessToken(givenUser.getUserId(),givenUser.getLoginId(), givenUser.getRoles()))
+                .thenReturn("mockAccessToken");
+        Mockito.when(jwtProvider.createRefreshToken(givenUser.getUserId(),givenUser.getLoginId(), givenUser.getRoles()))
+                .thenReturn("mockRefreshToken");
+        Mockito.when(refreshTokenRepository.save(any(RefreshToken.class)))
+                .then(returnsFirstArg());
 
         //when
-        SignInResDto signInResponseDto = signService.signIn(signInRequestDto);
+        SignInResDto signInResDto = signService.signIn(signInReqDto);
 
         //then
-        Assertions.assertEquals("mockToken",signInResponseDto.accessToken());
-        Assertions.assertEquals(signInRequestDto.loginId(),givenUser.getLoginId());
-        Assertions.assertEquals(signInRequestDto.password(),givenUser.getPassword());
+        Assertions.assertEquals("mockAccessToken",signInResDto.accessToken());
+        Assertions.assertEquals("mockRefreshToken",signInResDto.refreshToken());
+        Assertions.assertEquals(signInReqDto.loginId(),givenUser.getLoginId());
+        Assertions.assertEquals(signInReqDto.password(),givenUser.getPassword());
 
         verify(userRepository,times(1)).findByLoginId("kang4746");
-        verify(passwordEncoder,times(1)).matches(signInRequestDto.password(),givenUser.getPassword());
-        verify(jwtProvider,times(1)).createAccessToken(givenUser.getLoginId(),givenUser.getRoles());
+        verify(passwordEncoder,times(1)).matches(signInReqDto.password(),givenUser.getPassword());
+        verify(jwtProvider,times(1)).createAccessToken(givenUser.getUserId(),givenUser.getLoginId(),givenUser.getRoles());
 
     }
 
@@ -149,7 +159,7 @@ class UserServiceTest {
     public void deleteUser() {
         //given
         User user = spy(givenUser);
-        given(user.getId()).willReturn(1L);
+        given(user.getUserId()).willReturn(1L);
 
         Mockito.when(userRepository.findByLoginId("kang4746"))
                 .thenReturn(Optional.of(user));

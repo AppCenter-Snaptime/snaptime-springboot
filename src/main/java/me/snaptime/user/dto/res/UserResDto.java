@@ -6,7 +6,7 @@ import me.snaptime.user.domain.User;
 
 @Builder
 public record UserResDto(
-    Long id,
+    Long userId,
     String name,
     String loginId,
     String email,
@@ -14,7 +14,7 @@ public record UserResDto(
 ){
     public static UserResDto toDto(User user){
         return UserResDto.builder()
-                .id(user.getId())
+                .userId(user.getUserId())
                 .name(user.getName())
                 .loginId(user.getLoginId())
                 .email(user.getEmail())

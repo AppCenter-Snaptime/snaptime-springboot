@@ -50,7 +50,7 @@ public class FriendServiceImpl implements FriendService {
             throw new CustomException(ExceptionCode.ALREADY_FOLLOW);
 
         // 자기자신에게 팔로우요청을 했다면
-        if (receiver.getId() == sender.getId())
+        if (receiver.getUserId() == sender.getUserId())
             throw new CustomException(ExceptionCode.SELF_FRIEND_REQ);
 
         friendRepository.save(Friend.builder()
@@ -111,7 +111,7 @@ public class FriendServiceImpl implements FriendService {
         List<FriendInfo> friendInfos = tuples.stream().map(tuple ->
         {
             boolean isMyFriend = checkIsFollow(reqUser ,findUserByLoginId(tuple.get(user.loginId)));
-            String profilePhotoURL = urlComponent.makeProfileURL(tuple.get(user.profilePhoto.id));
+            String profilePhotoURL = urlComponent.makeProfileURL(tuple.get(user.profilePhoto.profilePhotoId));
             return FriendInfo.toDto(tuple,profilePhotoURL,isMyFriend);
         }).collect(Collectors.toList());
 

@@ -42,9 +42,9 @@ public class ProfilePhotoController {
     @Operation(summary = "프로필 사진 수정",description = "유저의 프로필 사진을 수정 합니다." +
             "<br> 유저의 Token 으로 유저를 구분짓습니다.")
     @PutMapping(consumes = MULTIPART_FORM_DATA)
-    public ResponseEntity<?> updateProfileToFileSystem(@AuthenticationPrincipal UserDetails principal,
+    public ResponseEntity<?> updateProfileToFileSystem(@AuthenticationPrincipal UserDetails userDetails,
                                                        @RequestParam MultipartFile file) throws Exception {
-        String loginId = principal.getUsername();
+        String loginId = userDetails.getUsername();
         log.info("[updateProfile] 유저의 프로필 사진을 수정합니다. loginId : {}", loginId);
         ProfilePhotoResDto updateProfile = profilePhotoService.updatePhotoFromFileSystem(loginId, file);
         return ResponseEntity.status(HttpStatus.OK).body(

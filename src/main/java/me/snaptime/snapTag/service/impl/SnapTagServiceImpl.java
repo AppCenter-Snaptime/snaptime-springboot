@@ -50,24 +50,6 @@ public class SnapTagServiceImpl implements SnapTagService {
 
     @Override
     @Transactional
-    public void deleteTagUser(List<String> tagUserLoginIds, Long snapId){
-
-        Snap snap = snapRepository.findById(snapId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
-
-        snapTagRepository.deleteAll(
-                tagUserLoginIds.stream().map( tagUserLoginId -> {
-                    User user = userRepository.findByLoginId(tagUserLoginId)
-                            .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-
-                    return snapTagRepository.findBySnapAndTagUser(snap,user)
-                            .orElseThrow(() -> new CustomException(ExceptionCode.SNAPTAG_NOT_EXIST));
-                }).collect(Collectors.toList())
-        );
-    }
-
-    @Override
-    @Transactional
     public void modifyTagUser(List<String> tagUserLoginIds, Snap snap){
 
         List<SnapTag> snapTags = snapTagRepository.findBySnap(snap);

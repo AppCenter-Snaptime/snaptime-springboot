@@ -31,27 +31,27 @@ public class UserServiceImpl implements UserService {
         return UserResDto.toDto(user);
     }
 
-    public UserResDto updateUser(String loginId, UserUpdateReqDto userUpdateDto) {
+    public UserResDto updateUser(String loginId, UserUpdateReqDto userUpdateReqDto) {
 
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        if (userUpdateDto.name() != null && !userUpdateDto.name().isEmpty()) {
-            user.updateUserName(userUpdateDto.name());
+        if (userUpdateReqDto.name() != null && !userUpdateReqDto.name().isEmpty()) {
+            user.updateUserName(userUpdateReqDto.name());
         }
 
-        if (userUpdateDto.email() != null && !userUpdateDto.email().isEmpty()) {
-            user.updateUserEmail(userUpdateDto.email());
+        if (userUpdateReqDto.email() != null && !userUpdateReqDto.email().isEmpty()) {
+            user.updateUserEmail(userUpdateReqDto.email());
         }
 
-        if (userUpdateDto.birthDay() != null && !userUpdateDto.birthDay().isEmpty()) {
-            user.updateUserBirthDay(userUpdateDto.birthDay());
+        if (userUpdateReqDto.birthDay() != null && !userUpdateReqDto.birthDay().isEmpty()) {
+            user.updateUserBirthDay(userUpdateReqDto.birthDay());
         }
         return UserResDto.toDto(user);
     }
 
     public void deleteUser(String loginId) {
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-        userRepository.deleteById(user.getId());
+        userRepository.deleteById(user.getUserId());
     }
 
     public void updatePassword(String loginId, String password){

@@ -74,7 +74,7 @@ public class ProfilePhotoServiceImpl implements ProfilePhotoService {
     @Transactional
     public ProfilePhotoResDto updatePhotoFromFileSystem(String loginId, MultipartFile updateFile) throws Exception{
         User updateUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
-        ProfilePhoto profilePhoto = profilePhotoRepository.findById(updateUser.getProfilePhoto().getId()).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
+        ProfilePhoto profilePhoto = profilePhotoRepository.findById(updateUser.getProfilePhoto().getProfilePhotoId()).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
 
         String updateFileName = ProfilePhotoNameGenerator.generatorProfilePhotoName(updateFile.getOriginalFilename());
         String updateFilePath = FOLDER_PATH + updateFileName;

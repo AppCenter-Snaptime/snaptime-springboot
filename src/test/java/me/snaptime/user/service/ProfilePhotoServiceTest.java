@@ -80,7 +80,7 @@ public class ProfilePhotoServiceTest {
                 .build();
 
         given(mockuser.getProfilePhoto()).willReturn(mockProfile);
-        given(mockProfile.getId()).willReturn(1L);
+        given(mockProfile.getProfilePhotoId()).willReturn(1L);
         given(mockProfile.getProfilePhotoName()).willReturn("image");
         given(mockProfile.getProfilePhotoPath()).willReturn("/image");
 
