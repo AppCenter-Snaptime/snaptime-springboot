@@ -40,10 +40,10 @@ public class ProfileController {
             "<br> 다른 사람의 프로필 조회 -> snap이 전부 private이거나 없는 경우 앨범 리턴 x 그리고 private 인 snap 리턴 x")
     @Parameter(name = "targetLoginId", description = "앨범과 사진들을 가져오기 위한 loginId", required = true)
     @GetMapping("/album-snap")
-    public ResponseEntity<CommonResponseDto<List<AlbumSnapResDto>>> getAlbumSnap(@AuthenticationPrincipal UserDetails principal,
+    public ResponseEntity<CommonResponseDto<List<AlbumSnapResDto>>> getAlbumSnap(@AuthenticationPrincipal UserDetails userDetails,
                                                                                  @RequestParam("targetLoginId")
                                                                                  @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String targetLoginId){
-        String reqLoginId = principal.getUsername();
+        String reqLoginId = userDetails.getUsername();
         List<AlbumSnapResDto> albumSnapResDtos = profileService.getAlbumSnap(reqLoginId, targetLoginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
@@ -57,10 +57,10 @@ public class ProfileController {
             "<br> 토큰이 없어도 해당 Api 엔드포인트를 요청할 수 있습니다.")
     @Parameter(name = "targetLoginId", description = "이름과 프로필 사진을 가져오기 위한 loginId", required = true)
     @GetMapping("/profile")
-    public ResponseEntity<CommonResponseDto<UserProfileResDto>> getUserProfile(@AuthenticationPrincipal UserDetails principal,
+    public ResponseEntity<CommonResponseDto<UserProfileResDto>> getUserProfile(@AuthenticationPrincipal UserDetails userDetails,
                                                                                @RequestParam("targetLoginId")
                                                                                @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String targetLoginId){
-        String reqLoginId = principal.getUsername();
+        String reqLoginId = userDetails.getUsername();
         UserProfileResDto userProfileResDto = profileService.getUserProfile(reqLoginId, targetLoginId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(

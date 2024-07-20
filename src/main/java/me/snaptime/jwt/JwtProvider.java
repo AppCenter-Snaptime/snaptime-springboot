@@ -33,14 +33,10 @@ public class JwtProvider {
 
     @PostConstruct
     protected void init(){
-        log.info("[init] JwtTokenProvide 내 secretKey 초기화 시작");
         secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-        log.info("[init] JwtTokenProvider 내 secretKey 초기화 완료");
     }
 
     public String createAccessToken(Long userId, String loginId, List<String> roles){
-        log.info("[createAccessToken] 엑세스 토큰 생성 시작");
-
         Claims claims = Jwts.claims().setSubject(loginId);
         claims.put("userId",userId);
         claims.put("type","access");
@@ -53,13 +49,10 @@ public class JwtProvider {
                 .signWith(secretKey)
                 .compact();
 
-        log.info("[createAccessToken] 엑세스 토큰 생성 완료");
         return token;
     }
 
     public String createRefreshToken(Long id, String loginId, List<String> roles){
-        log.info("[createRefreshToken] 리프레시 토큰 생성 시작");
-
         Claims claims = Jwts.claims().setSubject(loginId);
         claims.put("userId", id);
         claims.put("type", "refresh");
@@ -71,13 +64,10 @@ public class JwtProvider {
                 .setExpiration(new Date(now.getTime() + refreshTokenValidTime))
                 .signWith(secretKey)
                 .compact();
-
-        log.info("[createAccessToken] 엑세스 토큰 생성 완료");
         return token;
     }
 
     public Long getUserId(String token) {
-        log.info("[getUserId] 토큰 기반 회원 구별 정보 추출");
         Long userId = Long.valueOf(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("userId").toString());
         log.info("[getUserId] 토큰 기반 회원 구별 정보 추출 완료, userId : {}", userId);
         return userId;
@@ -86,7 +76,6 @@ public class JwtProvider {
     // 필터에서 인증 성공 후, SecurityContextHolder 에 저장할 Authentication 을 생성
     //UsernamePasswordAuthenticationToken 클래스를 사용
     public Authentication getAuthentication(String token){
-        log.info("[getAuthentication] 토큰 인증 정보 조회 시작");
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUsername(token));
         log.info("[getAuthentication] 토큰 인증 정보 조회 완료, UserDetails loginId : {}",userDetails.getUsername());
 
@@ -97,7 +86,6 @@ public class JwtProvider {
     //Jwts.parser()를 통해 secretKey를 설정하고 클레임을 추출해서 토큰을 생성할 때 넣었던 sub값을 추출합니다.
     public String getUsername(String token)
     {
-        log.info("[getUsername] 토큰 기반 회원 구별 정보 추출");
         String loginId = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
@@ -109,7 +97,6 @@ public class JwtProvider {
     }
 
     public String getAuthorizationToken(HttpServletRequest request){
-        log.info("[getAuthorizationToken] HTTP 헤더에서 Token 값 추출");
         String token = request.getHeader("Authorization");
         try{
             if(!token.substring(0,"BEARER ".length()).equalsIgnoreCase("Bearer ")){
@@ -126,7 +113,6 @@ public class JwtProvider {
         이 메소드는 토큰을 전달 받아 클레임의 유효기간을 체크하고 boolean 타입 값을 리턴하는 역할을 한다.
     */
     public boolean validateToken(String token) {
-        log.info("[validateToken] 토큰 유효 체크 시작");
         try{
             //복잡한 설정일 떈, Jwts.parserBuilder()를 이용
             Jws<Claims> claims = Jwts.parser()

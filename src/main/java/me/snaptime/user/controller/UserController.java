@@ -35,8 +35,8 @@ public class UserController {
 
     @Operation(summary = "유저 정보 조회",description = "유저 번호로 유저 정보를 조회합니다. ")
     @GetMapping()
-    public ResponseEntity<CommonResponseDto<UserResDto>> getUser(@AuthenticationPrincipal UserDetails principal){
-        UserResDto userResDto = userService.getUser(principal.getUsername());
+    public ResponseEntity<CommonResponseDto<UserResDto>> getUser(@AuthenticationPrincipal UserDetails userDetails){
+        UserResDto userResDto = userService.getUser(userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 정보가 성공적으로 조회되었습니다.",
@@ -48,9 +48,9 @@ public class UserController {
             "<br> 유저 loginId 수정 이후에는, Token의 loginId 정보와 현재 유저의 loginId가 다르므로," +
             "<br> Token을 버리고 재 login을 유도해야 합니다.")
     @PatchMapping()
-    public ResponseEntity<CommonResponseDto<UserResDto>> changeUser(@AuthenticationPrincipal UserDetails principal,
+    public ResponseEntity<CommonResponseDto<UserResDto>> changeUser(@AuthenticationPrincipal UserDetails userDetails,
                                                                     @Valid @RequestBody UserUpdateReqDto userUpdateReqDto){
-        UserResDto userResDto = userService.updateUser(principal.getUsername(), userUpdateReqDto);
+        UserResDto userResDto = userService.updateUser(userDetails.getUsername(), userUpdateReqDto);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 정보 수정이 성공적으로 완료되었습니다.",
@@ -58,10 +58,10 @@ public class UserController {
     }
     @Operation(summary = "유저 비밀번호 수정",description = "해당 유저의 비밀번호를 수정합니다.")
     @PatchMapping("/password")
-    public ResponseEntity<CommonResponseDto<Void>> changeUser(@AuthenticationPrincipal UserDetails principal,
+    public ResponseEntity<CommonResponseDto<Void>> changeUser(@AuthenticationPrincipal UserDetails userDetails,
                                                               @RequestParam("password")
                                                               @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String password) {
-        userService.updatePassword(principal.getUsername(), password);
+        userService.updatePassword(userDetails.getUsername(), password);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 비밀번호 수정이 성공적으로 완료되었습니다.",
@@ -71,8 +71,8 @@ public class UserController {
 
     @Operation(summary = "유저 삭제",description = "유저 번호로 유저를 삭제합니다.")
     @DeleteMapping()
-    public ResponseEntity<CommonResponseDto<Void>> deleteUser(@AuthenticationPrincipal UserDetails principal){
-        userService.deleteUser(principal.getUsername());
+    public ResponseEntity<CommonResponseDto<Void>> deleteUser(@AuthenticationPrincipal UserDetails userDetails){
+        userService.deleteUser(userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 삭제가 성공적으로 완료되었습니다.",
