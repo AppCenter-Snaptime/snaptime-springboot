@@ -44,7 +44,7 @@ public class UserController {
 
 
     @Operation(summary = "유저 정보 수정",description = "해당 유저의 정보를 수정합니다. " +
-            "<br> 유저 loginId 수정 이후에는, Token의 loginId 정보와 현재 유저의 loginId가 다르므로," +
+            "<br> 유저 writerLoginId 수정 이후에는, Token의 writerLoginId 정보와 현재 유저의 loginId가 다르므로," +
             "<br> Token을 버리고 재 login을 유도해야 합니다.")
     @PatchMapping()
     public ResponseEntity<CommonResponseDto<UserResDto>> changeUser(@AuthenticationPrincipal UserDetails principal,

@@ -2,6 +2,7 @@ package me.snaptime.snap.dto.res;
 
 import com.querydsl.core.Tuple;
 import lombok.Builder;
+import me.snaptime.snap.domain.Snap;
 import me.snaptime.snapTag.dto.res.FindTagUserResDto;
 
 import java.time.LocalDateTime;
@@ -12,8 +13,7 @@ import static me.snaptime.user.domain.QUser.user;
 
 
 @Builder
-public record SnapPagingInfo(
-
+public record SnapResInfo(
         Long snapId,
         String oneLineJournal,
         String snapPhotoURL,
@@ -26,10 +26,10 @@ public record SnapPagingInfo(
         Long likeCnt,
         boolean isLikedSnap
 ) {
-    public static SnapPagingInfo toDto(Tuple result, String profilePhotoURL, String snapPhotoURL,
-                                       List<FindTagUserResDto> findTagUserList, Long likeCnt, boolean isLikedSnap){
+    public static SnapResInfo toDto(Tuple result, String profilePhotoURL, String snapPhotoURL,
+                                    List<FindTagUserResDto> findTagUserList, Long likeCnt, boolean isLikedSnap){
 
-        return SnapPagingInfo.builder()
+        return SnapResInfo.builder()
                 .snapId(result.get(snap.id))
                 .oneLineJournal(String.valueOf(result.get(snap.oneLineJournal)))
                 .snapPhotoURL(snapPhotoURL)
@@ -38,6 +38,24 @@ public record SnapPagingInfo(
                 .writerLoginId(result.get(user.loginId))
                 .profilePhotoURL(profilePhotoURL)
                 .writerUserName(result.get(user.name))
+                .findTagUserList(findTagUserList)
+                .likeCnt(likeCnt)
+                .isLikedSnap(isLikedSnap)
+                .build();
+    }
+
+    public static SnapResInfo toDto(Snap result, String profilePhotoURL, String snapPhotoURL,
+                                    List<FindTagUserResDto> findTagUserList, Long likeCnt, boolean isLikedSnap){
+
+        return SnapResInfo.builder()
+                .snapId(result.getId())
+                .oneLineJournal(result.getOneLineJournal())
+                .snapPhotoURL(snapPhotoURL)
+                .snapCreatedDate(result.getCreatedDate())
+                .snapModifiedDate(result.getLastModifiedDate())
+                .writerLoginId(result.getUser().getLoginId())
+                .profilePhotoURL(profilePhotoURL)
+                .writerUserName(result.getUser().getName())
                 .findTagUserList(findTagUserList)
                 .likeCnt(likeCnt)
                 .isLikedSnap(isLikedSnap)

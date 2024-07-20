@@ -268,7 +268,7 @@ public class FriendServiceImplTest {
         given(friendRepository.countByReceiver(any(User.class))).willReturn(1l);
 
         // when
-        FriendCntResDto friendCntResDto = friendServiceImpl.findFriendCnt("loginId");
+        FriendCntResDto friendCntResDto = friendServiceImpl.findFriendCnt("writerLoginId");
 
         // then
         assertThat(friendCntResDto.followerCnt()).isEqualTo(1l);

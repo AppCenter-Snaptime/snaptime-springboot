@@ -15,9 +15,11 @@ import me.snaptime.snap.domain.Snap;
 import me.snaptime.snap.dto.file.WritePhotoToFileSystemResult;
 import me.snaptime.snap.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.dto.req.ModifySnapReqDto;
-import me.snaptime.snap.dto.res.FindSnapResDto;
+import me.snaptime.snap.dto.res.SnapResInfo;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snap.service.SnapService;
+import me.snaptime.snapLike.service.SnapLikeService;
+import me.snaptime.snapTag.dto.res.FindTagUserResDto;
 import me.snaptime.snapTag.service.SnapTagService;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
@@ -42,6 +44,7 @@ public class SnapServiceImpl implements SnapService {
     private final UrlComponent urlComponent;
     private final SnapTagService snapTagService;
     private final AlbumService albumService;
+    private final SnapLikeService snapLikeService;
 
     @Override
     public Long createSnap(CreateSnapReqDto createSnapReqDto, String userUid, boolean isPrivate, List<String> tagUserLoginIds, Long album_id) {
@@ -82,7 +85,7 @@ public class SnapServiceImpl implements SnapService {
     }
 
     @Override
-    public FindSnapResDto findSnap(Long id, String uId) {
+    public SnapResInfo findSnap(Long id, String uId) {
         Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         if(foundSnap.isPrivate()) {
             User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
@@ -93,7 +96,10 @@ public class SnapServiceImpl implements SnapService {
         }
         String snapPhotoUrl = urlComponent.makePhotoURL(foundSnap.getFileName(), foundSnap.isPrivate());
         String profilePhotoUrl = urlComponent.makeProfileURL(foundSnap.getUser().getProfilePhoto().getId());
-        return FindSnapResDto.entityToResDto(foundSnap, snapPhotoUrl, profilePhotoUrl);
+        List<FindTagUserResDto> tagUserList = snapTagService.findTagUserList(foundSnap.getId());
+        Long snapLikeCnt = snapLikeService.findSnapLikeCnt(foundSnap.getId());
+        boolean isLikedSnap = snapLikeService.isLikedSnap(foundSnap.getId(), uId);
+        return SnapResInfo.toDto(foundSnap, snapPhotoUrl, profilePhotoUrl, tagUserList, snapLikeCnt, isLikedSnap);
     }
 
     @Override

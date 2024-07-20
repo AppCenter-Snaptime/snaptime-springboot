@@ -56,7 +56,7 @@ public class JwtProvider {
     public Authentication getAuthentication(String token){
         log.info("[getAuthentication] 토큰 인증 정보 조회 시작");
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUsername(token));
-        log.info("[getAuthentication] 토큰 인증 정보 조회 완료, UserDetails loginId : {}",userDetails.getUsername());
+        log.info("[getAuthentication] 토큰 인증 정보 조회 완료, UserDetails writerLoginId : {}",userDetails.getUsername());
 
         return new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
     }
@@ -72,7 +72,7 @@ public class JwtProvider {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
-        log.info("[getUsername] 토큰 기반 회원 구별 정보 추출 완료, loginId : {}",loginId);
+        log.info("[getUsername] 토큰 기반 회원 구별 정보 추출 완료, writerLoginId : {}",loginId);
         return loginId;
     }
 

@@ -10,7 +10,7 @@ import me.snaptime.alarm.common.AlarmType;
 import me.snaptime.alarm.service.AlarmService;
 import me.snaptime.common.CommonResponseDto;
 import me.snaptime.reply.dto.res.FindParentReplyResDto;
-import me.snaptime.snap.dto.res.FindSnapResDto;
+import me.snaptime.snap.dto.res.SnapResInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -48,7 +48,7 @@ public class AlarmController {
     @GetMapping("/snaps/{snapAlarmId}")
     @Operation(summary = "스냅알림 조회", description = "스냅알림을 읽음처리 후 해당스냅페이지로 이동합니다.")
     @Parameter(name = "snapAlarmId" , description = "snapAlarmId를 입력해주세요", required = true,example = "1")
-    public ResponseEntity<CommonResponseDto<FindSnapResDto>> readSnapAlarm(
+    public ResponseEntity<CommonResponseDto<SnapResInfo>> readSnapAlarm(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long snapAlarmId) {
 

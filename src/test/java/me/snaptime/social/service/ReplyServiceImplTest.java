@@ -78,7 +78,7 @@ public class ReplyServiceImplTest {
         given(snapRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(snap));
 
         //when
-        replyServiceImpl.addParentReply("loginId", new AddParentReplyReqDto("댓글내용",1L));
+        replyServiceImpl.addParentReply("writerLoginId", new AddParentReplyReqDto("댓글내용",1L));
 
         //then
         verify(parentReplyRepository,times(1)).save(any(ParentReply.class));
@@ -95,7 +95,7 @@ public class ReplyServiceImplTest {
 
         //when
         try{
-            replyServiceImpl.addParentReply("loginId",new AddParentReplyReqDto("댓글내용",1L));
+            replyServiceImpl.addParentReply("writerLoginId",new AddParentReplyReqDto("댓글내용",1L));
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -116,7 +116,7 @@ public class ReplyServiceImplTest {
         given(parentReplyRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(parentReply));
 
         //when
-        replyServiceImpl.addChildReply("loginId",addChildReplyReqDto);
+        replyServiceImpl.addChildReply("writerLoginId",addChildReplyReqDto);
 
         //then
         verify(parentReplyRepository,times(1)).findById(any(Long.class));
@@ -134,7 +134,7 @@ public class ReplyServiceImplTest {
 
         //when
         try{
-            replyServiceImpl.addChildReply("loginId",addChildReplyReqDto);
+            replyServiceImpl.addChildReply("writerLoginId",addChildReplyReqDto);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -156,7 +156,7 @@ public class ReplyServiceImplTest {
 
         //when
         try{
-            replyServiceImpl.addChildReply("loginId",addChildReplyReqDto);
+            replyServiceImpl.addChildReply("writerLoginId",addChildReplyReqDto);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then

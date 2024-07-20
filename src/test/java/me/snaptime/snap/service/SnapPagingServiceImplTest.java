@@ -87,18 +87,18 @@ public class SnapPagingServiceImplTest {
         FindSnapPagingResDto result = snapPagingServiceImpl.findSnapPaging("testLoginId",1L);
 
         // then
-        assertThat(result.snapPagingInfoList().size()).isEqualTo(3);
-        assertThat(result.snapPagingInfoList().get(0).snapId()).isEqualTo(1);
-        assertThat(result.snapPagingInfoList().get(1).snapId()).isEqualTo(2);
-        assertThat(result.snapPagingInfoList().get(2).snapId()).isEqualTo(3);
+        assertThat(result.snapResInfoList().size()).isEqualTo(3);
+        assertThat(result.snapResInfoList().get(0).snapId()).isEqualTo(1);
+        assertThat(result.snapResInfoList().get(1).snapId()).isEqualTo(2);
+        assertThat(result.snapResInfoList().get(2).snapId()).isEqualTo(3);
 
-        assertThat(result.snapPagingInfoList().get(0).oneLineJournal()).isEqualTo("일기1");
-        assertThat(result.snapPagingInfoList().get(1).oneLineJournal()).isEqualTo("일기2");
-        assertThat(result.snapPagingInfoList().get(2).oneLineJournal()).isEqualTo("일기3");
+        assertThat(result.snapResInfoList().get(0).oneLineJournal()).isEqualTo("일기1");
+        assertThat(result.snapResInfoList().get(1).oneLineJournal()).isEqualTo("일기2");
+        assertThat(result.snapResInfoList().get(2).oneLineJournal()).isEqualTo("일기3");
 
-        assertThat(result.snapPagingInfoList().get(0).snapPhotoURL()).isEqualTo("photoURL1");
-        assertThat(result.snapPagingInfoList().get(1).snapPhotoURL()).isEqualTo("photoURL2");
-        assertThat(result.snapPagingInfoList().get(2).snapPhotoURL()).isEqualTo("photoURL3");
+        assertThat(result.snapResInfoList().get(0).snapPhotoURL()).isEqualTo("photoURL1");
+        assertThat(result.snapResInfoList().get(1).snapPhotoURL()).isEqualTo("photoURL2");
+        assertThat(result.snapResInfoList().get(2).snapPhotoURL()).isEqualTo("photoURL3");
 
         verify(snapRepository,times(1)).findSnapPaging(any(Long.class),any(User.class));
         verify(userRepository,times(1)).findByLoginId(any(String.class));
