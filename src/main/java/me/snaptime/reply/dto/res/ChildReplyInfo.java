@@ -21,19 +21,19 @@ public record ChildReplyInfo(
         String timeAgo
 ) {
 
-    public static ChildReplyInfo toDto(Tuple result, String profilePhotoURL,String timeAgo){
+    public static ChildReplyInfo toDto(Tuple tuple, String profilePhotoURL,String timeAgo){
         QUser tagUser = new QUser("tagUser");
         QUser writerUser = new QUser("writerUser");
 
         return ChildReplyInfo.builder()
-                .writerLoginId(result.get(writerUser.loginId))
+                .writerLoginId(tuple.get(writerUser.loginId))
                 .writerProfilePhotoURL(profilePhotoURL)
-                .writerUserName(result.get(writerUser.name))
-                .content(result.get(childReply.content))
-                .tagUserLoginId(result.get(tagUser.loginId))
-                .tagUserName(result.get(tagUser.name))
-                .parentReplyId(result.get(childReply.parentReply.parentReplyId))
-                .childReplyId(result.get(childReply.childReplyId))
+                .writerUserName(tuple.get(writerUser.name))
+                .content(tuple.get(childReply.content))
+                .tagUserLoginId(tuple.get(tagUser.loginId))
+                .tagUserName(tuple.get(tagUser.name))
+                .parentReplyId(tuple.get(childReply.parentReply.parentReplyId))
+                .childReplyId(tuple.get(childReply.childReplyId))
                 .timeAgo(timeAgo)
                 .build();
     }

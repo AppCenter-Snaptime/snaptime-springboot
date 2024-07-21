@@ -15,12 +15,12 @@ public record FriendInfo(
         Long friendId,
         boolean isMyFriend
 ) {
-    public static FriendInfo toDto(Tuple result, String profilePhotoURL, boolean isMyFriend){
+    public static FriendInfo toDto(Tuple tuple, String profilePhotoURL, boolean isMyFriend){
         return FriendInfo.builder()
-                .foundLoginId(result.get(user.loginId))
+                .foundLoginId(tuple.get(user.loginId))
                 .profilePhotoURL(profilePhotoURL)
-                .foundUserName(result.get(user.name))
-                .friendId(result.get(friend.friendId))
+                .foundUserName(tuple.get(user.name))
+                .friendId(tuple.get(friend.friendId))
                 .isMyFriend(isMyFriend)
                 .build();
     }

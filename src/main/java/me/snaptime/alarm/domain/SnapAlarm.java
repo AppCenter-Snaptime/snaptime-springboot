@@ -18,6 +18,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class SnapAlarm extends BaseTimeEntity {
 
     @Id
+    @Column(name = "snap_alarm_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long snapAlarmId;
 

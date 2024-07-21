@@ -25,13 +25,13 @@ public class SnapPagingController {
     @Operation(summary = "Snap 조회", description = "커뮤니티에서 Snap을 10개씩 페이징조회합니다.")
     @Parameter(name = "pageNum", description = "Snap페이지 번호를 보내주세요")
     @GetMapping("/community/snaps/{pageNum}")
-    public ResponseEntity<CommonResponseDto<FindSnapPagingResDto>> findSnapPaging(
+    public ResponseEntity<CommonResponseDto<FindSnapPagingResDto>> findSnapPage(
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final Long pageNum) {
 
-        String loginId = userDetails.getUsername();
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new CommonResponseDto("스냅 페이징조회가 완료되었습니다.", snapPagingService.findSnapPaging(loginId,pageNum)));
+        String reqLoginId = userDetails.getUsername();
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto(
+                "스냅 페이징조회가 완료되었습니다.", snapPagingService.findSnapPage(reqLoginId,pageNum)));
     }
 
 }

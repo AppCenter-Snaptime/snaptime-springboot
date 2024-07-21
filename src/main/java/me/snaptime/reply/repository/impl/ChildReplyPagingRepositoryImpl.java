@@ -30,7 +30,7 @@ public class ChildReplyPagingRepositoryImpl implements ChildReplyPagingRepositor
         QUser tagUser = new QUser("tagUser");
         QUser writerUser = new QUser("writerUser");
         
-        List<Tuple> result =  jpaQueryFactory.select(
+        List<Tuple> tuples =  jpaQueryFactory.select(
                         childReply.childReplyId,childReply.content,childReply.parentReply.parentReplyId,
                         writerUser.name,writerUser.loginId,tagUser.name,tagUser.loginId,
                         writerUser.profilePhoto.profilePhotoId, childReply.lastModifiedDate
@@ -44,10 +44,10 @@ public class ChildReplyPagingRepositoryImpl implements ChildReplyPagingRepositor
                 .limit(pageable.getPageSize()+1) //페이지의 크기
                 .fetch();
 
-        if(result.size() == 0)
+        if(tuples.size() == 0)
             throw new CustomException(ExceptionCode.PAGE_NOT_FOUND);
 
-        return result;
+        return tuples;
     }
 
     private OrderSpecifier createOrderSpecifier() {

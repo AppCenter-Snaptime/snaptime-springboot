@@ -304,20 +304,20 @@ public class FriendServiceImplTest {
 
         // when
         FindFriendResDto result = friendServiceImpl
-                .findFriendList("writerLoginId","targetLoginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
+                .findFriends("writerLoginId","targetLoginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
 
         // then
-        assertThat(result.friendInfoList().get(0).foundLoginId()).isEqualTo("testLoginId1");
-        assertThat(result.friendInfoList().get(1).foundLoginId()).isEqualTo("testLoginId2");
-        assertThat(result.friendInfoList().get(2).foundLoginId()).isEqualTo("testLoginId3");
+        assertThat(result.friendInfos().get(0).foundLoginId()).isEqualTo("testLoginId1");
+        assertThat(result.friendInfos().get(1).foundLoginId()).isEqualTo("testLoginId2");
+        assertThat(result.friendInfos().get(2).foundLoginId()).isEqualTo("testLoginId3");
 
-        assertThat(result.friendInfoList().get(0).foundUserName()).isEqualTo("name1");
-        assertThat(result.friendInfoList().get(1).foundUserName()).isEqualTo("name2");
-        assertThat(result.friendInfoList().get(2).foundUserName()).isEqualTo("name3");
+        assertThat(result.friendInfos().get(0).foundUserName()).isEqualTo("name1");
+        assertThat(result.friendInfos().get(1).foundUserName()).isEqualTo("name2");
+        assertThat(result.friendInfos().get(2).foundUserName()).isEqualTo("name3");
 
-        assertThat(result.friendInfoList().get(0).profilePhotoURL()).isEqualTo("profile1");
-        assertThat(result.friendInfoList().get(1).profilePhotoURL()).isEqualTo("profile2");
-        assertThat(result.friendInfoList().get(2).profilePhotoURL()).isEqualTo("profile3");
+        assertThat(result.friendInfos().get(0).profilePhotoURL()).isEqualTo("profile1");
+        assertThat(result.friendInfos().get(1).profilePhotoURL()).isEqualTo("profile2");
+        assertThat(result.friendInfos().get(2).profilePhotoURL()).isEqualTo("profile3");
 
         assertThat(result.hasNextPage()).isFalse();
 

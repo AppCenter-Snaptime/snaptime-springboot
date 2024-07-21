@@ -54,7 +54,7 @@ public class SnapPagingControllerTest {
                 .andExpect(jsonPath("$.msg").value("스냅 페이징조회가 완료되었습니다."))
                 .andDo(print());
 
-        verify(snapPagingService,times(1)).findSnapPaging(any(String.class),any(Long.class));
+        verify(snapPagingService,times(1)).findSnapPage(any(String.class),any(Long.class));
     }
 
     @Test
@@ -70,7 +70,7 @@ public class SnapPagingControllerTest {
                 .andExpect(jsonPath("$.msg").value("pageNum이 Long타입이여야 합니다."))
                 .andDo(print());
 
-        verify(snapPagingService,times(0)).findSnapPaging(any(String.class),any(Long.class));
+        verify(snapPagingService,times(0)).findSnapPage(any(String.class),any(Long.class));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class SnapPagingControllerTest {
     @DisplayName("스냅 페이징조회테스트 -> (실패 : 존재하지 않는 페이지)")
     public void findSnapPagingTest3() throws Exception{
         //given
-        given(snapPagingService.findSnapPaging(any(String.class),any(Long.class)))
+        given(snapPagingService.findSnapPage(any(String.class),any(Long.class)))
                 .willThrow(new CustomException(ExceptionCode.PAGE_NOT_FOUND));
 
         //when, then
@@ -88,6 +88,6 @@ public class SnapPagingControllerTest {
                 .andExpect(jsonPath("$.msg").value("존재하지 않는 페이지입니다."))
                 .andDo(print());
 
-        verify(snapPagingService,times(1)).findSnapPaging(any(String.class),any(Long.class));
+        verify(snapPagingService,times(1)).findSnapPage(any(String.class),any(Long.class));
     }
 }

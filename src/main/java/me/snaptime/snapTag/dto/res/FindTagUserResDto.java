@@ -7,13 +7,13 @@ import me.snaptime.snapTag.domain.SnapTag;
 public record FindTagUserResDto(
 
         String tagUserLoginId,
-        String userName
+        String tagUserName
 
 ) {
     public static FindTagUserResDto toDto(SnapTag snapTag){
         return FindTagUserResDto.builder()
                 .tagUserLoginId(snapTag.getTagUser().getLoginId())
-                .userName(snapTag.getTagUser().getName())
+                .tagUserName(snapTag.getTagUser().getName())
                 .build();
     }
 }

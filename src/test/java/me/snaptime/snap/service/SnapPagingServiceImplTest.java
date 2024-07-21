@@ -23,7 +23,7 @@ import java.util.Optional;
 
 import static me.snaptime.snap.domain.QSnap.snap;
 import static me.snaptime.user.domain.QUser.user;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -84,21 +84,21 @@ public class SnapPagingServiceImplTest {
         given(snapRepository.findSnapPaging(any(Long.class),any(User.class))).willReturn(List.of(tuple1,tuple2,tuple3));
 
         // when
-        FindSnapPagingResDto result = snapPagingServiceImpl.findSnapPaging("testLoginId",1L);
+        FindSnapPagingResDto findSnapPagingResDto = snapPagingServiceImpl.findSnapPage("testLoginId",1L);
 
         // then
-        assertThat(result.snapPagingInfoList().size()).isEqualTo(3);
-        assertThat(result.snapPagingInfoList().get(0).snapId()).isEqualTo(1);
-        assertThat(result.snapPagingInfoList().get(1).snapId()).isEqualTo(2);
-        assertThat(result.snapPagingInfoList().get(2).snapId()).isEqualTo(3);
+        assertThat(findSnapPagingResDto.snapPagingInfos().size()).isEqualTo(3);
+        assertThat(findSnapPagingResDto.snapPagingInfos().get(0).snapId()).isEqualTo(1);
+        assertThat(findSnapPagingResDto.snapPagingInfos().get(1).snapId()).isEqualTo(2);
+        assertThat(findSnapPagingResDto.snapPagingInfos().get(2).snapId()).isEqualTo(3);
 
-        assertThat(result.snapPagingInfoList().get(0).oneLineJournal()).isEqualTo("일기1");
-        assertThat(result.snapPagingInfoList().get(1).oneLineJournal()).isEqualTo("일기2");
-        assertThat(result.snapPagingInfoList().get(2).oneLineJournal()).isEqualTo("일기3");
+        assertThat(findSnapPagingResDto.snapPagingInfos().get(0).oneLineJournal()).isEqualTo("일기1");
+        assertThat(findSnapPagingResDto.snapPagingInfos().get(1).oneLineJournal()).isEqualTo("일기2");
+        assertThat(findSnapPagingResDto.snapPagingInfos().get(2).oneLineJournal()).isEqualTo("일기3");
 
-        assertThat(result.snapPagingInfoList().get(0).snapPhotoURL()).isEqualTo("photoURL1");
-        assertThat(result.snapPagingInfoList().get(1).snapPhotoURL()).isEqualTo("photoURL2");
-        assertThat(result.snapPagingInfoList().get(2).snapPhotoURL()).isEqualTo("photoURL3");
+        assertThat(findSnapPagingResDto.snapPagingInfos().get(0).snapPhotoURL()).isEqualTo("photoURL1");
+        assertThat(findSnapPagingResDto.snapPagingInfos().get(1).snapPhotoURL()).isEqualTo("photoURL2");
+        assertThat(findSnapPagingResDto.snapPagingInfos().get(2).snapPhotoURL()).isEqualTo("photoURL3");
 
         verify(snapRepository,times(1)).findSnapPaging(any(Long.class),any(User.class));
         verify(userRepository,times(1)).findByLoginId(any(String.class));

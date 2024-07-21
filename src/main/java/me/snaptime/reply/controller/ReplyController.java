@@ -40,7 +40,8 @@ public class ReplyController {
     }
 
     @PostMapping("/child-replies")
-    @Operation(summary = "대댓글 등록요청", description = "대댓글을 등록할 부모댓글의 Id와 태그할 유저의 loginId,댓글내용을 입력해주세요<br>태그할 유저가 없다면 tagLoginId는 보내지 않아도 됩니다.")
+    @Operation(summary = "대댓글 등록요청", description = "대댓글을 등록할 부모댓글의 Id와 태그할 유저의 loginId,댓글내용을 입력해주세요" +
+                                        "<br>태그할 유저가 없다면 tagLoginId는 보내지 않아도 됩니다.")
     public ResponseEntity<CommonResponseDto<Void>> addChildReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @RequestBody @Valid AddChildReplyReqDto addChildReplyReqDto){
@@ -51,31 +52,33 @@ public class ReplyController {
     }
 
     @GetMapping("/parent-replies/{pageNum}")
-    @Operation(summary = "댓글 조회요청", description = "댓글조회할 snapId와 페이지번호를 입력해주세요<br>댓글을 20개씩 반환합니다.")
+    @Operation(summary = "댓글 조회요청", description = "댓글조회할 snapId와 페이지번호를 입력해주세요<br>" +
+                                        "댓글을 20개씩 반환합니다.")
     @Parameters({
             @Parameter(name = "pageNum", description = "페이지번호", required = true, example = "1"),
             @Parameter(name = "snapId", description = "조회할 snapId", required = true, example = "1"),
     })
-    public ResponseEntity<CommonResponseDto<FindParentReplyResDto>> readParentReply(
+    public ResponseEntity<CommonResponseDto<FindParentReplyResDto>> readParentReplyPage(
             @RequestParam @NotNull(message = "댓글을 조회할 snapId를 입력해주세요.") final Long snapId,
             @PathVariable final Long pageNum){
 
         return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("댓글조회 성공했습니다.",
-                replyService.readParentReply(snapId,pageNum)));
+                replyService.findParentReplyPage(snapId,pageNum)));
     }
 
     @GetMapping("/child-replies/{pageNum}")
-    @Operation(summary = "대댓글 조회요청", description = "대댓글조회할 부모댓글의 Id와 페이지번호를 입력해주세요<br>대댓글을 20개씩 반환합니다.")
+    @Operation(summary = "대댓글 조회요청", description = "대댓글조회할 부모댓글의 Id와 페이지번호를 입력해주세요<br>" +
+                                        "대댓글을 20개씩 반환합니다.")
     @Parameters({
             @Parameter(name = "pageNum", description = "페이지번호", required = true, example = "1"),
             @Parameter(name = "parentReplyId", description = "대댓글을 조회할 부모댓글의Id", required = true, example = "1"),
     })
-    public ResponseEntity<CommonResponseDto<FindChildReplyResDto>> readChildReply(
+    public ResponseEntity<CommonResponseDto<FindChildReplyResDto>> readChildReplyPage(
             @RequestParam @NotNull(message = "부모댓글의 Id를 입력해주세요.") final Long parentReplyId,
             @PathVariable final Long pageNum){
 
-        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("대댓글조회 성공했습니다.",
-                replyService.readChildReply(parentReplyId,pageNum)));
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto(
+                "대댓글조회 성공했습니다.", replyService.findChildReplyPage(parentReplyId,pageNum)));
     }
 
     @PatchMapping("/parent-replies/{parentReplyId}")
@@ -90,7 +93,8 @@ public class ReplyController {
             @RequestParam final String newContent){
 
         replyService.updateParentReply(userDetails.getUsername(),parentReplyId,newContent);
-        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("댓글 수정을 완료했습니다",null));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new CommonResponseDto("댓글 수정을 완료했습니다",null));
     }
 
     @PatchMapping("/child-replies/{childReplyId}")
@@ -105,32 +109,31 @@ public class ReplyController {
             @RequestParam final String newContent){
 
         replyService.updateChildReply(userDetails.getUsername(),childReplyId,newContent);
-        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("대댓글 수정을 완료했습니다",null));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new CommonResponseDto("대댓글 수정을 완료했습니다",null));
     }
 
     @DeleteMapping("/parent-replies/{parentReplyId}")
     @Operation(summary = "댓글 삭제요청", description = "삭제할 댓글 ID를 입력해주세요")
-    @Parameters({
-            @Parameter(name = "parentReplyId", description = "댓글ID", required = true, example = "1")
-    })
+    @Parameter(name = "parentReplyId", description = "댓글ID", required = true, example = "1")
     public ResponseEntity<CommonResponseDto<Void>> deleteParentReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final Long parentReplyId){
 
         replyService.deleteParentReply(userDetails.getUsername(),parentReplyId);
-        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("댓글 삭제를 완료했습니다",null));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new CommonResponseDto("댓글 삭제를 완료했습니다",null));
     }
 
     @DeleteMapping("/child-replies/{childReplyId}")
     @Operation(summary = "대댓글 삭제요청", description = "삭제할 대댓글 ID를 입력해주세요")
-    @Parameters({
-            @Parameter(name = "childReplyId", description = "대댓글ID", required = true, example = "1")
-    })
+    @Parameter(name = "childReplyId", description = "대댓글ID", required = true, example = "1")
     public ResponseEntity<CommonResponseDto<Void>> deleteChildReply(
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final Long childReplyId){
 
         replyService.deleteChildReply(userDetails.getUsername(),childReplyId);
-        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("대댓글 삭제를 완료했습니다",null));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new CommonResponseDto("대댓글 삭제를 완료했습니다",null));
     }
 }

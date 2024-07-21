@@ -15,6 +15,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class Friend {
 
     @Id
+    @Column(name = "friend_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long friendId;
 

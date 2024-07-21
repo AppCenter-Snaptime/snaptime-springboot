@@ -25,15 +25,14 @@ public class SnapLikeController {
 
     @PostMapping("/likes/toggle")
     @Operation(summary = "스냅 좋아요 토글", description = "좋아요 토글할 snapId를 보내주세요<br>" +
-                                    "특정 유저가 특정스냅에 좋아요를 눌렀다면 좋아요가 취소됩니다.<br>"+
-                                    "좋아요를 누르지 않았다면 좋아요가 추가됩니다.")
+                                        "특정 유저가 특정스냅에 좋아요를 눌렀다면 좋아요가 취소됩니다.<br>"+
+                                        "좋아요를 누르지 않았다면 좋아요가 추가됩니다.")
     @Parameter(name = "snapId", description = "snap아이디를 입력해주세요.")
     public ResponseEntity<CommonResponseDto<Void>> toggleSnapLike(
             @AuthenticationPrincipal final UserDetails userDetails,
             @RequestParam final Long snapId){
 
         String message = snapLikeService.toggleSnapLike(userDetails.getUsername(), snapId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new CommonResponseDto(message,null));
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto(message,null));
     }
 }

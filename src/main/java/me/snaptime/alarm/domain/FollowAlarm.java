@@ -17,6 +17,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class FollowAlarm extends BaseTimeEntity {
 
     @Id
+    @Column(name = "follow_alarm_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long followAlarmId;
 

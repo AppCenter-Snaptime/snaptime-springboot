@@ -144,6 +144,7 @@ public class SnapServiceImpl implements SnapService {
                 throw new CustomException(ExceptionCode.SNAP_MODIFY_ERROR);
             }
         }
+
         Snap snap = snapRepository.save(foundSnap);
         return snap.getId();
     }

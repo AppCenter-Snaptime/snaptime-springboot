@@ -35,27 +35,28 @@ public class SnapPagingServiceImpl implements SnapPagingService {
     private final SnapTagService snapTagService;
     private final SnapLikeService snapLikeService;
 
-    public FindSnapPagingResDto findSnapPaging(String loginId, Long pageNum){
+    public FindSnapPagingResDto findSnapPage(String reqLoginId, Long pageNum){
 
-        User reqUser = userRepository.findByLoginId(loginId)
+        User reqUser = userRepository.findByLoginId(reqLoginId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        List<Tuple> result = snapRepository.findSnapPaging(pageNum,reqUser);
-        boolean hasNextPage = NextPageChecker.hasNextPage(result,10L);
+        List<Tuple> tuples = snapRepository.findSnapPaging(pageNum,reqUser);
+        boolean hasNextPage = NextPageChecker.hasNextPage(tuples,10L);
 
-        List<SnapPagingInfo> snapPagingInfoList = result.stream().map(entity ->
+        List<SnapPagingInfo> snapPagingInfos = tuples.stream().map( tuple ->
         {
-            Long snapId = entity.get(snap.id);
-            String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.profilePhotoId));
-            String snapPhotoURL = urlComponent.makePhotoURL(entity.get(snap.fileName),false);
 
-            return SnapPagingInfo.toDto(entity,profilePhotoURL,snapPhotoURL,
-                    snapTagService.findTagUserList(snapId),
+            Long snapId = tuple.get(snap.id);
+            String profilePhotoURL = urlComponent.makeProfileURL(tuple.get(user.profilePhoto.profilePhotoId));
+            String snapPhotoURL = urlComponent.makePhotoURL(tuple.get(snap.fileName),false);
+
+            return SnapPagingInfo.toDto(tuple,profilePhotoURL,snapPhotoURL,
+                    snapTagService.findTagUsers(snapId),
                     snapLikeService.findSnapLikeCnt(snapId),
-                    snapLikeService.isLikedSnap(snapId, loginId));
+                    snapLikeService.isLikedSnap(snapId, reqLoginId));
         }).collect(Collectors.toList());
 
-        return FindSnapPagingResDto.toDto(snapPagingInfoList,hasNextPage);
+        return FindSnapPagingResDto.toDto(snapPagingInfos,hasNextPage);
     }
 
 }

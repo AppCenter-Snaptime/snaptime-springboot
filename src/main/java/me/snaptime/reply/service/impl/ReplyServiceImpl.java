@@ -49,25 +49,25 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     @Transactional
-    public void addParentReply(String loginId, AddParentReplyReqDto addParentReplyReqDto){
-        User user = findUserByLoginId(loginId);
+    public void addParentReply(String reqLoginId, AddParentReplyReqDto addParentReplyReqDto){
+        User reqUser = findUserByLoginId(reqLoginId);
         Snap snap = snapRepository.findById(addParentReplyReqDto.snapId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
 
         parentReplyRepository.save(
                 ParentReply.builder()
-                        .user(user)
+                        .user(reqUser)
                         .snap(snap)
                         .content(addParentReplyReqDto.content())
                         .build()
         );
 
-        createAlarmService.createReplyAlarm(user, snap.getUser(), snap, addParentReplyReqDto.content());
+        createAlarmService.createReplyAlarm(reqUser, snap.getUser(), snap, addParentReplyReqDto.content());
     }
 
     @Transactional
-    public void addChildReply(String loginId, AddChildReplyReqDto addChildReplyReqDto){
-        User user = findUserByLoginId(loginId);
+    public void addChildReply(String reqLoginId, AddChildReplyReqDto addChildReplyReqDto){
+        User reqUser = findUserByLoginId(reqLoginId);
 
         ParentReply parentReply = parentReplyRepository.findById(addChildReplyReqDto.parentReplyId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
@@ -77,7 +77,7 @@ public class ReplyServiceImpl implements ReplyService {
             childReplyRepository.save(
                     ChildReply.builder()
                             .parentReply(parentReply)
-                            .user(user)
+                            .user(reqUser)
                             .content(addChildReplyReqDto.content())
                             .build()
             );
@@ -90,7 +90,7 @@ public class ReplyServiceImpl implements ReplyService {
             childReplyRepository.save(
                     ChildReply.builder()
                             .parentReply(parentReply)
-                            .user(user)
+                            .user(reqUser)
                             .tagUser(tagUser)
                             .content(addChildReplyReqDto.content())
                             .build()
@@ -98,86 +98,84 @@ public class ReplyServiceImpl implements ReplyService {
         }
     }
 
-    public FindParentReplyResDto readParentReply(Long snapId, Long pageNum){
+    public FindParentReplyResDto findParentReplyPage(Long snapId, Long pageNum){
 
-        List<Tuple> result = parentReplyRepository.findReplyList(snapId,pageNum);
-        boolean hasNextPage = NextPageChecker.hasNextPage(result,20L);
+        List<Tuple> tuples = parentReplyRepository.findReplyList(snapId,pageNum);
+        boolean hasNextPage = NextPageChecker.hasNextPage(tuples,20L);
 
-        List<ParentReplyInfo> parentReplyInfoList = result.stream().map(entity ->
+        List<ParentReplyInfo> parentReplyInfoList = tuples.stream().map( tuple ->
         {
-            String profilePhotoURL = urlComponent.makeProfileURL(entity.get(user.profilePhoto.profilePhotoId));
-            String timeAgo = TimeAgoCalculator.findTimeAgo(entity.get(parentReply.lastModifiedDate));
-            return ParentReplyInfo.toDto(entity,profilePhotoURL,timeAgo);
+            String profilePhotoURL = urlComponent.makeProfileURL(tuple.get(user.profilePhoto.profilePhotoId));
+            String timeAgo = TimeAgoCalculator.findTimeAgo(tuple.get(parentReply.lastModifiedDate));
+            return ParentReplyInfo.toDto(tuple,profilePhotoURL,timeAgo);
         }).collect(Collectors.toList());
 
         return FindParentReplyResDto.toDto(parentReplyInfoList, hasNextPage);
     }
 
-    public FindChildReplyResDto readChildReply(Long parentReplyId, Long pageNum){
+    public FindChildReplyResDto findChildReplyPage(Long parentReplyId, Long pageNum){
 
         QUser writerUser = new QUser("writerUser");
-        List<Tuple> result = childReplyRepository.findReplyList(parentReplyId,pageNum);
-        boolean hasNextPage = NextPageChecker.hasNextPage(result,20L);
+        List<Tuple> tuples = childReplyRepository.findReplyList(parentReplyId,pageNum);
+        boolean hasNextPage = NextPageChecker.hasNextPage(tuples,20L);
 
-        List<ChildReplyInfo> childReplyInfoList = result.stream().map(entity ->
+        List<ChildReplyInfo> childReplyInfoList = tuples.stream().map( tuple ->
         {
-            String profilePhotoURL = urlComponent.makeProfileURL(entity.get(writerUser.profilePhoto.profilePhotoId));
-            String timeAgo = TimeAgoCalculator.findTimeAgo(entity.get(childReply.lastModifiedDate));
+            String profilePhotoURL = urlComponent.makeProfileURL( tuple.get(writerUser.profilePhoto.profilePhotoId));
+            String timeAgo = TimeAgoCalculator.findTimeAgo( tuple.get(childReply.lastModifiedDate));
 
-            return ChildReplyInfo.toDto(entity,profilePhotoURL,timeAgo);
+            return ChildReplyInfo.toDto( tuple,profilePhotoURL,timeAgo);
         }).collect(Collectors.toList());
 
         return FindChildReplyResDto.toDto(childReplyInfoList, hasNextPage);
     }
 
     @Transactional
-    public void updateParentReply(String loginId ,Long parentReplyId, String newContent){
+    public void updateParentReply(String reqLoginId ,Long parentReplyId, String newContent){
         ParentReply parentReply = parentReplyRepository.findById(parentReplyId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
 
-        if(!parentReply.getUser().getLoginId().equals(loginId))
-            throw new CustomException(ExceptionCode.ACCESS_FAIL_REPLY);
-
+        isMyReply(reqLoginId,parentReply.getUser().getLoginId());
         parentReply.updateReply(newContent);
         parentReplyRepository.save(parentReply);
     }
 
     @Transactional
-    public void updateChildReply(String loginId, Long childReplyId, String newContent){
+    public void updateChildReply(String reqLoginId, Long childReplyId, String newContent){
         ChildReply childReply = childReplyRepository.findById(childReplyId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
 
-        if(!childReply.getUser().getLoginId().equals(loginId))
-            throw new CustomException(ExceptionCode.ACCESS_FAIL_REPLY);
-
+        isMyReply(reqLoginId,childReply.getUser().getLoginId());
         childReply.updateReply(newContent);
         childReplyRepository.save(childReply);
     }
 
     @Transactional
-    public void deleteParentReply(String loginId, Long parentReplyId){
+    public void deleteParentReply(String reqLoginId, Long parentReplyId){
         ParentReply parentReply = parentReplyRepository.findById(parentReplyId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
 
-        if(!parentReply.getUser().getLoginId().equals(loginId))
-            throw new CustomException(ExceptionCode.ACCESS_FAIL_REPLY);
-
+        isMyReply(reqLoginId,parentReply.getUser().getLoginId());
         parentReplyRepository.delete(parentReply);
     }
 
     @Transactional
-    public void deleteChildReply(String loginId, Long childReplyId){
+    public void deleteChildReply(String reqLoginId, Long childReplyId){
         ChildReply childReply = childReplyRepository.findById(childReplyId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
 
-        if(!childReply.getUser().getLoginId().equals(loginId))
-            throw new CustomException(ExceptionCode.ACCESS_FAIL_REPLY);
-
+        isMyReply(reqLoginId,childReply.getUser().getLoginId());
         childReplyRepository.delete(childReply);
     }
 
     private User findUserByLoginId(String loginId){
         return userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    }
+
+    private void isMyReply(String reqLoginId, String targetLoginId){
+
+        if(!targetLoginId.equals(reqLoginId))
+            throw new CustomException(ExceptionCode.ACCESS_FAIL_REPLY);
     }
 }

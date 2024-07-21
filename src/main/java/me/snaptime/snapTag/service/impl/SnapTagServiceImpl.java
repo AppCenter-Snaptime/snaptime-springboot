@@ -32,51 +32,33 @@ public class SnapTagServiceImpl implements SnapTagService {
 
     @Override
     @Transactional
-    public void addTagUser(List<String> tagUserLoginIdList, Snap snap){
+    public void addTagUser(List<String> tagUserLoginIds, Snap snap){
 
-        List<SnapTag> snapTagList = tagUserLoginIdList.stream().map( loginId -> {
-            User tagedUser = userRepository.findByLoginId(loginId)
+        List<SnapTag> snapTags = tagUserLoginIds.stream().map( tagUserloginId -> {
+            User tagUser = userRepository.findByLoginId(tagUserloginId)
                     .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-            createAlarmService.createSnapAlarm(snap.getUser(), tagedUser,snap, AlarmType.SNAPTAG);
+            createAlarmService.createSnapAlarm(snap.getUser(), tagUser,snap, AlarmType.SNAPTAG);
             return SnapTag.builder()
                     .snap(snap)
-                    .tagUser(tagedUser)
+                    .tagUser(tagUser)
                     .build();
         }).collect(Collectors.toList());
 
-        snapTagRepository.saveAll(snapTagList);
+        snapTagRepository.saveAll(snapTags);
     }
 
     @Override
     @Transactional
-    public void deleteTagUser(List<String> tagUserLoginIdList, Long snapId){
+    public void modifyTagUser(List<String> tagUserLoginIds, Snap snap){
 
-        Snap snap = snapRepository.findById(snapId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
-
-        snapTagRepository.deleteAll(
-                tagUserLoginIdList.stream().map( loginId -> {
-                    User user = userRepository.findByLoginId(loginId)
-                            .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-
-                    return snapTagRepository.findBySnapAndTagUser(snap,user)
-                            .orElseThrow(() -> new CustomException(ExceptionCode.SNAPTAG_NOT_EXIST));
-                }).collect(Collectors.toList())
-        );
-    }
-
-    @Override
-    @Transactional
-    public void modifyTagUser(List<String> tagUserLoginIdList, Snap snap){
-
-        List<SnapTag> snapTagList = snapTagRepository.findBySnap(snap);
+        List<SnapTag> snapTags = snapTagRepository.findBySnap(snap);
 
         // 태그유저 삭제
-        snapTagRepository.deleteAll( findDeleteTagUserList(snapTagList,tagUserLoginIdList) );
+        snapTagRepository.deleteAll( findDeletedTagUsers(snapTags,tagUserLoginIds) );
 
         // 태그유저 추가
-       snapTagRepository.saveAll( findNewTagUserList(tagUserLoginIdList, snap) );
+       snapTagRepository.saveAll( findNewTagUsers(tagUserLoginIds, snap) );
     }
 
     @Override
@@ -86,35 +68,35 @@ public class SnapTagServiceImpl implements SnapTagService {
     }
 
     @Override
-    public List<FindTagUserResDto> findTagUserList(Long snapId){
+    public List<FindTagUserResDto> findTagUsers(Long snapId){
         Snap snap = snapRepository.findById(snapId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
 
-        List<SnapTag> snapTagList = snapTagRepository.findBySnap(snap);
-        return snapTagList.stream().map( snapTag -> FindTagUserResDto.toDto(snapTag)).collect(Collectors.toList());
+        List<SnapTag> snapTags = snapTagRepository.findBySnap(snap);
+        return snapTags.stream().map( snapTag -> FindTagUserResDto.toDto(snapTag)).collect(Collectors.toList());
     }
 
     // 삭제된 태그유저 추출
-    private List<SnapTag> findDeleteTagUserList(List<SnapTag> snapTagList, List<String> tagUserLoginIdList){
+    private List<SnapTag> findDeletedTagUsers(List<SnapTag> snapTags, List<String> tagUserLoginIds){
 
-        return snapTagList.stream()
-                .filter(snapTag -> !tagUserLoginIdList.contains(snapTag.getTagUser().getLoginId()))
+        return snapTags.stream()
+                .filter(snapTag -> !tagUserLoginIds.contains(snapTag.getTagUser().getLoginId()))
                 .collect(Collectors.toList());
     }
 
     // 새롭게 추가된 태그유저 추출
-    private List<SnapTag> findNewTagUserList(List<String> tagUserLoginIdList, Snap snap){
+    private List<SnapTag> findNewTagUsers(List<String> tagUserLoginIds, Snap snap){
 
-        return tagUserLoginIdList.stream().map( loginId-> {
+        return tagUserLoginIds.stream().map( tagUserloginId-> {
 
-            User user = userRepository.findByLoginId(loginId)
+            User tagUser = userRepository.findByLoginId(tagUserloginId)
                     .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-            if(!snapTagRepository.existsBySnapAndTagUser(snap,user)){
-                createAlarmService.createSnapAlarm(snap.getUser(), user, snap, AlarmType.SNAPTAG);
+            if(!snapTagRepository.existsBySnapAndTagUser(snap,tagUser)){
+                createAlarmService.createSnapAlarm(snap.getUser(), tagUser, snap, AlarmType.SNAPTAG);
                 return SnapTag.builder()
                         .snap(snap)
-                        .tagUser(user)
+                        .tagUser(tagUser)
                         .build();
             }
 
