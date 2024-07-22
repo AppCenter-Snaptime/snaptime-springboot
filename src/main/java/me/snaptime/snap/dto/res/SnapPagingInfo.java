@@ -2,6 +2,7 @@ package me.snaptime.snap.dto.res;
 
 import com.querydsl.core.Tuple;
 import lombok.Builder;
+import me.snaptime.snap.domain.Snap;
 import me.snaptime.snapTag.dto.res.FindTagUserResDto;
 
 import java.time.LocalDateTime;
@@ -43,5 +44,24 @@ public record SnapPagingInfo(
                 .isLikedSnap(isLikedSnap)
                 .build();
     }
+
+    public static SnapPagingInfo toDto(Snap snap, String profilePhotoURL, String snapPhotoURL,
+                                       List<FindTagUserResDto> findTagUsers, Long likeCnt, boolean isLikedSnap){
+
+        return SnapPagingInfo.builder()
+                .snapId(snap.getId())
+                .oneLineJournal(snap.getOneLineJournal())
+                .snapPhotoURL(snapPhotoURL)
+                .snapCreatedDate(snap.getCreatedDate())
+                .snapModifiedDate(snap.getLastModifiedDate())
+                .writerLoginId(snap.getUser().getLoginId())
+                .profilePhotoURL(profilePhotoURL)
+                .writerUserName(snap.getUser().getName())
+                .findTagUsers(findTagUsers)
+                .likeCnt(likeCnt)
+                .isLikedSnap(isLikedSnap)
+                .build();
+    }
+
 
 }

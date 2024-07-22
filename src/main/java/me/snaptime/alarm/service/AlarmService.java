@@ -2,7 +2,7 @@ package me.snaptime.alarm.service;
 
 import me.snaptime.alarm.common.AlarmType;
 import me.snaptime.reply.dto.res.FindParentReplyResDto;
-import me.snaptime.snap.dto.res.FindSnapResDto;
+import me.snaptime.snap.dto.res.SnapPagingInfo;
 
 public interface AlarmService {
 
@@ -10,7 +10,7 @@ public interface AlarmService {
         snapAlarm을 읽음처리합니다.
         읽음 처리 후 해당 스냅을 조회합니다.
     */
-    FindSnapResDto readSnapAlarm(String reqLoginId, Long snapAlarmId);
+    SnapPagingInfo readSnapAlarm(String reqLoginId, Long snapAlarmId);
 
     //팔로우요청을 수락 or거절한 뒤 FollowAlarm을 읽음처리합니다.
     String readFollowAlarm(String reqLoginId, Long followAlarmId, boolean isAccept);

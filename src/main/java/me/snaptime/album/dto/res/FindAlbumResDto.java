@@ -1,7 +1,7 @@
 package me.snaptime.album.dto.res;
 
 import lombok.Builder;
-import me.snaptime.snap.dto.res.FindSnapResDto;
+import me.snaptime.snap.dto.res.FindAlbumSnapResDto;
 
 import java.util.List;
 
@@ -9,6 +9,6 @@ import java.util.List;
 public record FindAlbumResDto(
         Long id,
         String name,
-        List<FindSnapResDto> snap
+        List<FindAlbumSnapResDto> snap
 ) {
 }
