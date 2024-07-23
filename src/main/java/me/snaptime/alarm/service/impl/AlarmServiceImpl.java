@@ -15,7 +15,7 @@ import me.snaptime.exception.ExceptionCode;
 import me.snaptime.friend.service.FriendService;
 import me.snaptime.reply.dto.res.FindParentReplyResDto;
 import me.snaptime.reply.service.ReplyService;
-import me.snaptime.snap.dto.res.FindSnapResDto;
+import me.snaptime.snap.dto.res.SnapPagingInfo;
 import me.snaptime.snap.service.SnapService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +36,7 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Override
     @Transactional
-    public FindSnapResDto readSnapAlarm(String reqLoginId, Long snapAlarmId) {
+    public SnapPagingInfo readSnapAlarm(String reqLoginId, Long snapAlarmId) {
         SnapAlarm snapAlarm = snapAlarmRepository.findById(snapAlarmId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.ALARM_NOT_EXIST));
 
