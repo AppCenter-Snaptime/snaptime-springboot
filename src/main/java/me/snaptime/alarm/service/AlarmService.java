@@ -22,10 +22,10 @@ public interface AlarmService {
     FindParentReplyResDto readReplyAlarm(String reqLoginId, Long replyAlarmId);
 
     //유저의 모든 알림을 불러옵니다.
-    Object findAlarms(Long reqLoginId);
+    Object findAlarms(String reqLoginId);
 
     // 읽지않은 알림이 몇개인지 조회합니다.
-    Long findNotReadAlarmCnt(Long reqLoginId);
+    Long findNotReadAlarmCnt(String reqLoginId);
 
     /*
         알림을 삭제합니다.

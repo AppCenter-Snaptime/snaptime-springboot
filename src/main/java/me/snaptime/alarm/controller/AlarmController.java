@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.alarm.common.AlarmType;
+import me.snaptime.alarm.dto.res.FindAlarmsDto;
 import me.snaptime.alarm.service.AlarmService;
 import me.snaptime.common.CommonResponseDto;
 import me.snaptime.reply.dto.res.FindParentReplyResDto;
@@ -67,6 +68,30 @@ public class AlarmController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new CommonResponseDto("댓글알림 조회 성공",
                         alarmService.readSnapAlarm(userDetails.getUsername(), replyAlarmId)));
+    }
+
+    @GetMapping("/count/not-read")
+    @Operation(summary = "미확인알림개수 조회", description = "확인되지 않은 알림개수를 조회합니다.")
+    public ResponseEntity<CommonResponseDto<Long>> findNotReadAlarmCnt(
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new CommonResponseDto("미확인 알림개수 조회성공",
+                        alarmService.findNotReadAlarmCnt(userDetails.getUsername())));
+    }
+
+    @GetMapping
+    @Operation(summary = "알림리스트 조회", description = "자신에게 온 알림리스트를 조회합니다.<br>"+
+                                        "읽지않은 알림을 먼저 보여주며 시간순으로 정렬하여 반환합니다.<br>"+
+                                        "알림타입별로 반환되는 데이터가 다릅니다. 팔로우알림에는 snapUrl정보가 없으며 "+
+                                        "댓글알림에만 댓글내용을 보여주는 previewText값이 있습니다.<br>"+
+                                        "각 알림타입별로 alarmId값이 부여되기 때문에 타입이 다른 알림의 경우 id값이 중복될 수 있습니다.")
+    public ResponseEntity<CommonResponseDto<FindAlarmsDto>> findalarms(
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new CommonResponseDto("알림리스트 조회성공",
+                        alarmService.findAlarms(userDetails.getUsername())));
     }
 
     @DeleteMapping ("/{alarmId}")

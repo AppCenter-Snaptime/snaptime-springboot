@@ -29,5 +29,5 @@ public interface CreateAlarmService {
        receiver : 알림을 받는 유저
        alarmType : 알림타입
    */
-    void createReplyAlarm(User sender, User receiver, Snap snap, String message);
+    void createReplyAlarm(User sender, User receiver, Snap snap, String replyMessage);
 }
