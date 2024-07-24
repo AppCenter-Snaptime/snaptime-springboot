@@ -15,7 +15,7 @@ import me.snaptime.snap.domain.Snap;
 import me.snaptime.snap.dto.file.WritePhotoToFileSystemResult;
 import me.snaptime.snap.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.dto.req.ModifySnapReqDto;
-import me.snaptime.snap.dto.res.FindSnapResDto;
+import me.snaptime.snap.dto.res.SnapInfoDto;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snap.service.SnapService;
 import me.snaptime.snapTag.service.SnapTagService;
@@ -82,7 +82,7 @@ public class SnapServiceImpl implements SnapService {
     }
 
     @Override
-    public FindSnapResDto findSnap(Long id, String uId) {
+    public SnapInfoDto findSnap(Long id, String uId) {
         Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         if(foundSnap.isPrivate()) {
             User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
@@ -93,7 +93,7 @@ public class SnapServiceImpl implements SnapService {
         }
         String snapPhotoUrl = urlComponent.makePhotoURL(foundSnap.getFileName(), foundSnap.isPrivate());
         String profilePhotoUrl = urlComponent.makeProfileURL(foundSnap.getUser().getProfilePhoto().getProfilePhotoId());
-        return FindSnapResDto.entityToResDto(foundSnap, snapPhotoUrl, profilePhotoUrl);
+        return SnapInfoDto.entityToResDto(foundSnap, snapPhotoUrl, profilePhotoUrl);
     }
 
     @Override
