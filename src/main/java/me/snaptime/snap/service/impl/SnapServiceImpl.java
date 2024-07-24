@@ -15,7 +15,7 @@ import me.snaptime.snap.domain.Snap;
 import me.snaptime.snap.dto.file.WritePhotoToFileSystemResult;
 import me.snaptime.snap.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.dto.req.ModifySnapReqDto;
-import me.snaptime.snap.dto.res.SnapPagingInfo;
+import me.snaptime.snap.dto.res.SnapDetailInfoDto;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snap.service.SnapService;
 import me.snaptime.snapLike.service.SnapLikeService;
@@ -85,7 +85,7 @@ public class SnapServiceImpl implements SnapService {
     }
 
     @Override
-    public SnapPagingInfo findSnap(Long id, String uId) {
+    public SnapDetailInfoDto findSnap(Long id, String uId) {
         Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         if(foundSnap.isPrivate()) {
             User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
@@ -99,7 +99,7 @@ public class SnapServiceImpl implements SnapService {
         List<FindTagUserResDto> findTagUsers = snapTagService.findTagUsers(foundSnap.getId());
         Long likeCnt = snapLikeService.findSnapLikeCnt(foundSnap.getId());
         boolean isLikedSnap = snapLikeService.isLikedSnap(foundSnap.getId(), uId);
-        return SnapPagingInfo.toDto(foundSnap, snapPhotoUrl, profilePhotoUrl, findTagUsers, likeCnt, isLikedSnap);
+        return SnapDetailInfoDto.toDto(foundSnap, profilePhotoUrl, snapPhotoUrl, findTagUsers, likeCnt, isLikedSnap);
     }
 
     @Override

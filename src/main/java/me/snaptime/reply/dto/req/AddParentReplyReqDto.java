@@ -10,7 +10,7 @@ public record AddParentReplyReqDto(
                 description = "댓글로 등록할 내용을 입력해주세요"
         )
         @NotBlank(message = "내용을 입력해주세요")
-        String content,
+        String replyMessage,
 
         @Schema(
                 example = "1",

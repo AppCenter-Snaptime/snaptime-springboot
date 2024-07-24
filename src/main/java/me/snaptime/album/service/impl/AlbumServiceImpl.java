@@ -12,7 +12,7 @@ import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.snap.domain.Snap;
-import me.snaptime.snap.dto.res.FindAlbumSnapResDto;
+import me.snaptime.snap.dto.res.SnapInfoDto;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
@@ -71,7 +71,7 @@ public class AlbumServiceImpl implements AlbumService {
                             .sorted(Comparator.comparing(Snap::getId).reversed())
                             .filter( snap -> !snap.isPrivate())
                             .map(snap ->
-                                    FindAlbumSnapResDto.entityToResDto(
+                                    SnapInfoDto.entityToResDto(
                                             snap,
                                             urlComponent.makePhotoURL(snap.getFileName(), false),
                                             urlComponent.makeProfileURL(snap.getUser().getProfilePhoto().getProfilePhotoId())
@@ -87,7 +87,7 @@ public class AlbumServiceImpl implements AlbumService {
                 .snap(foundAlbum.getSnap().stream()
                         .sorted(Comparator.comparing(Snap::getId).reversed())
                         .map(snap ->
-                                FindAlbumSnapResDto.entityToResDto(
+                                SnapInfoDto.entityToResDto(
                                         snap,
                                         urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate()),
                                         urlComponent.makeProfileURL(snap.getUser().getProfilePhoto().getProfilePhotoId())

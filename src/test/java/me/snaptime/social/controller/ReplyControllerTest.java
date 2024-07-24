@@ -82,7 +82,7 @@ public class ReplyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("올바르지 않은 입력값입니다"))
-                .andExpect(jsonPath("$.result.content").value("내용을 입력해주세요"))
+                .andExpect(jsonPath("$.result.replyMessage").value("내용을 입력해주세요"))
                 .andDo(print());
 
         verify(replyService,times(0))
@@ -176,7 +176,7 @@ public class ReplyControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("올바르지 않은 입력값입니다"))
                 .andExpect(jsonPath("$.result.parentReplyId").value("parentReplyId를 입력해주세요."))
-                .andExpect(jsonPath("$.result.content").value("내용을 입력해주세요"))
+                .andExpect(jsonPath("$.result.replyMessage").value("내용을 입력해주세요"))
                 .andDo(print());
 
         verify(replyService,times(0))

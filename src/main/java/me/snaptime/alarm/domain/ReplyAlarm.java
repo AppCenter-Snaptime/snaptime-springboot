@@ -40,7 +40,8 @@ public class ReplyAlarm extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "alarm_type")
     private AlarmType alarmType;
-
+    
+    // 댓글이 변경되더라도 기존 댓글내용을 유지하기 위해 Reply와 연관관계를 맺지않음
     @Column(nullable = false, name = "reply_message")
     private String replyMessage;
 
@@ -48,10 +49,12 @@ public class ReplyAlarm extends BaseTimeEntity {
     private boolean isRead = false;
 
     @Builder
-    protected ReplyAlarm(User sender, User receiver, Snap snap, String messgae, AlarmType alarmType){
+    protected ReplyAlarm(User sender, User receiver, Snap snap, String replyMessage, AlarmType alarmType){
         this.sender=sender;
         this.receiver=receiver;
         this.alarmType=alarmType;
+        this.snap=snap;
+        this.replyMessage=replyMessage;
     }
 
     public void readAlarm(){

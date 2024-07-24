@@ -1,4 +1,4 @@
-package me.snaptime.redis;
+package me.snaptime.jwt.redis;
 
 import org.springframework.data.repository.CrudRepository;
 

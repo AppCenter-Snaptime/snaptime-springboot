@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.CommonResponseDto;
-import me.snaptime.snap.dto.res.FindSnapPagingResDto;
+import me.snaptime.snap.dto.res.SnapPagingResDto;
 import me.snaptime.snap.service.SnapPagingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class SnapPagingController {
     @Operation(summary = "Snap 조회", description = "커뮤니티에서 Snap을 10개씩 페이징조회합니다.")
     @Parameter(name = "pageNum", description = "Snap페이지 번호를 보내주세요")
     @GetMapping("/community/snaps/{pageNum}")
-    public ResponseEntity<CommonResponseDto<FindSnapPagingResDto>> findSnapPage(
+    public ResponseEntity<CommonResponseDto<SnapPagingResDto>> findSnapPage(
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final Long pageNum) {
 

@@ -58,11 +58,11 @@ public class ReplyServiceImpl implements ReplyService {
                 ParentReply.builder()
                         .user(reqUser)
                         .snap(snap)
-                        .content(addParentReplyReqDto.content())
+                        .content(addParentReplyReqDto.replyMessage())
                         .build()
         );
 
-        createAlarmService.createReplyAlarm(reqUser, snap.getUser(), snap, addParentReplyReqDto.content());
+        createAlarmService.createReplyAlarm(reqUser, snap.getUser(), snap, addParentReplyReqDto.replyMessage());
     }
 
     @Transactional
@@ -78,7 +78,7 @@ public class ReplyServiceImpl implements ReplyService {
                     ChildReply.builder()
                             .parentReply(parentReply)
                             .user(reqUser)
-                            .content(addChildReplyReqDto.content())
+                            .content(addChildReplyReqDto.replyMessage())
                             .build()
             );
         }
@@ -92,7 +92,7 @@ public class ReplyServiceImpl implements ReplyService {
                             .parentReply(parentReply)
                             .user(reqUser)
                             .tagUser(tagUser)
-                            .content(addChildReplyReqDto.content())
+                            .content(addChildReplyReqDto.replyMessage())
                             .build()
             );
         }

@@ -1,10 +1,10 @@
 package me.snaptime.user.service;
 
 import me.snaptime.jwt.JwtProvider;
+import me.snaptime.jwt.redis.RefreshToken;
+import me.snaptime.jwt.redis.RefreshTokenRepository;
 import me.snaptime.profilePhoto.domain.ProfilePhoto;
 import me.snaptime.profilePhoto.repository.ProfilePhotoRepository;
-import me.snaptime.redis.RefreshToken;
-import me.snaptime.redis.RefreshTokenRepository;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.dto.req.SignInReqDto;
 import me.snaptime.user.dto.req.UserReqDto;
