@@ -3,7 +3,6 @@ package me.snaptime.alarm.service;
 import me.snaptime.alarm.common.AlarmType;
 import me.snaptime.reply.dto.res.FindParentReplyResDto;
 import me.snaptime.snap.dto.res.SnapDetailInfoDto;
-import me.snaptime.snap.dto.res.SnapInfoDto;
 
 
 public interface AlarmService {

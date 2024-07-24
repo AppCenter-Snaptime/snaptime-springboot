@@ -18,7 +18,6 @@ import me.snaptime.friend.service.FriendService;
 import me.snaptime.reply.dto.res.FindParentReplyResDto;
 import me.snaptime.reply.service.ReplyService;
 import me.snaptime.snap.dto.res.SnapDetailInfoDto;
-import me.snaptime.snap.dto.res.SnapInfoDto;
 import me.snaptime.snap.service.SnapService;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;

@@ -16,7 +16,6 @@ import me.snaptime.snap.dto.file.WritePhotoToFileSystemResult;
 import me.snaptime.snap.dto.req.CreateSnapReqDto;
 import me.snaptime.snap.dto.req.ModifySnapReqDto;
 import me.snaptime.snap.dto.res.SnapDetailInfoDto;
-import me.snaptime.snap.dto.res.SnapInfoDto;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snap.service.SnapService;
 import me.snaptime.snapLike.service.SnapLikeService;
@@ -100,7 +99,7 @@ public class SnapServiceImpl implements SnapService {
         List<FindTagUserResDto> findTagUsers = snapTagService.findTagUsers(foundSnap.getId());
         Long likeCnt = snapLikeService.findSnapLikeCnt(foundSnap.getId());
         boolean isLikedSnap = snapLikeService.isLikedSnap(foundSnap.getId(), uId);
-        return SnapDetailInfoDto.toDto(foundSnap, snapPhotoUrl, profilePhotoUrl, findTagUsers, likeCnt, isLikedSnap);
+        return SnapDetailInfoDto.toDto(foundSnap, profilePhotoUrl, snapPhotoUrl, findTagUsers, likeCnt, isLikedSnap);
     }
 
     @Override
