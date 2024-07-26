@@ -12,6 +12,7 @@ import me.snaptime.user.dto.req.SignInReqDto;
 import me.snaptime.user.dto.req.UserReqDto;
 import me.snaptime.user.dto.req.UserUpdateReqDto;
 import me.snaptime.user.dto.res.SignInResDto;
+import me.snaptime.user.dto.res.TestSignInResDto;
 import me.snaptime.user.dto.res.UserResDto;
 import me.snaptime.user.service.SignService;
 import me.snaptime.user.service.UserService;
@@ -103,7 +104,9 @@ public class UserController {
                         signInResDto));
     }
 
-    @Operation(summary = "엑세스 토큰 재발급", description = "RefreshToken 을 통해 AccessToken 재발급")
+    @Operation(summary = "엑세스 토큰 재발급", description = "RefreshToken 을 통해 AccessToken 재발급"+
+    "<br> 엑세스 토큰이 만료되어 401 에러가 발생하면, RefreshToken을 헤더에 담아 요청"+
+    "<br>  AccessToken과 RefreshToken 을 재발급")
     @PostMapping("/reissue")
     public ResponseEntity<CommonResponseDto<SignInResDto>> reissue(HttpServletRequest request){
         SignInResDto signInResDto = signService.reissueAccessToken(request);
@@ -113,5 +116,17 @@ public class UserController {
                         "리프레시 토큰으로 엑세스 토큰 재발급 성공",
                         signInResDto
                 ));
+    }
+
+    @Operation(summary = "테스트 로그인", description = "회원 가입 한 유저의 loginId와 password를 입력합니다."+
+            "<br> refreshToken을 통한 자동 로그인 구현을 위한 테스트 api입니다")
+    @PostMapping("/test/sign-in")
+    public ResponseEntity<CommonResponseDto<TestSignInResDto>> testSignIn(@Valid @RequestBody SignInReqDto signInReqDto){
+        TestSignInResDto testSignInResDto = signService.testSignIn(signInReqDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new CommonResponseDto<>(
+                        "테스트 유저 로그인을 성공적으로 완료하였습니다.",
+                        testSignInResDto));
     }
 }

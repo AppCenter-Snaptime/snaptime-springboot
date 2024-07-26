@@ -6,6 +6,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.snaptime.exception.ExpiredRefreshTokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,6 +31,9 @@ public class JwtProvider {
 
     @Value("${refreshTokenValidTime}")
     private Long refreshTokenValidTime;
+
+    private Long testAccessTokenValidTime = 30000L;
+    private Long testRefreshTokenValidTime = 60000L;
 
     @PostConstruct
     protected void init(){
@@ -62,6 +66,37 @@ public class JwtProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenValidTime))
+                .signWith(secretKey)
+                .compact();
+        return token;
+    }
+
+    public String testCreateAccessToken(Long userId, String loginId, List<String> roles){
+        Claims claims = Jwts.claims().setSubject(loginId);
+        claims.put("userId",userId);
+        claims.put("type","testAccess");
+        claims.put("roles",roles);
+        Date now = new Date();
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + testAccessTokenValidTime))
+                .signWith(secretKey)
+                .compact();
+
+        return token;
+    }
+
+    public String testCreateRefreshToken(Long id, String loginId, List<String> roles){
+        Claims claims = Jwts.claims().setSubject(loginId);
+        claims.put("userId", id);
+        claims.put("type", "testRefresh");
+        claims.put("roles", roles);
+        Date now = new Date();
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + testRefreshTokenValidTime))
                 .signWith(secretKey)
                 .compact();
         return token;
@@ -113,13 +148,18 @@ public class JwtProvider {
         이 메소드는 토큰을 전달 받아 클레임의 유효기간을 체크하고 boolean 타입 값을 리턴하는 역할을 한다.
     */
     public boolean validateToken(String token) {
+        Claims claims  = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token).getBody();
         try{
-            //복잡한 설정일 떈, Jwts.parserBuilder()를 이용
-            Jws<Claims> claims = Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(token);
-            return !claims.getBody().getExpiration().before(new Date());
+            return !claims.getExpiration().before(new Date());
         }catch (ExpiredJwtException ex){
+            String tokenType = claims.get("type",String.class);
+
+            if("refresh".equals(tokenType) || "testRefresh".equals(tokenType)){
+                throw new ExpiredRefreshTokenException("리프레시 토큰이 만료되었습니다.");
+            }
+
             log.error("[validateToken] 토큰 만료됨: {}", ex.getMessage());
             throw ex;
         }

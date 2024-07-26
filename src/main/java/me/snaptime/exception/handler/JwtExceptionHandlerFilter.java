@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.CommonResponseDto;
 import me.snaptime.exception.ExceptionCode;
+import me.snaptime.exception.ExpiredRefreshTokenException;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -34,6 +35,9 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) { //jwt 만료되었을 때 발생하는 예외
             setErrorResponse(response, ExceptionCode.TOKEN_EXPIRED);
             log.info("[JwtExceptionHandlerFilter] error name = ExpiredJwtException");
+        } catch (ExpiredRefreshTokenException e) { //jwt 만료되었을 때 발생하는 예외
+            setErrorResponse(response, ExceptionCode. REFRESH_TOKEN_EXPIRED);
+            log.info("[JwtExceptionHandlerFilter] error name = ExpiredRefreshTokenException");
         } catch (IllegalArgumentException e) { // 잘못된 인수나 인수의 값이 올바르지 않을 때 발생
             setErrorResponse(response, ExceptionCode.TOKEN_NOT_FOUND);
             log.info("[JwtExceptionHandlerFilter] error name = IllegalArgumentException");
@@ -48,6 +52,7 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
         ObjectMapper objectMapper = new ObjectMapper();
         response.setStatus(exceptionMessage.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
 
         CommonResponseDto commonResponse = new CommonResponseDto(exceptionMessage.getMessage(),null);
         try {
