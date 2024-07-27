@@ -92,10 +92,10 @@ public class SignServiceImpl implements SignService {
         String token = jwtProvider.getAuthorizationToken(request);
         Long userId = jwtProvider.getUserId(token);
 
-        RefreshToken refreshToken = refreshTokenRepository.findById(userId).orElseThrow(()-> new CustomException(ExceptionCode.INVALID_REFRESH_TOKEN));
+        RefreshToken refreshToken = refreshTokenRepository.findById(userId).orElseThrow(()-> new CustomException(ExceptionCode.TOKEN_NOT_FOUND));
 
         if(!refreshToken.getRefreshToken().equals(token)) {
-            throw new CustomException(ExceptionCode.INVALID_REFRESH_TOKEN);
+            throw new CustomException(ExceptionCode.TOKEN_INVALID);
         }
 
         User user = userRepository.findById(userId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));

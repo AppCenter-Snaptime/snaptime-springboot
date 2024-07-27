@@ -1,19 +1,24 @@
 package me.snaptime.jwt;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.snaptime.exception.ExpiredRefreshTokenException;
+import me.snaptime.exception.CustomException;
+import me.snaptime.exception.ExceptionCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -24,12 +29,13 @@ public class JwtProvider {
 
     private final UserDetailsServiceImpl userDetailsService;
 
-    private Key secretKey;
+    @Value("${spring.jwt.secret}")
+    private String secretKey;
 
-    @Value("${accessTokenValidTime}")
+    @Value("${spring.jwt.access-token-valid-time}")
     private Long accessTokenValidTime;
 
-    @Value("${refreshTokenValidTime}")
+    @Value("${spring.jwt.refresh-token-valid-time}")
     private Long refreshTokenValidTime;
 
     private Long testAccessTokenValidTime = 30000L;
@@ -37,7 +43,7 @@ public class JwtProvider {
 
     @PostConstruct
     protected void init(){
-        secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
     public String createAccessToken(Long userId, String loginId, List<String> roles){
@@ -50,7 +56,7 @@ public class JwtProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + accessTokenValidTime))
-                .signWith(secretKey)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
 
         return token;
@@ -66,7 +72,7 @@ public class JwtProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenValidTime))
-                .signWith(secretKey)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
         return token;
     }
@@ -81,7 +87,7 @@ public class JwtProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + testAccessTokenValidTime))
-                .signWith(secretKey)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
 
         return token;
@@ -97,7 +103,7 @@ public class JwtProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + testRefreshTokenValidTime))
-                .signWith(secretKey)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
         return token;
     }
@@ -148,19 +154,18 @@ public class JwtProvider {
         이 메소드는 토큰을 전달 받아 클레임의 유효기간을 체크하고 boolean 타입 값을 리턴하는 역할을 한다.
     */
     public boolean validateToken(String token) {
-        Claims claims  = Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token).getBody();
         try{
-            return !claims.getExpiration().before(new Date());
-        }catch (ExpiredJwtException ex){
-            String tokenType = claims.get("type",String.class);
-
-            if("refresh".equals(tokenType) || "testRefresh".equals(tokenType)){
-                throw new ExpiredRefreshTokenException("리프레시 토큰이 만료되었습니다.");
+            Claims claims = getClaims(token);
+            Date expiration = claims.getExpiration();
+            if(expiration.before(new Date())){
+                String tokenType = claims.get("type", String.class);
+                if ("refresh".equals(tokenType) || "testRefresh".equals(tokenType)) {
+                    throw new CustomException(ExceptionCode.REFRESH_TOKEN_EXPIRED);
+                }
+                throw new CustomException(ExceptionCode.ACCESS_TOKEN_EXPIRED);
             }
-
-            log.error("[validateToken] 토큰 만료됨: {}", ex.getMessage());
+            return true;
+        }catch (CustomException ex){
             throw ex;
         }
         catch (Exception e){
@@ -168,4 +173,25 @@ public class JwtProvider {
             return false;
         }
     }
+
+    private Claims getClaims(String token) {
+        JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(secretKey).build();
+        try {
+            // Try to parse claims
+            return jwtParser.parseClaimsJws(token).getBody();
+        } catch (ExpiredJwtException ex) {
+            // If the token is expired, return the claims from the exception
+            return ex.getClaims();
+        } catch (Exception e) {
+            // Handle other token parsing issues
+            log.info("[validateToken] 토큰 유효 체크 예외 발생");
+            throw new CustomException(ExceptionCode.TOKEN_INVALID);
+        }
+    }
 }
+
+
+
+
+
+
