@@ -14,6 +14,7 @@ import me.snaptime.user.domain.User;
 import me.snaptime.user.dto.req.SignInReqDto;
 import me.snaptime.user.dto.req.UserReqDto;
 import me.snaptime.user.dto.res.SignInResDto;
+import me.snaptime.user.dto.res.TestSignInResDto;
 import me.snaptime.user.dto.res.UserResDto;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.user.service.SignService;
@@ -91,10 +92,10 @@ public class SignServiceImpl implements SignService {
         String token = jwtProvider.getAuthorizationToken(request);
         Long userId = jwtProvider.getUserId(token);
 
-        RefreshToken refreshToken = refreshTokenRepository.findById(userId).orElseThrow(()-> new CustomException(ExceptionCode.INVALID_REFRESH_TOKEN));
+        RefreshToken refreshToken = refreshTokenRepository.findById(userId).orElseThrow(()-> new CustomException(ExceptionCode.TOKEN_NOT_FOUND));
 
         if(!refreshToken.getRefreshToken().equals(token)) {
-            throw new CustomException(ExceptionCode.INVALID_REFRESH_TOKEN);
+            throw new CustomException(ExceptionCode.TOKEN_INVALID);
         }
 
         User user = userRepository.findById(userId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
@@ -110,5 +111,23 @@ public class SignServiceImpl implements SignService {
         refreshTokenRepository.save(new RefreshToken(userId, newRefreshToken));
 
         return signInResDto;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TestSignInResDto testSignIn(SignInReqDto signInReqDto) {
+        User testUser = userRepository.findByLoginId(signInReqDto.loginId()).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+
+        if (!passwordEncoder.matches(signInReqDto.password(), testUser.getPassword())) {
+            throw new CustomException(ExceptionCode.PASSWORD_NOT_EQUAL);
+        }
+        String testAccessToken = jwtProvider.testCreateAccessToken(testUser.getUserId(), testUser.getLoginId(), testUser.getRoles());
+        String testRefreshToken = jwtProvider.testCreateRefreshToken(testUser.getUserId(), testUser.getLoginId(),testUser.getRoles());
+        refreshTokenRepository.save(new RefreshToken(testUser.getUserId(),testRefreshToken));
+
+        return TestSignInResDto.builder()
+                .testAccessToken(testAccessToken)
+                .testRefreshToken(testRefreshToken)
+                .build();
     }
 }
