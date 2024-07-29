@@ -5,12 +5,12 @@ import me.snaptime.user.dto.req.SignInReqDto;
 import me.snaptime.user.dto.req.UserReqDto;
 import me.snaptime.user.dto.res.SignInResDto;
 import me.snaptime.user.dto.res.TestSignInResDto;
-import me.snaptime.user.dto.res.UserResDto;
+import me.snaptime.user.dto.res.UserFindResDto;
 
 public interface SignService {
 
     /* 회원 가입 하는 메서드 */
-    UserResDto signUp(UserReqDto userReqDto);
+    UserFindResDto signUp(UserReqDto userReqDto);
     /* 로그인 하는 메서드, accessToken을 리턴한다 */
     SignInResDto signIn(SignInReqDto signInReqDto);
 

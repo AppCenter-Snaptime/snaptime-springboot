@@ -15,7 +15,7 @@ import me.snaptime.user.dto.req.SignInReqDto;
 import me.snaptime.user.dto.req.UserReqDto;
 import me.snaptime.user.dto.res.SignInResDto;
 import me.snaptime.user.dto.res.TestSignInResDto;
-import me.snaptime.user.dto.res.UserResDto;
+import me.snaptime.user.dto.res.UserFindResDto;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.user.service.SignService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,7 +37,7 @@ public class SignServiceImpl implements SignService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public UserResDto signUp(UserReqDto userReqDto) {
+    public UserFindResDto signUp(UserReqDto userReqDto) {
 
         //로그인 id가 이미 존재하는지 확인
         if(userRepository.findByLoginId(userReqDto.loginId()).isPresent()){
@@ -66,7 +66,7 @@ public class SignServiceImpl implements SignService {
                 .profilePhoto(profilePhoto)
                 .build();
 
-        return UserResDto.toDto(userRepository.save(user));
+        return UserFindResDto.toDto(userRepository.save(user));
     }
 
     @Override

@@ -28,7 +28,7 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Tuple> findSnapPaging(Long pageNum, User reqUser) {
+    public List<Tuple> findSnapPage(Long pageNum, User reqUser) {
 
         Pageable pageable= PageRequest.of((int) (pageNum-1),10);
         List<Tuple> tuples =  jpaQueryFactory.select(

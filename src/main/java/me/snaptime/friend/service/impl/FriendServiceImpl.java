@@ -10,7 +10,7 @@ import me.snaptime.friend.common.FriendSearchType;
 import me.snaptime.friend.domain.Friend;
 import me.snaptime.friend.dto.res.FriendCntResDto;
 import me.snaptime.friend.dto.res.FriendInfoResDto;
-import me.snaptime.friend.dto.res.FriendPagingFindResDto;
+import me.snaptime.friend.dto.res.FriendPagingResDto;
 import me.snaptime.friend.repository.FriendRepository;
 import me.snaptime.friend.service.FriendService;
 import me.snaptime.user.domain.User;
@@ -98,12 +98,12 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public FriendPagingFindResDto findFriends(String reqLoginId, String targetLoginId, Long pageNum,
-                                              FriendSearchType searchType, String searchKeyword){
+    public FriendPagingResDto findFriendPage(String reqLoginId, String targetLoginId, Long pageNum,
+                                             FriendSearchType searchType, String searchKeyword){
 
         User reqUser = findUserByLoginId(reqLoginId);
         User targetUser = findUserByLoginId(targetLoginId);
-        List<Tuple> tuples = friendRepository.findFriendList(targetUser,searchType,pageNum,searchKeyword);
+        List<Tuple> tuples = friendRepository.findFriendPage(targetUser,searchType,pageNum,searchKeyword);
 
         // 다음 페이지 유무 체크
         boolean hasNextPage = NextPageChecker.hasNextPage(tuples,20L);
@@ -115,7 +115,7 @@ public class FriendServiceImpl implements FriendService {
             return FriendInfoResDto.toDto(tuple,profilePhotoURL,isMyFriend);
         }).collect(Collectors.toList());
 
-        return FriendPagingFindResDto.toDto(friendInfoResDtos, hasNextPage);
+        return FriendPagingResDto.toDto(friendInfoResDtos, hasNextPage);
     }
 
     @Override

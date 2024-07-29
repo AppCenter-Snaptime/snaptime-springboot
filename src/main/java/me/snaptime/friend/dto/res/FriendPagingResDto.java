@@ -5,13 +5,13 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record FriendPagingFindResDto(
+public record FriendPagingResDto(
 
         List<FriendInfoResDto> friendInfoResDtos,
         boolean hasNextPage
 ) {
-    public static FriendPagingFindResDto toDto(List<FriendInfoResDto> friendInfoResDtos, boolean hasNextPage){
-        return FriendPagingFindResDto.builder()
+    public static FriendPagingResDto toDto(List<FriendInfoResDto> friendInfoResDtos, boolean hasNextPage){
+        return FriendPagingResDto.builder()
                 .friendInfoResDtos(friendInfoResDtos)
                 .hasNextPage(hasNextPage)
                 .build();

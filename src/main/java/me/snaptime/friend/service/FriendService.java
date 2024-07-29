@@ -2,7 +2,7 @@ package me.snaptime.friend.service;
 
 import me.snaptime.friend.common.FriendSearchType;
 import me.snaptime.friend.dto.res.FriendCntResDto;
-import me.snaptime.friend.dto.res.FriendPagingFindResDto;
+import me.snaptime.friend.dto.res.FriendPagingResDto;
 import me.snaptime.user.domain.User;
 
 public interface FriendService {
@@ -18,9 +18,10 @@ public interface FriendService {
     // 친구 삭제(deletingUser(삭제자)의 팔로잉 -1, deletedUser의 팔로워 -1)
     void unFollow(String deletingUserLoginId, String deletedUserLoginId);
 
-    // myloginId유저가 targetLoginId의 팔로워 or 팔로잉 친구리스트 조회
-    FriendPagingFindResDto findFriends(String loginId, String targetLoginId, Long pageNum,
-                                       FriendSearchType searchType, String searchKeyword);
+    // myLoginId유저가 targetLoginId유저의 팔로워 or 팔로잉 친구리스트 조회
+    FriendPagingResDto findFriendPage(String loginId, String targetLoginId, Long pageNum,
+                                      FriendSearchType searchType, String searchKeyword);
+
 
     // 유저 프로필 조회 시 팔로잉,팔로워 수를 반환하는 메소드
     FriendCntResDto findFriendCnt(String loginId);

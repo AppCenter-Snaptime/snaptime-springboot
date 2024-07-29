@@ -23,12 +23,12 @@ public record SnapDetailInfoResDto(
         String writerLoginId,
         String profilePhotoURL,
         String writerUserName,
-        List<TagUserFindResDto> findTagUsers,
+        List<TagUserFindResDto> tagUserFindResDtos,
         Long likeCnt,
         boolean isLikedSnap
 ) {
     public static SnapDetailInfoResDto toDto(Tuple tuple, String profilePhotoURL, String snapPhotoURL,
-                                             List<TagUserFindResDto> findTagUsers, Long likeCnt, boolean isLikedSnap){
+                                             List<TagUserFindResDto> tagUserFindResDtos, Long likeCnt, boolean isLikedSnap){
 
         return SnapDetailInfoResDto.builder()
                 .snapId(tuple.get(snap.id))
@@ -39,14 +39,14 @@ public record SnapDetailInfoResDto(
                 .writerLoginId(tuple.get(user.loginId))
                 .profilePhotoURL(profilePhotoURL)
                 .writerUserName(tuple.get(user.name))
-                .findTagUsers(findTagUsers)
+                .tagUserFindResDtos(tagUserFindResDtos)
                 .likeCnt(likeCnt)
                 .isLikedSnap(isLikedSnap)
                 .build();
     }
 
     public static SnapDetailInfoResDto toDto(Snap snap, String profilePhotoURL, String snapPhotoURL,
-                                             List<TagUserFindResDto> findTagUsers, Long likeCnt, boolean isLikedSnap){
+                                             List<TagUserFindResDto> tagUserFindResDtos, Long likeCnt, boolean isLikedSnap){
 
         return SnapDetailInfoResDto.builder()
                 .snapId(snap.getId())
@@ -57,7 +57,7 @@ public record SnapDetailInfoResDto(
                 .writerLoginId(snap.getUser().getLoginId())
                 .profilePhotoURL(profilePhotoURL)
                 .writerUserName(snap.getUser().getName())
-                .findTagUsers(findTagUsers)
+                .tagUserFindResDtos(tagUserFindResDtos)
                 .likeCnt(likeCnt)
                 .isLikedSnap(isLikedSnap)
                 .build();

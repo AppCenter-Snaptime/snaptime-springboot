@@ -8,7 +8,7 @@ import me.snaptime.exception.ExceptionCode;
 import me.snaptime.friend.common.FriendSearchType;
 import me.snaptime.friend.domain.Friend;
 import me.snaptime.friend.dto.res.FriendCntResDto;
-import me.snaptime.friend.dto.res.FriendPagingFindResDto;
+import me.snaptime.friend.dto.res.FriendPagingResDto;
 import me.snaptime.friend.repository.FriendRepository;
 import me.snaptime.friend.service.impl.FriendServiceImpl;
 import me.snaptime.user.domain.User;
@@ -299,12 +299,12 @@ public class FriendServiceImplTest {
         given(tuple3.get(user.name)).willReturn("name3");
 
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user1));
-        given(friendRepository.findFriendList(any(User.class),any(FriendSearchType.class),any(Long.class),any(String.class)))
+        given(friendRepository.findFriendPage(any(User.class),any(FriendSearchType.class),any(Long.class),any(String.class)))
                 .willReturn(List.of(tuple1,tuple2,tuple3));
 
         // when
-        FriendPagingFindResDto result = friendServiceImpl
-                .findFriends("writerLoginId","targetLoginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
+        FriendPagingResDto result = friendServiceImpl
+                .findFriendPage("writerLoginId","targetLoginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
 
         // then
         assertThat(result.friendInfoResDtos().get(0).foundLoginId()).isEqualTo("testLoginId1");
@@ -324,7 +324,7 @@ public class FriendServiceImplTest {
         verify(userRepository,times(5)).findByLoginId(any(String.class));
         verify(urlComponent,times(3)).makeProfileURL(any(Long.class));
         verify(friendRepository,times(1))
-                .findFriendList(any(User.class),any(FriendSearchType.class),any(Long.class),any(String.class));
+                .findFriendPage(any(User.class),any(FriendSearchType.class),any(Long.class),any(String.class));
 
     }
 

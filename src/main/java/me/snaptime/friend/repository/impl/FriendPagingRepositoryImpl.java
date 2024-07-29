@@ -28,7 +28,7 @@ public class FriendPagingRepositoryImpl implements FriendPagingRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Tuple> findFriendList(User targetUser, FriendSearchType searchType, Long pageNum, String searchKeyword) {
+    public List<Tuple> findFriendPage(User targetUser, FriendSearchType searchType, Long pageNum, String searchKeyword) {
 
         Pageable pageable= PageRequest.of((int) (pageNum-1),20);
 
@@ -65,7 +65,7 @@ public class FriendPagingRepositoryImpl implements FriendPagingRepository {
         }
 
         if(searchKeyword !=null){
-            builder.and(user.name.contains(searchKeyword));
+            builder.and(user.name.startsWith(searchKeyword));
         }
 
         return builder;

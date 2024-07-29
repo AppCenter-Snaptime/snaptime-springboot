@@ -5,15 +5,15 @@ import lombok.Builder;
 import me.snaptime.user.domain.User;
 
 @Builder
-public record UserResDto(
+public record UserFindResDto(
     Long userId,
     String name,
     String loginId,
     String email,
     String birthDay
 ){
-    public static UserResDto toDto(User user){
-        return UserResDto.builder()
+    public static UserFindResDto toDto(User user){
+        return UserFindResDto.builder()
                 .userId(user.getUserId())
                 .name(user.getName())
                 .loginId(user.getLoginId())

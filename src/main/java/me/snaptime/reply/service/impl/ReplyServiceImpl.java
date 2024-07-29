@@ -100,26 +100,26 @@ public class ReplyServiceImpl implements ReplyService {
 
     public ParentReplyPagingResDto findParentReplyPage(Long snapId, Long pageNum){
 
-        List<Tuple> tuples = parentReplyRepository.findReplyList(snapId,pageNum);
+        List<Tuple> tuples = parentReplyRepository.findReplyPage(snapId,pageNum);
         boolean hasNextPage = NextPageChecker.hasNextPage(tuples,20L);
 
-        List<ParentReplyInfoResDto> parentReplyInfoResDtoList = tuples.stream().map(tuple ->
+        List<ParentReplyInfoResDto> parentReplyInfoResDtos = tuples.stream().map(tuple ->
         {
             String profilePhotoURL = urlComponent.makeProfileURL(tuple.get(user.profilePhoto.profilePhotoId));
             String timeAgo = TimeAgoCalculator.findTimeAgo(tuple.get(parentReply.lastModifiedDate));
             return ParentReplyInfoResDto.toDto(tuple,profilePhotoURL,timeAgo);
         }).collect(Collectors.toList());
 
-        return ParentReplyPagingResDto.toDto(parentReplyInfoResDtoList, hasNextPage);
+        return ParentReplyPagingResDto.toDto(parentReplyInfoResDtos, hasNextPage);
     }
 
     public ChildReplyPagingResDto findChildReplyPage(Long parentReplyId, Long pageNum){
 
         QUser writerUser = new QUser("writerUser");
-        List<Tuple> tuples = childReplyRepository.findReplyList(parentReplyId,pageNum);
+        List<Tuple> tuples = childReplyRepository.findReplyPage(parentReplyId,pageNum);
         boolean hasNextPage = NextPageChecker.hasNextPage(tuples,20L);
 
-        List<ChildReplyInfoResDto> childReplyInfoResDtoList = tuples.stream().map(tuple ->
+        List<ChildReplyInfoResDto> childReplyInfoResDtos = tuples.stream().map(tuple ->
         {
             String profilePhotoURL = urlComponent.makeProfileURL( tuple.get(writerUser.profilePhoto.profilePhotoId));
             String timeAgo = TimeAgoCalculator.findTimeAgo( tuple.get(childReply.lastModifiedDate));
@@ -127,7 +127,7 @@ public class ReplyServiceImpl implements ReplyService {
             return ChildReplyInfoResDto.toDto( tuple,profilePhotoURL,timeAgo);
         }).collect(Collectors.toList());
 
-        return ChildReplyPagingResDto.toDto(childReplyInfoResDtoList, hasNextPage);
+        return ChildReplyPagingResDto.toDto(childReplyInfoResDtos, hasNextPage);
     }
 
     @Transactional
