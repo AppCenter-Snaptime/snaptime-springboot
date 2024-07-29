@@ -8,12 +8,12 @@ import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.reply.domain.ChildReply;
 import me.snaptime.reply.domain.ParentReply;
-import me.snaptime.reply.dto.req.AddChildReplyReqDto;
-import me.snaptime.reply.dto.req.AddParentReplyReqDto;
-import me.snaptime.reply.dto.res.ChildReplyInfo;
-import me.snaptime.reply.dto.res.FindChildReplyResDto;
-import me.snaptime.reply.dto.res.FindParentReplyResDto;
-import me.snaptime.reply.dto.res.ParentReplyInfo;
+import me.snaptime.reply.dto.req.ChildReplyAddReqDto;
+import me.snaptime.reply.dto.req.ParentReplyAddReqDto;
+import me.snaptime.reply.dto.res.ChildReplyInfoResDto;
+import me.snaptime.reply.dto.res.ChildReplyPagingResDto;
+import me.snaptime.reply.dto.res.ParentReplyInfoResDto;
+import me.snaptime.reply.dto.res.ParentReplyPagingResDto;
 import me.snaptime.reply.repository.ChildReplyRepository;
 import me.snaptime.reply.repository.ParentReplyRepository;
 import me.snaptime.reply.service.ReplyService;
@@ -49,42 +49,42 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     @Transactional
-    public void addParentReply(String reqLoginId, AddParentReplyReqDto addParentReplyReqDto){
+    public void addParentReply(String reqLoginId, ParentReplyAddReqDto parentReplyAddReqDto){
         User reqUser = findUserByLoginId(reqLoginId);
-        Snap snap = snapRepository.findById(addParentReplyReqDto.snapId())
+        Snap snap = snapRepository.findById(parentReplyAddReqDto.snapId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
 
         parentReplyRepository.save(
                 ParentReply.builder()
                         .user(reqUser)
                         .snap(snap)
-                        .content(addParentReplyReqDto.replyMessage())
+                        .content(parentReplyAddReqDto.replyMessage())
                         .build()
         );
 
-        createAlarmService.createReplyAlarm(reqUser, snap.getUser(), snap, addParentReplyReqDto.replyMessage());
+        createAlarmService.createReplyAlarm(reqUser, snap.getUser(), snap, parentReplyAddReqDto.replyMessage());
     }
 
     @Transactional
-    public void addChildReply(String reqLoginId, AddChildReplyReqDto addChildReplyReqDto){
+    public void addChildReply(String reqLoginId, ChildReplyAddReqDto childReplyAddReqDto){
         User reqUser = findUserByLoginId(reqLoginId);
 
-        ParentReply parentReply = parentReplyRepository.findById(addChildReplyReqDto.parentReplyId())
+        ParentReply parentReply = parentReplyRepository.findById(childReplyAddReqDto.parentReplyId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
 
         // 태그유저가 없는 댓글 등록이면
-        if( addChildReplyReqDto.tagLoginId() == "" || addChildReplyReqDto.tagLoginId() == null){
+        if( childReplyAddReqDto.tagLoginId() == "" || childReplyAddReqDto.tagLoginId() == null){
             childReplyRepository.save(
                     ChildReply.builder()
                             .parentReply(parentReply)
                             .user(reqUser)
-                            .content(addChildReplyReqDto.replyMessage())
+                            .content(childReplyAddReqDto.replyMessage())
                             .build()
             );
         }
         // 태그유저가 있는 댓글등록이면
         else{
-            User tagUser = userRepository.findByLoginId(addChildReplyReqDto.tagLoginId())
+            User tagUser = userRepository.findByLoginId(childReplyAddReqDto.tagLoginId())
                     .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
             childReplyRepository.save(
@@ -92,42 +92,42 @@ public class ReplyServiceImpl implements ReplyService {
                             .parentReply(parentReply)
                             .user(reqUser)
                             .tagUser(tagUser)
-                            .content(addChildReplyReqDto.replyMessage())
+                            .content(childReplyAddReqDto.replyMessage())
                             .build()
             );
         }
     }
 
-    public FindParentReplyResDto findParentReplyPage(Long snapId, Long pageNum){
+    public ParentReplyPagingResDto findParentReplyPage(Long snapId, Long pageNum){
 
         List<Tuple> tuples = parentReplyRepository.findReplyList(snapId,pageNum);
         boolean hasNextPage = NextPageChecker.hasNextPage(tuples,20L);
 
-        List<ParentReplyInfo> parentReplyInfoList = tuples.stream().map( tuple ->
+        List<ParentReplyInfoResDto> parentReplyInfoResDtoList = tuples.stream().map(tuple ->
         {
             String profilePhotoURL = urlComponent.makeProfileURL(tuple.get(user.profilePhoto.profilePhotoId));
             String timeAgo = TimeAgoCalculator.findTimeAgo(tuple.get(parentReply.lastModifiedDate));
-            return ParentReplyInfo.toDto(tuple,profilePhotoURL,timeAgo);
+            return ParentReplyInfoResDto.toDto(tuple,profilePhotoURL,timeAgo);
         }).collect(Collectors.toList());
 
-        return FindParentReplyResDto.toDto(parentReplyInfoList, hasNextPage);
+        return ParentReplyPagingResDto.toDto(parentReplyInfoResDtoList, hasNextPage);
     }
 
-    public FindChildReplyResDto findChildReplyPage(Long parentReplyId, Long pageNum){
+    public ChildReplyPagingResDto findChildReplyPage(Long parentReplyId, Long pageNum){
 
         QUser writerUser = new QUser("writerUser");
         List<Tuple> tuples = childReplyRepository.findReplyList(parentReplyId,pageNum);
         boolean hasNextPage = NextPageChecker.hasNextPage(tuples,20L);
 
-        List<ChildReplyInfo> childReplyInfoList = tuples.stream().map( tuple ->
+        List<ChildReplyInfoResDto> childReplyInfoResDtoList = tuples.stream().map(tuple ->
         {
             String profilePhotoURL = urlComponent.makeProfileURL( tuple.get(writerUser.profilePhoto.profilePhotoId));
             String timeAgo = TimeAgoCalculator.findTimeAgo( tuple.get(childReply.lastModifiedDate));
 
-            return ChildReplyInfo.toDto( tuple,profilePhotoURL,timeAgo);
+            return ChildReplyInfoResDto.toDto( tuple,profilePhotoURL,timeAgo);
         }).collect(Collectors.toList());
 
-        return FindChildReplyResDto.toDto(childReplyInfoList, hasNextPage);
+        return ChildReplyPagingResDto.toDto(childReplyInfoResDtoList, hasNextPage);
     }
 
     @Transactional

@@ -1,8 +1,8 @@
 package me.snaptime.alarm.service;
 
 import me.snaptime.alarm.common.AlarmType;
-import me.snaptime.reply.dto.res.FindParentReplyResDto;
-import me.snaptime.snap.dto.res.SnapDetailInfoDto;
+import me.snaptime.reply.dto.res.ParentReplyPagingResDto;
+import me.snaptime.snap.dto.res.SnapDetailInfoResDto;
 
 
 public interface AlarmService {
@@ -11,7 +11,7 @@ public interface AlarmService {
         snapAlarm을 읽음처리합니다.
         읽음 처리 후 해당 스냅을 조회합니다.
     */
-    SnapDetailInfoDto readSnapAlarm(String reqLoginId, Long snapAlarmId);
+    SnapDetailInfoResDto readSnapAlarm(String reqLoginId, Long snapAlarmId);
 
     //팔로우요청을 수락 or거절한 뒤 FollowAlarm을 읽음처리합니다.
     String readFollowAlarm(String reqLoginId, Long followAlarmId, boolean isAccept);
@@ -20,7 +20,7 @@ public interface AlarmService {
         ReplyAlarm을 읽음처리합니다.
         읽음처리 후 해당 댓글의 1페이지로 이동합니다.
     */
-    FindParentReplyResDto readReplyAlarm(String reqLoginId, Long replyAlarmId);
+    ParentReplyPagingResDto readReplyAlarm(String reqLoginId, Long replyAlarmId);
 
     //유저의 모든 알림을 불러옵니다.
     Object findAlarms(String reqLoginId);

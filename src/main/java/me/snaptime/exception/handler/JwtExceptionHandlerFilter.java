@@ -1,7 +1,6 @@
 package me.snaptime.exception.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.DecodingException;
 import jakarta.servlet.FilterChain;
@@ -13,12 +12,9 @@ import me.snaptime.common.CommonResponseDto;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import org.springframework.http.MediaType;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 public class JwtExceptionHandlerFilter extends OncePerRequestFilter {

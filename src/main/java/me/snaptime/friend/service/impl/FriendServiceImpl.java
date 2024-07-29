@@ -8,9 +8,9 @@ import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.friend.common.FriendSearchType;
 import me.snaptime.friend.domain.Friend;
-import me.snaptime.friend.dto.res.FindFriendResDto;
 import me.snaptime.friend.dto.res.FriendCntResDto;
-import me.snaptime.friend.dto.res.FriendInfo;
+import me.snaptime.friend.dto.res.FriendInfoResDto;
+import me.snaptime.friend.dto.res.FriendPagingFindResDto;
 import me.snaptime.friend.repository.FriendRepository;
 import me.snaptime.friend.service.FriendService;
 import me.snaptime.user.domain.User;
@@ -98,8 +98,8 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public FindFriendResDto findFriends(String reqLoginId, String targetLoginId, Long pageNum,
-                                        FriendSearchType searchType, String searchKeyword){
+    public FriendPagingFindResDto findFriends(String reqLoginId, String targetLoginId, Long pageNum,
+                                              FriendSearchType searchType, String searchKeyword){
 
         User reqUser = findUserByLoginId(reqLoginId);
         User targetUser = findUserByLoginId(targetLoginId);
@@ -108,14 +108,14 @@ public class FriendServiceImpl implements FriendService {
         // 다음 페이지 유무 체크
         boolean hasNextPage = NextPageChecker.hasNextPage(tuples,20L);
 
-        List<FriendInfo> friendInfos = tuples.stream().map(tuple ->
+        List<FriendInfoResDto> friendInfoResDtos = tuples.stream().map(tuple ->
         {
             boolean isMyFriend = checkIsFollow(reqUser ,findUserByLoginId(tuple.get(user.loginId)));
             String profilePhotoURL = urlComponent.makeProfileURL(tuple.get(user.profilePhoto.profilePhotoId));
-            return FriendInfo.toDto(tuple,profilePhotoURL,isMyFriend);
+            return FriendInfoResDto.toDto(tuple,profilePhotoURL,isMyFriend);
         }).collect(Collectors.toList());
 
-        return FindFriendResDto.toDto(friendInfos, hasNextPage);
+        return FriendPagingFindResDto.toDto(friendInfoResDtos, hasNextPage);
     }
 
     @Override

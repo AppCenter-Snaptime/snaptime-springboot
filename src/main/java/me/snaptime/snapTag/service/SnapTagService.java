@@ -1,7 +1,7 @@
 package me.snaptime.snapTag.service;
 
 import me.snaptime.snap.domain.Snap;
-import me.snaptime.snapTag.dto.res.FindTagUserResDto;
+import me.snaptime.snapTag.dto.res.TagUserFindResDto;
 
 import java.util.List;
 
@@ -17,5 +17,5 @@ public interface SnapTagService {
     void deleteAllTagUser(Snap snap);
 
     // 스냅에 태그된 유저들의 정보를 가져옵니다.
-    List<FindTagUserResDto> findTagUsers(Long snapId);
+    List<TagUserFindResDto> findTagUsers(Long snapId);
 }

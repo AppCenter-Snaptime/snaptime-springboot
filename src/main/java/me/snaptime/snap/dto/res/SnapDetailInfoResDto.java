@@ -3,7 +3,7 @@ package me.snaptime.snap.dto.res;
 import com.querydsl.core.Tuple;
 import lombok.Builder;
 import me.snaptime.snap.domain.Snap;
-import me.snaptime.snapTag.dto.res.FindTagUserResDto;
+import me.snaptime.snapTag.dto.res.TagUserFindResDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,7 +13,7 @@ import static me.snaptime.user.domain.QUser.user;
 
 
 @Builder
-public record SnapDetailInfoDto(
+public record SnapDetailInfoResDto(
 
         Long snapId,
         String oneLineJournal,
@@ -23,14 +23,14 @@ public record SnapDetailInfoDto(
         String writerLoginId,
         String profilePhotoURL,
         String writerUserName,
-        List<FindTagUserResDto> findTagUsers,
+        List<TagUserFindResDto> findTagUsers,
         Long likeCnt,
         boolean isLikedSnap
 ) {
-    public static SnapDetailInfoDto toDto(Tuple tuple, String profilePhotoURL, String snapPhotoURL,
-                                          List<FindTagUserResDto> findTagUsers, Long likeCnt, boolean isLikedSnap){
+    public static SnapDetailInfoResDto toDto(Tuple tuple, String profilePhotoURL, String snapPhotoURL,
+                                             List<TagUserFindResDto> findTagUsers, Long likeCnt, boolean isLikedSnap){
 
-        return SnapDetailInfoDto.builder()
+        return SnapDetailInfoResDto.builder()
                 .snapId(tuple.get(snap.id))
                 .oneLineJournal(String.valueOf(tuple.get(snap.oneLineJournal)))
                 .snapPhotoURL(snapPhotoURL)
@@ -45,10 +45,10 @@ public record SnapDetailInfoDto(
                 .build();
     }
 
-    public static SnapDetailInfoDto toDto(Snap snap, String profilePhotoURL, String snapPhotoURL,
-                                       List<FindTagUserResDto> findTagUsers, Long likeCnt, boolean isLikedSnap){
+    public static SnapDetailInfoResDto toDto(Snap snap, String profilePhotoURL, String snapPhotoURL,
+                                             List<TagUserFindResDto> findTagUsers, Long likeCnt, boolean isLikedSnap){
 
-        return SnapDetailInfoDto.builder()
+        return SnapDetailInfoResDto.builder()
                 .snapId(snap.getId())
                 .oneLineJournal(snap.getOneLineJournal())
                 .snapPhotoURL(snapPhotoURL)

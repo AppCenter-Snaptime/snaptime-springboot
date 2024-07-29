@@ -5,8 +5,8 @@ import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.reply.domain.ChildReply;
 import me.snaptime.reply.domain.ParentReply;
-import me.snaptime.reply.dto.req.AddChildReplyReqDto;
-import me.snaptime.reply.dto.req.AddParentReplyReqDto;
+import me.snaptime.reply.dto.req.ChildReplyAddReqDto;
+import me.snaptime.reply.dto.req.ParentReplyAddReqDto;
 import me.snaptime.reply.repository.ChildReplyRepository;
 import me.snaptime.reply.repository.ParentReplyRepository;
 import me.snaptime.reply.service.impl.ReplyServiceImpl;
@@ -78,7 +78,7 @@ public class ReplyServiceImplTest {
         given(snapRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(snap));
 
         //when
-        replyServiceImpl.addParentReply("loginId", new AddParentReplyReqDto("댓글내용",1L));
+        replyServiceImpl.addParentReply("loginId", new ParentReplyAddReqDto("댓글내용",1L));
 
         //then
         verify(parentReplyRepository,times(1)).save(any(ParentReply.class));
@@ -95,7 +95,7 @@ public class ReplyServiceImplTest {
 
         //when
         try{
-            replyServiceImpl.addParentReply("loginId",new AddParentReplyReqDto("댓글내용",1L));
+            replyServiceImpl.addParentReply("loginId",new ParentReplyAddReqDto("댓글내용",1L));
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -110,13 +110,13 @@ public class ReplyServiceImplTest {
     @DisplayName("대댓글 등록 테스트 -> 성공")
     public void addChildReplyTest1(){
         //given
-        AddChildReplyReqDto addChildReplyReqDto =
-                new AddChildReplyReqDto("댓글내용",1L,"태그유저loginId");
+        ChildReplyAddReqDto childReplyAddReqDto =
+                new ChildReplyAddReqDto("댓글내용",1L,"태그유저loginId");
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user));
         given(parentReplyRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(parentReply));
 
         //when
-        replyServiceImpl.addChildReply("loginId",addChildReplyReqDto);
+        replyServiceImpl.addChildReply("loginId", childReplyAddReqDto);
 
         //then
         verify(parentReplyRepository,times(1)).findById(any(Long.class));
@@ -128,13 +128,13 @@ public class ReplyServiceImplTest {
     @DisplayName("대댓글 등록 테스트 -> 실패(태그할 유저LoginId와 연결되는 유저가 존재하지 않음)")
     public void addChildReplyTest2(){
         //given
-        AddChildReplyReqDto addChildReplyReqDto =
-                new AddChildReplyReqDto("댓글내용",1L,"태그유저loginId");
+        ChildReplyAddReqDto childReplyAddReqDto =
+                new ChildReplyAddReqDto("댓글내용",1L,"태그유저loginId");
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.empty());
 
         //when
         try{
-            replyServiceImpl.addChildReply("loginId",addChildReplyReqDto);
+            replyServiceImpl.addChildReply("loginId", childReplyAddReqDto);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
@@ -149,14 +149,14 @@ public class ReplyServiceImplTest {
     @DisplayName("대댓글 등록 테스트 -> 실패(부모댓글이 존재하지 않음)")
     public void addChildReplyTest3(){
         //given
-        AddChildReplyReqDto addChildReplyReqDto =
-                new AddChildReplyReqDto("댓글내용",1L,"태그유저loginId");
+        ChildReplyAddReqDto childReplyAddReqDto =
+                new ChildReplyAddReqDto("댓글내용",1L,"태그유저loginId");
         given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user));
         given(parentReplyRepository.findById(any(Long.class))).willReturn(Optional.empty());
 
         //when
         try{
-            replyServiceImpl.addChildReply("loginId",addChildReplyReqDto);
+            replyServiceImpl.addChildReply("loginId", childReplyAddReqDto);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then

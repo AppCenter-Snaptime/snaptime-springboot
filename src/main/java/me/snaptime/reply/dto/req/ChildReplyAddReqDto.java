@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record AddChildReplyReqDto(
+public record ChildReplyAddReqDto(
         @Schema(
                 example = "대댓글내용입니다.",
                 description = "대댓글로 등록할 내용을 입력해주세요"

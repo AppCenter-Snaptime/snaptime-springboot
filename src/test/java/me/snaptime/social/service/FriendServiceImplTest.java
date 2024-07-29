@@ -7,8 +7,8 @@ import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.friend.common.FriendSearchType;
 import me.snaptime.friend.domain.Friend;
-import me.snaptime.friend.dto.res.FindFriendResDto;
 import me.snaptime.friend.dto.res.FriendCntResDto;
+import me.snaptime.friend.dto.res.FriendPagingFindResDto;
 import me.snaptime.friend.repository.FriendRepository;
 import me.snaptime.friend.service.impl.FriendServiceImpl;
 import me.snaptime.user.domain.User;
@@ -303,21 +303,21 @@ public class FriendServiceImplTest {
                 .willReturn(List.of(tuple1,tuple2,tuple3));
 
         // when
-        FindFriendResDto result = friendServiceImpl
+        FriendPagingFindResDto result = friendServiceImpl
                 .findFriends("writerLoginId","targetLoginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
 
         // then
-        assertThat(result.friendInfos().get(0).foundLoginId()).isEqualTo("testLoginId1");
-        assertThat(result.friendInfos().get(1).foundLoginId()).isEqualTo("testLoginId2");
-        assertThat(result.friendInfos().get(2).foundLoginId()).isEqualTo("testLoginId3");
+        assertThat(result.friendInfoResDtos().get(0).foundLoginId()).isEqualTo("testLoginId1");
+        assertThat(result.friendInfoResDtos().get(1).foundLoginId()).isEqualTo("testLoginId2");
+        assertThat(result.friendInfoResDtos().get(2).foundLoginId()).isEqualTo("testLoginId3");
 
-        assertThat(result.friendInfos().get(0).foundUserName()).isEqualTo("name1");
-        assertThat(result.friendInfos().get(1).foundUserName()).isEqualTo("name2");
-        assertThat(result.friendInfos().get(2).foundUserName()).isEqualTo("name3");
+        assertThat(result.friendInfoResDtos().get(0).foundUserName()).isEqualTo("name1");
+        assertThat(result.friendInfoResDtos().get(1).foundUserName()).isEqualTo("name2");
+        assertThat(result.friendInfoResDtos().get(2).foundUserName()).isEqualTo("name3");
 
-        assertThat(result.friendInfos().get(0).profilePhotoURL()).isEqualTo("profile1");
-        assertThat(result.friendInfos().get(1).profilePhotoURL()).isEqualTo("profile2");
-        assertThat(result.friendInfos().get(2).profilePhotoURL()).isEqualTo("profile3");
+        assertThat(result.friendInfoResDtos().get(0).profilePhotoURL()).isEqualTo("profile1");
+        assertThat(result.friendInfoResDtos().get(1).profilePhotoURL()).isEqualTo("profile2");
+        assertThat(result.friendInfoResDtos().get(2).profilePhotoURL()).isEqualTo("profile3");
 
         assertThat(result.hasNextPage()).isFalse();
 

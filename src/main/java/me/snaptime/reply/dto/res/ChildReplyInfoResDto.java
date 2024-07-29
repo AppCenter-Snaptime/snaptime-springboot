@@ -8,7 +8,7 @@ import static me.snaptime.reply.domain.QChildReply.childReply;
 
 
 @Builder
-public record ChildReplyInfo(
+public record ChildReplyInfoResDto(
 
         String writerLoginId,
         String writerUserName,
@@ -21,11 +21,11 @@ public record ChildReplyInfo(
         String timeAgo
 ) {
 
-    public static ChildReplyInfo toDto(Tuple tuple, String profilePhotoURL,String timeAgo){
+    public static ChildReplyInfoResDto toDto(Tuple tuple, String profilePhotoURL, String timeAgo){
         QUser tagUser = new QUser("tagUser");
         QUser writerUser = new QUser("writerUser");
 
-        return ChildReplyInfo.builder()
+        return ChildReplyInfoResDto.builder()
                 .writerLoginId(tuple.get(writerUser.loginId))
                 .writerProfilePhotoURL(profilePhotoURL)
                 .writerUserName(tuple.get(writerUser.name))

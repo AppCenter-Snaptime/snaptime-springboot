@@ -87,18 +87,18 @@ public class SnapPagingServiceImplTest {
         SnapPagingResDto snapPagingResDto = snapPagingServiceImpl.findSnapPage("testLoginId",1L);
 
         // then
-        assertThat(snapPagingResDto.snapDetailInfoDtos().size()).isEqualTo(3);
-        assertThat(snapPagingResDto.snapDetailInfoDtos().get(0).snapId()).isEqualTo(1);
-        assertThat(snapPagingResDto.snapDetailInfoDtos().get(1).snapId()).isEqualTo(2);
-        assertThat(snapPagingResDto.snapDetailInfoDtos().get(2).snapId()).isEqualTo(3);
+        assertThat(snapPagingResDto.snapDetailInfoResDtos().size()).isEqualTo(3);
+        assertThat(snapPagingResDto.snapDetailInfoResDtos().get(0).snapId()).isEqualTo(1);
+        assertThat(snapPagingResDto.snapDetailInfoResDtos().get(1).snapId()).isEqualTo(2);
+        assertThat(snapPagingResDto.snapDetailInfoResDtos().get(2).snapId()).isEqualTo(3);
 
-        assertThat(snapPagingResDto.snapDetailInfoDtos().get(0).oneLineJournal()).isEqualTo("일기1");
-        assertThat(snapPagingResDto.snapDetailInfoDtos().get(1).oneLineJournal()).isEqualTo("일기2");
-        assertThat(snapPagingResDto.snapDetailInfoDtos().get(2).oneLineJournal()).isEqualTo("일기3");
+        assertThat(snapPagingResDto.snapDetailInfoResDtos().get(0).oneLineJournal()).isEqualTo("일기1");
+        assertThat(snapPagingResDto.snapDetailInfoResDtos().get(1).oneLineJournal()).isEqualTo("일기2");
+        assertThat(snapPagingResDto.snapDetailInfoResDtos().get(2).oneLineJournal()).isEqualTo("일기3");
 
-        assertThat(snapPagingResDto.snapDetailInfoDtos().get(0).snapPhotoURL()).isEqualTo("photoURL1");
-        assertThat(snapPagingResDto.snapDetailInfoDtos().get(1).snapPhotoURL()).isEqualTo("photoURL2");
-        assertThat(snapPagingResDto.snapDetailInfoDtos().get(2).snapPhotoURL()).isEqualTo("photoURL3");
+        assertThat(snapPagingResDto.snapDetailInfoResDtos().get(0).snapPhotoURL()).isEqualTo("photoURL1");
+        assertThat(snapPagingResDto.snapDetailInfoResDtos().get(1).snapPhotoURL()).isEqualTo("photoURL2");
+        assertThat(snapPagingResDto.snapDetailInfoResDtos().get(2).snapPhotoURL()).isEqualTo("photoURL3");
 
         verify(snapRepository,times(1)).findSnapPaging(any(Long.class),any(User.class));
         verify(userRepository,times(1)).findByLoginId(any(String.class));
