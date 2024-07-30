@@ -10,6 +10,7 @@ public class FileNameGenerator {
 
     public static String generatorName(String fileName) {
         Random rd = new Random();
-        return currentTime + "_" + rd.nextInt() + "_"+ fileName;
+        int nonNegativeInt = Math.abs(rd.nextInt()); // 음수를 방지하기 위해 절대값을 취합니다.
+        return currentTime + "_" + nonNegativeInt + "_" + fileName;
     }
 }
