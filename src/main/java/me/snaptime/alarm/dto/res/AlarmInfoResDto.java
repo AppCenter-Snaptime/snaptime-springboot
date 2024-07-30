@@ -10,7 +10,7 @@ import me.snaptime.alarm.domain.SnapAlarm;
 import java.time.LocalDateTime;
 
 @Builder
-public record AlarmInfo(
+public record AlarmInfoResDto(
         Long alarmId,
         String snapPhotoURL,
         String senderName,
@@ -22,9 +22,9 @@ public record AlarmInfo(
         LocalDateTime createdDate
 
 ) {
-    public static AlarmInfo toDtoByFollowAlarm(String senderProfilePhotoURL, String timeAgo, FollowAlarm followAlarm){
+    public static AlarmInfoResDto toDtoByFollowAlarm(String senderProfilePhotoURL, String timeAgo, FollowAlarm followAlarm){
 
-        return AlarmInfo.builder()
+        return AlarmInfoResDto.builder()
                 .alarmId(followAlarm.getFollowAlarmId())
                 .snapPhotoURL(null)
                 .senderName(followAlarm.getSender().getName())
@@ -36,10 +36,10 @@ public record AlarmInfo(
                 .build();
     }
 
-    public static AlarmInfo toDtoBySnapAlarm(String senderProfilePhotoURL, String snapPhotoURL,
-                                             String timeAgo, SnapAlarm snapAlarm){
+    public static AlarmInfoResDto toDtoBySnapAlarm(String senderProfilePhotoURL, String snapPhotoURL,
+                                                   String timeAgo, SnapAlarm snapAlarm){
 
-        return AlarmInfo.builder()
+        return AlarmInfoResDto.builder()
                 .alarmId(snapAlarm.getSnapAlarmId())
                 .snapPhotoURL(snapPhotoURL)
                 .senderName(snapAlarm.getSender().getName())
@@ -51,10 +51,10 @@ public record AlarmInfo(
                 .build();
     }
 
-    public static AlarmInfo toDtoByReplyAlarm(String senderProfilePhotoURL, String snapPhotoURL,
-                                              String timeAgo, ReplyAlarm replyAlarm){
+    public static AlarmInfoResDto toDtoByReplyAlarm(String senderProfilePhotoURL, String snapPhotoURL,
+                                                    String timeAgo, ReplyAlarm replyAlarm){
 
-        return AlarmInfo.builder()
+        return AlarmInfoResDto.builder()
                 .alarmId(replyAlarm.getReplyAlarmId())
                 .snapPhotoURL(snapPhotoURL)
                 .senderName(replyAlarm.getSender().getName())

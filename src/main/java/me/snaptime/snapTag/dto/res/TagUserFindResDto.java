@@ -4,14 +4,14 @@ import lombok.Builder;
 import me.snaptime.snapTag.domain.SnapTag;
 
 @Builder
-public record FindTagUserResDto(
+public record TagUserFindResDto(
 
         String tagUserLoginId,
         String tagUserName
 
 ) {
-    public static FindTagUserResDto toDto(SnapTag snapTag){
-        return FindTagUserResDto.builder()
+    public static TagUserFindResDto toDto(SnapTag snapTag){
+        return TagUserFindResDto.builder()
                 .tagUserLoginId(snapTag.getTagUser().getLoginId())
                 .tagUserName(snapTag.getTagUser().getName())
                 .build();

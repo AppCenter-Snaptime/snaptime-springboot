@@ -7,11 +7,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.alarm.common.AlarmType;
-import me.snaptime.alarm.dto.res.FindAlarmsDto;
+import me.snaptime.alarm.dto.res.AlarmFindAllResDto;
 import me.snaptime.alarm.service.AlarmService;
 import me.snaptime.common.CommonResponseDto;
-import me.snaptime.reply.dto.res.FindParentReplyResDto;
-import me.snaptime.snap.dto.res.SnapInfoDto;
+import me.snaptime.reply.dto.res.ParentReplyPagingResDto;
+import me.snaptime.snap.dto.res.SnapDetailInfoResDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,7 +49,7 @@ public class AlarmController {
     @GetMapping("/snaps/{snapAlarmId}")
     @Operation(summary = "스냅알림 조회", description = "스냅알림을 읽음처리 후 해당스냅페이지로 이동합니다.")
     @Parameter(name = "snapAlarmId" , description = "snapAlarmId를 입력해주세요", required = true,example = "1")
-    public ResponseEntity<CommonResponseDto<SnapInfoDto>> readSnapAlarm(
+    public ResponseEntity<CommonResponseDto<SnapDetailInfoResDto>> readSnapAlarm(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long snapAlarmId) {
 
@@ -61,7 +61,7 @@ public class AlarmController {
     @GetMapping("/replies/{replyAlarmId}")
     @Operation(summary = "댓글알림 조회", description = "댓글알림을 읽음처리 후 해당 댓글페이지 1번으로 이동합니다.")
     @Parameter(name = "replyAlarmId" , description = "replyAlarmId를 입력해주세요", required = true,example = "1")
-    public ResponseEntity<CommonResponseDto<FindParentReplyResDto>> readReplyAlarm(
+    public ResponseEntity<CommonResponseDto<ParentReplyPagingResDto>> readReplyAlarm(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long replyAlarmId) {
 
@@ -86,7 +86,7 @@ public class AlarmController {
                                         "알림타입별로 반환되는 데이터가 다릅니다. 팔로우알림에는 snapUrl정보가 없으며 "+
                                         "댓글알림에만 댓글내용을 보여주는 previewText값이 있습니다.<br>"+
                                         "각 알림타입별로 alarmId값이 부여되기 때문에 타입이 다른 알림의 경우 id값이 중복될 수 있습니다.")
-    public ResponseEntity<CommonResponseDto<FindAlarmsDto>> findalarms(
+    public ResponseEntity<CommonResponseDto<AlarmFindAllResDto>> findAlarms(
             @AuthenticationPrincipal UserDetails userDetails) {
 
         return ResponseEntity.status(HttpStatus.OK)

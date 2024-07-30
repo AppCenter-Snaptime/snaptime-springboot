@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
-import me.snaptime.snap.dto.res.SnapDetailInfoDto;
+import me.snaptime.snap.dto.res.SnapDetailInfoResDto;
 import me.snaptime.snap.dto.res.SnapPagingResDto;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snap.service.SnapPagingService;
@@ -40,23 +40,23 @@ public class SnapPagingServiceImpl implements SnapPagingService {
         User reqUser = userRepository.findByLoginId(reqLoginId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        List<Tuple> tuples = snapRepository.findSnapPaging(pageNum,reqUser);
+        List<Tuple> tuples = snapRepository.findSnapPage(pageNum,reqUser);
         boolean hasNextPage = NextPageChecker.hasNextPage(tuples,10L);
 
-        List<SnapDetailInfoDto> snapDetailInfoDtos = tuples.stream().map(tuple ->
+        List<SnapDetailInfoResDto> snapDetailInfoResDtos = tuples.stream().map(tuple ->
         {
 
             Long snapId = tuple.get(snap.id);
             String profilePhotoURL = urlComponent.makeProfileURL(tuple.get(user.profilePhoto.profilePhotoId));
             String snapPhotoURL = urlComponent.makePhotoURL(tuple.get(snap.fileName),false);
 
-            return SnapDetailInfoDto.toDto(tuple,profilePhotoURL,snapPhotoURL,
+            return SnapDetailInfoResDto.toDto(tuple,profilePhotoURL,snapPhotoURL,
                     snapTagService.findTagUsers(snapId),
                     snapLikeService.findSnapLikeCnt(snapId),
                     snapLikeService.isLikedSnap(snapId, reqLoginId));
         }).collect(Collectors.toList());
 
-        return SnapPagingResDto.toDto(snapDetailInfoDtos,hasNextPage);
+        return SnapPagingResDto.toDto(snapDetailInfoResDtos,hasNextPage);
     }
 
 }

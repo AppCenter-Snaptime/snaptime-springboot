@@ -8,10 +8,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.common.CommonResponseDto;
-import me.snaptime.reply.dto.req.AddChildReplyReqDto;
-import me.snaptime.reply.dto.req.AddParentReplyReqDto;
-import me.snaptime.reply.dto.res.FindChildReplyResDto;
-import me.snaptime.reply.dto.res.FindParentReplyResDto;
+import me.snaptime.reply.dto.req.ChildReplyAddReqDto;
+import me.snaptime.reply.dto.req.ParentReplyAddReqDto;
+import me.snaptime.reply.dto.res.ChildReplyPagingResDto;
+import me.snaptime.reply.dto.res.ParentReplyPagingResDto;
 import me.snaptime.reply.service.ReplyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +32,9 @@ public class ReplyController {
     @Operation(summary = "댓글 등록요청", description = "댓글을 등록할 snap의 Id와 댓글내용을 보내주세요.")
     public ResponseEntity<CommonResponseDto<Void>> addParentReply(
             @AuthenticationPrincipal final UserDetails userDetails,
-            @RequestBody @Valid AddParentReplyReqDto addParentReplyReqDto){
+            @RequestBody @Valid ParentReplyAddReqDto parentReplyAddReqDto){
 
-        replyService.addParentReply(userDetails.getUsername(), addParentReplyReqDto);
+        replyService.addParentReply(userDetails.getUsername(), parentReplyAddReqDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CommonResponseDto("댓글등록이 성공했습니다.",null));
     }
@@ -44,9 +44,9 @@ public class ReplyController {
                                         "<br>태그할 유저가 없다면 tagLoginId는 보내지 않아도 됩니다.")
     public ResponseEntity<CommonResponseDto<Void>> addChildReply(
             @AuthenticationPrincipal final UserDetails userDetails,
-            @RequestBody @Valid AddChildReplyReqDto addChildReplyReqDto){
+            @RequestBody @Valid ChildReplyAddReqDto childReplyAddReqDto){
 
-        replyService.addChildReply(userDetails.getUsername(), addChildReplyReqDto);
+        replyService.addChildReply(userDetails.getUsername(), childReplyAddReqDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CommonResponseDto("대댓글등록이 성공했습니다.",null));
     }
@@ -58,7 +58,7 @@ public class ReplyController {
             @Parameter(name = "pageNum", description = "페이지번호", required = true, example = "1"),
             @Parameter(name = "snapId", description = "조회할 snapId", required = true, example = "1"),
     })
-    public ResponseEntity<CommonResponseDto<FindParentReplyResDto>> readParentReplyPage(
+    public ResponseEntity<CommonResponseDto<ParentReplyPagingResDto>> readParentReplyPage(
             @RequestParam @NotNull(message = "댓글을 조회할 snapId를 입력해주세요.") final Long snapId,
             @PathVariable final Long pageNum){
 
@@ -73,7 +73,7 @@ public class ReplyController {
             @Parameter(name = "pageNum", description = "페이지번호", required = true, example = "1"),
             @Parameter(name = "parentReplyId", description = "대댓글을 조회할 부모댓글의Id", required = true, example = "1"),
     })
-    public ResponseEntity<CommonResponseDto<FindChildReplyResDto>> readChildReplyPage(
+    public ResponseEntity<CommonResponseDto<ChildReplyPagingResDto>> readChildReplyPage(
             @RequestParam @NotNull(message = "부모댓글의 Id를 입력해주세요.") final Long parentReplyId,
             @PathVariable final Long pageNum){
 

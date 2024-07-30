@@ -1,29 +1,29 @@
 package me.snaptime.reply.service;
 
-import me.snaptime.reply.dto.req.AddChildReplyReqDto;
-import me.snaptime.reply.dto.req.AddParentReplyReqDto;
-import me.snaptime.reply.dto.res.FindChildReplyResDto;
-import me.snaptime.reply.dto.res.FindParentReplyResDto;
+import me.snaptime.reply.dto.req.ChildReplyAddReqDto;
+import me.snaptime.reply.dto.req.ParentReplyAddReqDto;
+import me.snaptime.reply.dto.res.ChildReplyPagingResDto;
+import me.snaptime.reply.dto.res.ParentReplyPagingResDto;
 
 public interface ReplyService {
 
     // 댓글을 추가합니다.
-    void addParentReply(String reqLoginId, AddParentReplyReqDto addParentReplyReqDto);
+    void addParentReply(String reqLoginId, ParentReplyAddReqDto parentReplyAddReqDto);
 
     // 댓글에 대댓글을 추가합니다.
-    void addChildReply(String reqLoginId, AddChildReplyReqDto addChildReplyReqDto);
+    void addChildReply(String reqLoginId, ChildReplyAddReqDto childReplyAddReqDto);
 
     /*
         댓글을 최신순으로 20개씩 조회합니다.
         커뮤니티기능이므로 페이징처리를 합니다.
     */
-    FindParentReplyResDto findParentReplyPage(Long snapId, Long pageNum);
+    ParentReplyPagingResDto findParentReplyPage(Long snapId, Long pageNum);
 
     /*
         댓글에 달린 대댓글을 최신순으로 20개씩 조회합니다.
         커뮤니티기능이므로 페이징처리를 합니다.
     */
-    FindChildReplyResDto findChildReplyPage(Long parentReplyId, Long pageNum);
+    ChildReplyPagingResDto findChildReplyPage(Long parentReplyId, Long pageNum);
 
     // 댓글을 변경합니다.
     void updateParentReply(String reqLoginId ,Long parentReplyId, String newContent);

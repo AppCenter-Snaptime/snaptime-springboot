@@ -237,7 +237,7 @@ public class FriendControllerTest {
                 .andDo(print());
 
         verify(friendService,times(1))
-                .findFriends(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq(null));
+                .findFriendPage(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq(null));
     }
 
     @Test
@@ -256,7 +256,7 @@ public class FriendControllerTest {
                 .andDo(print());
 
         verify(friendService,times(1))
-                .findFriends(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq(null));
+                .findFriendPage(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq(null));
     }
 
     @Test
@@ -276,7 +276,7 @@ public class FriendControllerTest {
                 .andDo(print());
 
         verify(friendService,times(1))
-                .findFriends(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+                .findFriendPage(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 
     @Test
@@ -296,7 +296,7 @@ public class FriendControllerTest {
                 .andDo(print());
 
         verify(friendService,times(0))
-                .findFriends(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+                .findFriendPage(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 
     @Test
@@ -316,7 +316,7 @@ public class FriendControllerTest {
                 .andDo(print());
 
         verify(friendService,times(0))
-                .findFriends(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+                .findFriendPage(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 
     @Test
@@ -336,7 +336,7 @@ public class FriendControllerTest {
                 .andDo(print());
 
         verify(friendService,times(0))
-                .findFriends(any(String.class), any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
+                .findFriendPage(any(String.class), any(String.class),any(Long.class),any(FriendSearchType.class),eq("박"));
     }
 
     @Test
@@ -345,7 +345,7 @@ public class FriendControllerTest {
     public void findFriendListTest7() throws Exception {
         //given
         doThrow(new CustomException(ExceptionCode.PAGE_NOT_FOUND))
-                .when(friendService).findFriends(any(String.class),any(String.class),any(Long.class),
+                .when(friendService).findFriendPage(any(String.class),any(String.class),any(Long.class),
                                                         any(FriendSearchType.class),eq("박"));
 
         //when, then
@@ -359,7 +359,7 @@ public class FriendControllerTest {
                 .andDo(print());
 
         verify(friendService,times(1))
-                .findFriends(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),
+                .findFriendPage(any(String.class),any(String.class),any(Long.class),any(FriendSearchType.class),
                                 eq("박"));
     }
 }

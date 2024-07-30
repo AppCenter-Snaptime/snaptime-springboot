@@ -7,7 +7,7 @@ import me.snaptime.jwt.UserDetailsServiceImpl;
 import me.snaptime.profile.service.impl.ProfileServiceImpl;
 import me.snaptime.user.dto.req.UserReqDto;
 import me.snaptime.user.dto.req.UserUpdateReqDto;
-import me.snaptime.user.dto.res.UserResDto;
+import me.snaptime.user.dto.res.UserFindResDto;
 import me.snaptime.user.service.impl.SignServiceImpl;
 import me.snaptime.user.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.DisplayName;
@@ -60,14 +60,14 @@ public class UserControllerTest {
 
         //given
         given(userService.getUser("kang4746")).willReturn(
-                UserResDto.builder()
+                UserFindResDto.builder()
                         .loginId("kang4746")
                         .email("strong@gmail.com")
                         .birthDay("1999-10-29")
                         .build());
 
         //when
-        mockMvc.perform(get("/users"))
+        mockMvc.perform(get("/users/my"))
                 .andExpect(status().isOk())
                 //json response 형식을 잘 봅시다.
                 .andExpect(jsonPath("$.msg").exists())
@@ -94,7 +94,7 @@ public class UserControllerTest {
                 .build();
 
         given(signService.signUp(any(UserReqDto.class)))
-                .willReturn(UserResDto.builder()
+                .willReturn(UserFindResDto.builder()
                         .userId(1L)
                         .loginId("kang4746")
                         .name("홍길순")
@@ -132,7 +132,7 @@ public class UserControllerTest {
                 .build();
 
         given(userService.updateUser(eq("kang4746"),any(UserUpdateReqDto.class)))
-                .willReturn(UserResDto.builder()
+                .willReturn(UserFindResDto.builder()
                         .loginId("kang4746")
                         .name("홍길순")
                         .email("strong@gmail.com")

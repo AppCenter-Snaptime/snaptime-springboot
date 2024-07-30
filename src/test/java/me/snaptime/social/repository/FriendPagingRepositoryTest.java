@@ -67,7 +67,7 @@ public class FriendPagingRepositoryTest {
         // given
 
         // when
-        List<Tuple> result = friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWING,1L,null);
+        List<Tuple> result = friendRepository.findFriendPage(reqUser, FriendSearchType.FOLLOWING,1L,null);
 
         // then
         assertThat(result.size()).isEqualTo(5);
@@ -79,7 +79,7 @@ public class FriendPagingRepositoryTest {
         // given
 
         // when
-        List<Tuple> result = friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,1L,"");
+        List<Tuple> result = friendRepository.findFriendPage(reqUser, FriendSearchType.FOLLOWER,1L,"");
 
         // then
         assertThat(result.size()).isEqualTo(5);
@@ -91,7 +91,7 @@ public class FriendPagingRepositoryTest {
         // given
 
         // when
-        List<Tuple> result = friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWING,1L,"testName1");
+        List<Tuple> result = friendRepository.findFriendPage(reqUser, FriendSearchType.FOLLOWING,1L,"testName1");
 
         // then
         assertThat(result.size()).isEqualTo(1);
@@ -104,7 +104,7 @@ public class FriendPagingRepositoryTest {
 
         // when
         try{
-            friendRepository.findFriendList(reqUser, FriendSearchType.FOLLOWER,10L,"20");
+            friendRepository.findFriendPage(reqUser, FriendSearchType.FOLLOWER,10L,"20");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.PAGE_NOT_FOUND);

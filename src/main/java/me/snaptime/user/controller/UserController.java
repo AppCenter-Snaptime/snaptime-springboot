@@ -13,7 +13,8 @@ import me.snaptime.user.dto.req.UserReqDto;
 import me.snaptime.user.dto.req.UserUpdateReqDto;
 import me.snaptime.user.dto.res.SignInResDto;
 import me.snaptime.user.dto.res.TestSignInResDto;
-import me.snaptime.user.dto.res.UserResDto;
+import me.snaptime.user.dto.res.UserFindResDto;
+import me.snaptime.user.dto.res.UserPagingResDto;
 import me.snaptime.user.service.SignService;
 import me.snaptime.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -34,28 +35,39 @@ public class UserController {
     private final UserService userService;
     private final SignService signService;
 
-    @Operation(summary = "유저 정보 조회",description = "유저 번호로 유저 정보를 조회합니다. ")
-    @GetMapping()
-    public ResponseEntity<CommonResponseDto<UserResDto>> getUser(@AuthenticationPrincipal UserDetails userDetails){
-        UserResDto userResDto = userService.getUser(userDetails.getUsername());
+    @Operation(summary = "자신의 유저 정보 조회",description = "자신의 유저 정보를 조회합니다. ")
+    @GetMapping("/my")
+    public ResponseEntity<CommonResponseDto<UserFindResDto>> getMyUser(@AuthenticationPrincipal UserDetails userDetails){
+        UserFindResDto userFindResDto = userService.getUser(userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 정보가 성공적으로 조회되었습니다.",
-                        userResDto));
+                        userFindResDto));
     }
 
+    @GetMapping("/{pageNum}")
+    @Operation(summary = "이름을 통해 유저리스트 조회",description = "유저이름을 통해 유저리스트를 반환합니다.<br>"+
+                                                                "해당 이름으로 시작하는 유저를 20개씩 반환합니다.<br>"+
+                                                                "searchKeyword는 반드시 입력해야합니다.")
+    public ResponseEntity<CommonResponseDto<UserPagingResDto>> findUserPageByName(
+            @RequestParam(name = "searchKeyword") @NotBlank(message = "검색어를 입력해주세요.") String searchKeyword,
+            @PathVariable(name = "pageNum") final Long pageNum){
+
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto("유저 검색이 완료되었습니다.",
+                userService.findUserPageByName(searchKeyword, pageNum)));
+    }
 
     @Operation(summary = "유저 정보 수정",description = "해당 유저의 정보를 수정합니다. " +
             "<br> 유저 loginId 수정 이후에는, Token의 loginId 정보와 현재 유저의 loginId가 다르므로," +
             "<br> Token을 버리고 재 login을 유도해야 합니다.")
     @PatchMapping()
-    public ResponseEntity<CommonResponseDto<UserResDto>> changeUser(@AuthenticationPrincipal UserDetails userDetails,
-                                                                    @Valid @RequestBody UserUpdateReqDto userUpdateReqDto){
-        UserResDto userResDto = userService.updateUser(userDetails.getUsername(), userUpdateReqDto);
+    public ResponseEntity<CommonResponseDto<UserFindResDto>> changeUser(@AuthenticationPrincipal UserDetails userDetails,
+                                                                        @Valid @RequestBody UserUpdateReqDto userUpdateReqDto){
+        UserFindResDto userFindResDto = userService.updateUser(userDetails.getUsername(), userUpdateReqDto);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 정보 수정이 성공적으로 완료되었습니다.",
-                        userResDto));
+                        userFindResDto));
     }
     @Operation(summary = "유저 비밀번호 수정",description = "해당 유저의 비밀번호를 수정합니다.")
     @PatchMapping("/password")
@@ -84,13 +96,13 @@ public class UserController {
             "<br> 회원가입이 완료되면 자동으로 유저의 기본 profile 사진이 등록됩니다." +
             "<br> 이후에 유저의 Token 을 통해 profile 사진을 수정할 수 있습니다.")
     @PostMapping("/sign-up")
-    public ResponseEntity<CommonResponseDto<UserResDto>> signUp(@Valid @RequestBody UserReqDto userReqDto){
-        UserResDto userResDto = signService.signUp(userReqDto);
+    public ResponseEntity<CommonResponseDto<UserFindResDto>> signUp(@Valid @RequestBody UserReqDto userReqDto){
+        UserFindResDto userFindResDto = signService.signUp(userReqDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new CommonResponseDto<>(
                         "유저 회원가입을 성공적으로 완료하였습니다.",
-                        userResDto));
+                        userFindResDto));
     }
 
     @Operation(summary = "로그인", description = "회원 가입 한 유저의 loginId와 password를 입력합니다.")

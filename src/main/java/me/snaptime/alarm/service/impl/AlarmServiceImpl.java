@@ -5,8 +5,8 @@ import me.snaptime.alarm.common.AlarmType;
 import me.snaptime.alarm.domain.FollowAlarm;
 import me.snaptime.alarm.domain.ReplyAlarm;
 import me.snaptime.alarm.domain.SnapAlarm;
-import me.snaptime.alarm.dto.res.AlarmInfo;
-import me.snaptime.alarm.dto.res.FindAlarmsDto;
+import me.snaptime.alarm.dto.res.AlarmFindAllResDto;
+import me.snaptime.alarm.dto.res.AlarmInfoResDto;
 import me.snaptime.alarm.repository.FollowAlarmRepository;
 import me.snaptime.alarm.repository.ReplyAlarmRepository;
 import me.snaptime.alarm.repository.SnapAlarmRepository;
@@ -15,9 +15,9 @@ import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.friend.service.FriendService;
-import me.snaptime.reply.dto.res.FindParentReplyResDto;
+import me.snaptime.reply.dto.res.ParentReplyPagingResDto;
 import me.snaptime.reply.service.ReplyService;
-import me.snaptime.snap.dto.res.SnapDetailInfoDto;
+import me.snaptime.snap.dto.res.SnapDetailInfoResDto;
 import me.snaptime.snap.service.SnapService;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
@@ -46,7 +46,7 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Override
     @Transactional
-    public SnapDetailInfoDto readSnapAlarm(String reqLoginId, Long snapAlarmId) {
+    public SnapDetailInfoResDto readSnapAlarm(String reqLoginId, Long snapAlarmId) {
 
         SnapAlarm snapAlarm = snapAlarmRepository.findById(snapAlarmId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.ALARM_NOT_EXIST));
@@ -78,7 +78,7 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Override
     @Transactional
-    public FindParentReplyResDto readReplyAlarm(String reqLoginId, Long replyAlarmId) {
+    public ParentReplyPagingResDto readReplyAlarm(String reqLoginId, Long replyAlarmId) {
         ReplyAlarm replyAlarm = replyAlarmRepository.findById(replyAlarmId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.ALARM_NOT_EXIST));
 
@@ -92,11 +92,11 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
-    public FindAlarmsDto findAlarms(String reqLoginId) {
+    public AlarmFindAllResDto findAlarms(String reqLoginId) {
         User reqUser = userRepository.findByLoginId(reqLoginId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        return FindAlarmsDto.toDto(findSortedAlarms(reqUser,false), findSortedAlarms(reqUser,true));
+        return AlarmFindAllResDto.toDto(findSortedAlarms(reqUser,false), findSortedAlarms(reqUser,true));
     }
 
     @Override
@@ -148,9 +148,9 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     // 알림을 최신순으로 정렬하여 조회합니다.
-    private List<AlarmInfo> findSortedAlarms(User reqUser, boolean isRead){
+    private List<AlarmInfoResDto> findSortedAlarms(User reqUser, boolean isRead){
 
-        List<AlarmInfo> alarmInfos = new ArrayList<>();
+        List<AlarmInfoResDto> alarmInfoResDtos = new ArrayList<>();
 
         List<FollowAlarm> followAlarms = followAlarmRepository.findByReceiverAndIsRead(reqUser,isRead);
         List<ReplyAlarm> replyAlarms = replyAlarmRepository.findByReceiverAndIsRead(reqUser,isRead);
@@ -162,8 +162,8 @@ public class AlarmServiceImpl implements AlarmService {
             String profilePhotoURL = urlComponent.makeProfileURL(sender.getProfilePhoto().getProfilePhotoId());
             String timeAgo = TimeAgoCalculator.findTimeAgo(followAlarm.getCreatedDate());
 
-            AlarmInfo alarmInfo = AlarmInfo.toDtoByFollowAlarm(profilePhotoURL, timeAgo, followAlarm);
-            alarmInfos.add(alarmInfo);
+            AlarmInfoResDto alarmInfoResDto = AlarmInfoResDto.toDtoByFollowAlarm(profilePhotoURL, timeAgo, followAlarm);
+            alarmInfoResDtos.add(alarmInfoResDto);
         });
 
         replyAlarms.forEach(replyAlarm -> {
@@ -173,8 +173,8 @@ public class AlarmServiceImpl implements AlarmService {
             String snapPhotoURL = urlComponent.makePhotoURL(replyAlarm.getSnap().getFileName(),false);
             String timeAgo = TimeAgoCalculator.findTimeAgo(replyAlarm.getCreatedDate());
 
-            AlarmInfo alarmInfo = AlarmInfo.toDtoByReplyAlarm(profilePhotoURL, snapPhotoURL, timeAgo, replyAlarm);
-            alarmInfos.add(alarmInfo);
+            AlarmInfoResDto alarmInfoResDto = AlarmInfoResDto.toDtoByReplyAlarm(profilePhotoURL, snapPhotoURL, timeAgo, replyAlarm);
+            alarmInfoResDtos.add(alarmInfoResDto);
         });
 
         snapAlarms.forEach(snapAlarm -> {
@@ -184,12 +184,12 @@ public class AlarmServiceImpl implements AlarmService {
             String snapPhotoURL = urlComponent.makePhotoURL(snapAlarm.getSnap().getFileName(),false);
             String timeAgo = TimeAgoCalculator.findTimeAgo(snapAlarm.getCreatedDate());
 
-            AlarmInfo alarmInfo = AlarmInfo.toDtoBySnapAlarm(profilePhotoURL, snapPhotoURL, timeAgo, snapAlarm);
-            alarmInfos.add(alarmInfo);
+            AlarmInfoResDto alarmInfoResDto = AlarmInfoResDto.toDtoBySnapAlarm(profilePhotoURL, snapPhotoURL, timeAgo, snapAlarm);
+            alarmInfoResDtos.add(alarmInfoResDto);
         });
 
-        alarmInfos.sort(Comparator.comparing(AlarmInfo::getCreatedDate).reversed());
-        return alarmInfos;
+        alarmInfoResDtos.sort(Comparator.comparing(AlarmInfoResDto::getCreatedDate).reversed());
+        return alarmInfoResDtos;
     }
 
 }

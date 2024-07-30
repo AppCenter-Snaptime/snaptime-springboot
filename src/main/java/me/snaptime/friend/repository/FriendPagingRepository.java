@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface FriendPagingRepository {
 
-    List<Tuple> findFriendList(User targetUser, FriendSearchType searchType, Long pageNum , String searchKeyword);
+    List<Tuple> findFriendPage(User targetUser, FriendSearchType searchType, Long pageNum , String searchKeyword);
 }

@@ -10,7 +10,7 @@ import me.snaptime.user.dto.req.SignInReqDto;
 import me.snaptime.user.dto.req.UserReqDto;
 import me.snaptime.user.dto.req.UserUpdateReqDto;
 import me.snaptime.user.dto.res.SignInResDto;
-import me.snaptime.user.dto.res.UserResDto;
+import me.snaptime.user.dto.res.UserFindResDto;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.user.service.impl.SignServiceImpl;
 import me.snaptime.user.service.impl.UserServiceImpl;
@@ -76,14 +76,14 @@ class UserServiceTest {
         Mockito.when(userRepository.findByLoginId("kang4746"))
                 .thenReturn(Optional.of(givenUser));
         //when
-        UserResDto userResDto = userService.getUser("kang4746");
+        UserFindResDto userFindResDto = userService.getUser("kang4746");
 
         //then
-        Assertions.assertEquals(givenUser.getUserId(),userResDto.userId());
-        Assertions.assertEquals(givenUser.getName(),userResDto.name());
-        Assertions.assertEquals(givenUser.getLoginId(),userResDto.loginId());
-        Assertions.assertEquals(givenUser.getEmail(),userResDto.email());
-        Assertions.assertEquals(givenUser.getBirthDay(),userResDto.birthDay());
+        Assertions.assertEquals(givenUser.getUserId(), userFindResDto.userId());
+        Assertions.assertEquals(givenUser.getName(), userFindResDto.name());
+        Assertions.assertEquals(givenUser.getLoginId(), userFindResDto.loginId());
+        Assertions.assertEquals(givenUser.getEmail(), userFindResDto.email());
+        Assertions.assertEquals(givenUser.getBirthDay(), userFindResDto.birthDay());
 
         verify(userRepository, times(1)).findByLoginId("kang4746");
     }
@@ -108,13 +108,13 @@ class UserServiceTest {
         Mockito.when(profilePhotoRepository.save(any(ProfilePhoto.class)))
                 .then(returnsFirstArg());
         //when
-        UserResDto userResDto = signService.signUp(givenRequest);
+        UserFindResDto userFindResDto = signService.signUp(givenRequest);
 
         //then
-        Assertions.assertEquals(givenRequest.name(),userResDto.name());
-        Assertions.assertEquals(givenRequest.loginId(),userResDto.loginId());
-        Assertions.assertEquals(givenRequest.email(),userResDto.email());
-        Assertions.assertEquals(givenRequest.birthDay(),userResDto.birthDay());
+        Assertions.assertEquals(givenRequest.name(), userFindResDto.name());
+        Assertions.assertEquals(givenRequest.loginId(), userFindResDto.loginId());
+        Assertions.assertEquals(givenRequest.email(), userFindResDto.email());
+        Assertions.assertEquals(givenRequest.birthDay(), userFindResDto.birthDay());
         verify(userRepository,times(1)).save(any());
     }
 
@@ -185,7 +185,7 @@ class UserServiceTest {
                 .thenReturn(Optional.of(givenUser));
 
         //when
-        UserResDto userResponseDto = userService.updateUser("kang4746",userUpdateDto);
+        UserFindResDto userResponseDto = userService.updateUser("kang4746",userUpdateDto);
 
         //then
         Assertions.assertEquals("홍길순",userResponseDto.name());

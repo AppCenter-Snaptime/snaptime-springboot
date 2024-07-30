@@ -7,8 +7,8 @@ import me.snaptime.exception.ExceptionCode;
 import me.snaptime.jwt.JwtProvider;
 import me.snaptime.jwt.UserDetailsServiceImpl;
 import me.snaptime.reply.controller.ReplyController;
-import me.snaptime.reply.dto.req.AddChildReplyReqDto;
-import me.snaptime.reply.dto.req.AddParentReplyReqDto;
+import me.snaptime.reply.dto.req.ChildReplyAddReqDto;
+import me.snaptime.reply.dto.req.ParentReplyAddReqDto;
 import me.snaptime.reply.service.ReplyService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,9 +50,9 @@ public class ReplyControllerTest {
     public void addParentReplyTest1() throws Exception {
         //given
         Gson gson = new Gson();
-        AddParentReplyReqDto addParentReplyReqDto =
-                new AddParentReplyReqDto("댓글내용",1L);
-        String requestBody = gson.toJson(addParentReplyReqDto);
+        ParentReplyAddReqDto parentReplyAddReqDto =
+                new ParentReplyAddReqDto("댓글내용",1L);
+        String requestBody = gson.toJson(parentReplyAddReqDto);
 
         //when, then
         this.mockMvc.perform(post("/parent-replies")
@@ -63,7 +63,7 @@ public class ReplyControllerTest {
                 .andDo(print());
 
         verify(replyService,times(1))
-                .addParentReply(any(String.class),any(AddParentReplyReqDto.class));
+                .addParentReply(any(String.class),any(ParentReplyAddReqDto.class));
     }
 
     @Test
@@ -72,9 +72,9 @@ public class ReplyControllerTest {
     public void addParentReplyTest2() throws Exception {
         //given
         Gson gson = new Gson();
-        AddParentReplyReqDto addParentReplyReqDto =
-                new AddParentReplyReqDto("",1L);
-        String requestBody = gson.toJson(addParentReplyReqDto);
+        ParentReplyAddReqDto parentReplyAddReqDto =
+                new ParentReplyAddReqDto("",1L);
+        String requestBody = gson.toJson(parentReplyAddReqDto);
 
         //when, then
         this.mockMvc.perform(post("/parent-replies",1L)
@@ -86,7 +86,7 @@ public class ReplyControllerTest {
                 .andDo(print());
 
         verify(replyService,times(0))
-                .addParentReply(any(String.class),any(AddParentReplyReqDto.class));
+                .addParentReply(any(String.class),any(ParentReplyAddReqDto.class));
     }
 
     @Test
@@ -95,9 +95,9 @@ public class ReplyControllerTest {
     public void addParentReplyTest3() throws Exception {
         //given
         Gson gson = new Gson();
-        AddParentReplyReqDto addParentReplyReqDto =
-                new AddParentReplyReqDto("댓글내용",null);
-        String requestBody = gson.toJson(addParentReplyReqDto);
+        ParentReplyAddReqDto parentReplyAddReqDto =
+                new ParentReplyAddReqDto("댓글내용",null);
+        String requestBody = gson.toJson(parentReplyAddReqDto);
 
         //when, then
         this.mockMvc.perform(post("/parent-replies")
@@ -109,7 +109,7 @@ public class ReplyControllerTest {
                 .andDo(print());
 
         verify(replyService,times(0))
-                .addParentReply(any(String.class),any(AddParentReplyReqDto.class));
+                .addParentReply(any(String.class),any(ParentReplyAddReqDto.class));
     }
 
     @Test
@@ -118,12 +118,12 @@ public class ReplyControllerTest {
     public void addParentReplyTest4() throws Exception {
         //given
         Gson gson = new Gson();
-        AddParentReplyReqDto addParentReplyReqDto =
-                new AddParentReplyReqDto("댓글내용",1L);
-        String requestBody = gson.toJson(addParentReplyReqDto);
+        ParentReplyAddReqDto parentReplyAddReqDto =
+                new ParentReplyAddReqDto("댓글내용",1L);
+        String requestBody = gson.toJson(parentReplyAddReqDto);
 
         doThrow(new CustomException(ExceptionCode.SNAP_NOT_EXIST))
-                .when(replyService).addParentReply(any(String.class),any(AddParentReplyReqDto.class));
+                .when(replyService).addParentReply(any(String.class),any(ParentReplyAddReqDto.class));
 
         //when, then
         this.mockMvc.perform(post("/parent-replies")
@@ -134,7 +134,7 @@ public class ReplyControllerTest {
                 .andDo(print());
 
         verify(replyService,times(1))
-                .addParentReply(any(String.class),any(AddParentReplyReqDto.class));
+                .addParentReply(any(String.class),any(ParentReplyAddReqDto.class));
     }
 
     @Test
@@ -143,9 +143,9 @@ public class ReplyControllerTest {
     public void addChildReplyTest1() throws Exception {
         //given
         Gson gson = new Gson();
-        AddChildReplyReqDto addChildReplyReqDto =
-                new AddChildReplyReqDto("댓글내용",1L,"태그유저loginId");
-        String requestBody = gson.toJson(addChildReplyReqDto);
+        ChildReplyAddReqDto childReplyAddReqDto =
+                new ChildReplyAddReqDto("댓글내용",1L,"태그유저loginId");
+        String requestBody = gson.toJson(childReplyAddReqDto);
 
         //when, then
         this.mockMvc.perform(post("/child-replies")
@@ -156,7 +156,7 @@ public class ReplyControllerTest {
                 .andDo(print());
 
         verify(replyService,times(1))
-                .addChildReply(any(String.class),any(AddChildReplyReqDto.class));
+                .addChildReply(any(String.class),any(ChildReplyAddReqDto.class));
     }
 
     @Test
@@ -165,9 +165,9 @@ public class ReplyControllerTest {
     public void addChildReplyTest2() throws Exception {
         //given
         Gson gson = new Gson();
-        AddChildReplyReqDto addChildReplyReqDto =
-                new AddChildReplyReqDto("",null,"");
-        String requestBody = gson.toJson(addChildReplyReqDto);
+        ChildReplyAddReqDto childReplyAddReqDto =
+                new ChildReplyAddReqDto("",null,"");
+        String requestBody = gson.toJson(childReplyAddReqDto);
 
         //when, then
         this.mockMvc.perform(post("/child-replies")
@@ -180,7 +180,7 @@ public class ReplyControllerTest {
                 .andDo(print());
 
         verify(replyService,times(0))
-                .addChildReply(any(String.class),any(AddChildReplyReqDto.class));
+                .addChildReply(any(String.class),any(ChildReplyAddReqDto.class));
     }
 
     @Test
@@ -189,12 +189,12 @@ public class ReplyControllerTest {
     public void addChildReplyTest3() throws Exception {
         //given
         Gson gson = new Gson();
-        AddChildReplyReqDto addChildReplyReqDto =
-                new AddChildReplyReqDto("댓글내용",1L,"태그유저loginId");
-        String requestBody = gson.toJson(addChildReplyReqDto);
+        ChildReplyAddReqDto childReplyAddReqDto =
+                new ChildReplyAddReqDto("댓글내용",1L,"태그유저loginId");
+        String requestBody = gson.toJson(childReplyAddReqDto);
 
         doThrow(new CustomException(ExceptionCode.USER_NOT_EXIST))
-                .when(replyService).addChildReply(any(String.class),any(AddChildReplyReqDto.class));
+                .when(replyService).addChildReply(any(String.class),any(ChildReplyAddReqDto.class));
 
         //when, then
         this.mockMvc.perform(post("/child-replies")
@@ -205,7 +205,7 @@ public class ReplyControllerTest {
                 .andDo(print());
 
         verify(replyService,times(1))
-                .addChildReply(any(String.class),any(AddChildReplyReqDto.class));
+                .addChildReply(any(String.class),any(ChildReplyAddReqDto.class));
     }
 
     @Test
@@ -214,12 +214,12 @@ public class ReplyControllerTest {
     public void addChildReplyTest4() throws Exception {
         //given
         Gson gson = new Gson();
-        AddChildReplyReqDto addChildReplyReqDto =
-                new AddChildReplyReqDto("댓글내용",1L,"태그유저loginId");
-        String requestBody = gson.toJson(addChildReplyReqDto);
+        ChildReplyAddReqDto childReplyAddReqDto =
+                new ChildReplyAddReqDto("댓글내용",1L,"태그유저loginId");
+        String requestBody = gson.toJson(childReplyAddReqDto);
 
         doThrow(new CustomException(ExceptionCode.REPLY_NOT_FOUND))
-                .when(replyService).addChildReply(any(String.class),any(AddChildReplyReqDto.class));
+                .when(replyService).addChildReply(any(String.class),any(ChildReplyAddReqDto.class));
 
         //when, then
         this.mockMvc.perform(post("/child-replies")
@@ -230,6 +230,6 @@ public class ReplyControllerTest {
                 .andDo(print());
 
         verify(replyService,times(1))
-                .addChildReply(any(String.class),any(AddChildReplyReqDto.class));
+                .addChildReply(any(String.class),any(ChildReplyAddReqDto.class));
     }
 }

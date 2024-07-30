@@ -8,7 +8,7 @@ import me.snaptime.exception.ExceptionCode;
 import me.snaptime.snap.domain.Snap;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snapTag.domain.SnapTag;
-import me.snaptime.snapTag.dto.res.FindTagUserResDto;
+import me.snaptime.snapTag.dto.res.TagUserFindResDto;
 import me.snaptime.snapTag.repository.SnapTagRepository;
 import me.snaptime.snapTag.service.SnapTagService;
 import me.snaptime.user.domain.User;
@@ -68,12 +68,12 @@ public class SnapTagServiceImpl implements SnapTagService {
     }
 
     @Override
-    public List<FindTagUserResDto> findTagUsers(Long snapId){
+    public List<TagUserFindResDto> findTagUsers(Long snapId){
         Snap snap = snapRepository.findById(snapId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
 
         List<SnapTag> snapTags = snapTagRepository.findBySnap(snap);
-        return snapTags.stream().map( snapTag -> FindTagUserResDto.toDto(snapTag)).collect(Collectors.toList());
+        return snapTags.stream().map( snapTag -> TagUserFindResDto.toDto(snapTag)).collect(Collectors.toList());
     }
 
     // 삭제된 태그유저 추출

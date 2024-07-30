@@ -135,7 +135,7 @@ public class SnapPagingRepositoryImplTest {
         // given
 
         // when
-        List<Tuple> result = snapRepository.findSnapPaging(1L,reqUser);
+        List<Tuple> result = snapRepository.findSnapPage(1L,reqUser);
 
         // then
         assertThat(result.size()).isEqualTo(4);
@@ -148,7 +148,7 @@ public class SnapPagingRepositoryImplTest {
 
         // when,then
         try{
-            snapRepository.findSnapPaging(10L,reqUser);
+            snapRepository.findSnapPage(10L,reqUser);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.PAGE_NOT_FOUND);

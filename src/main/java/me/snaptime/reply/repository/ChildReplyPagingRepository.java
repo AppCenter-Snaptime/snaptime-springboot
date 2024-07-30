@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ChildReplyPagingRepository {
 
-    List<Tuple> findReplyList(Long parentReplyId, Long pageNum);
+    List<Tuple> findReplyPage(Long parentReplyId, Long pageNum);
 }

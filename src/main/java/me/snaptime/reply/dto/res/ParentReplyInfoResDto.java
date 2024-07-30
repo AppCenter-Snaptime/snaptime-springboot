@@ -8,7 +8,7 @@ import static me.snaptime.user.domain.QUser.user;
 
 
 @Builder
-public record ParentReplyInfo(
+public record ParentReplyInfoResDto(
 
         String writerLoginId,
         String writerProfilePhotoURL,
@@ -17,8 +17,8 @@ public record ParentReplyInfo(
         Long replyId,
         String timeAgo
 ) {
-    public static ParentReplyInfo toDto(Tuple tuple, String profilePhotoURL,String timeAgo){
-        return ParentReplyInfo.builder()
+    public static ParentReplyInfoResDto toDto(Tuple tuple, String profilePhotoURL, String timeAgo){
+        return ParentReplyInfoResDto.builder()
                 .writerLoginId(tuple.get(user.loginId))
                 .writerProfilePhotoURL(profilePhotoURL)
                 .writerUserName(tuple.get(user.name))
