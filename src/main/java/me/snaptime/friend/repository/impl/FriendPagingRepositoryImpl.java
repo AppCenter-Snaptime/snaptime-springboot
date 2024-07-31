@@ -65,7 +65,7 @@ public class FriendPagingRepositoryImpl implements FriendPagingRepository {
         }
 
         if(searchKeyword !=null){
-            builder.and(user.name.startsWith(searchKeyword));
+            builder.and(user.name.startsWith(searchKeyword).or(user.loginId.startsWith(searchKeyword)));
         }
 
         return builder;
