@@ -3,6 +3,7 @@ package me.snaptime.user.service.impl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.snaptime.album.service.AlbumService;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.jwt.JwtProvider;
@@ -35,6 +36,7 @@ public class SignServiceImpl implements SignService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AlbumService albumService;
 
     @Override
     public UserFindResDto signUp(UserReqDto userReqDto) {
@@ -65,6 +67,9 @@ public class SignServiceImpl implements SignService {
                 .roles(Collections.singletonList("ROLE_USER"))
                 .profilePhoto(profilePhoto)
                 .build();
+
+        // NonClassification 앨범 생성
+        albumService.createNonClassificationAlbum(user);
 
         return UserFindResDto.toDto(userRepository.save(user));
     }
