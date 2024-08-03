@@ -1,5 +1,6 @@
 package me.snaptime.user.service;
 
+import me.snaptime.album.service.AlbumService;
 import me.snaptime.jwt.JwtProvider;
 import me.snaptime.jwt.redis.RefreshToken;
 import me.snaptime.jwt.redis.RefreshTokenRepository;
@@ -56,6 +57,9 @@ class UserServiceTest {
     @Mock
     private JwtProvider jwtProvider;
 
+    @Mock
+    private AlbumService albumService;
+
     private User givenUser;
 
     @BeforeEach
@@ -107,6 +111,7 @@ class UserServiceTest {
                 .then(returnsFirstArg());
         Mockito.when(profilePhotoRepository.save(any(ProfilePhoto.class)))
                 .then(returnsFirstArg());
+        given(albumService.createNonClassificationAlbum(any(User.class))).willReturn(1L);
         //when
         UserFindResDto userFindResDto = signService.signUp(givenRequest);
 
