@@ -1,5 +1,6 @@
 package me.snaptime.user.repository.impl;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -30,7 +31,7 @@ public class UserPagingRepositoryImpl implements UserPagingRepository {
                         user.loginId, user.profilePhoto.profilePhotoId, user.name
                 )
                 .from(user)
-                .where(user.name.startsWith(searchKeyword))
+                .where(user.name.startsWith(searchKeyword).or(user.loginId.startsWith(searchKeyword)))
                 .orderBy(new OrderSpecifier(Order.ASC, user.userId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1) //페이지의 크기
