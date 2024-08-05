@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import me.snaptime.album.domain.Album;
 import me.snaptime.common.BaseTimeEntity;
 import me.snaptime.user.domain.User;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -26,6 +28,7 @@ public class Snap extends BaseTimeEntity {
     private Album album;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id")
     private User user;
 
