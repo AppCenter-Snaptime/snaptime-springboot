@@ -113,7 +113,7 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public Long findUserNonClassificationId(User user) {
         List<Album> foundAlbums = albumRepository.findAlbumsByUser(user);
-        return foundAlbums.stream().filter(album -> Objects.equals(album.getName(), nonClassificationName)).findFirst().map(Album::getId).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
+        return foundAlbums.stream().filter(album -> Objects.equals(album.getName(), nonClassificationName)).findFirst().map(Album::getId).orElseThrow(() -> new CustomException(ExceptionCode.NON_CLASSIFICATION_ALBUM_IS_NOT_EXIST));
     }
 
     @Override
@@ -151,6 +151,9 @@ public class AlbumServiceImpl implements AlbumService {
         Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
         // 사용자가 가지고 있는 non-classification id를 가져온다.
         Long foundNonClassificationId = findUserNonClassificationId(foundUser);
+        if  (foundNonClassificationId.equals(album_id)) {
+            throw new CustomException(ExceptionCode.NOT_DELETE_NON_CLASSIFICATION_ALBUM);
+        }
         Album nonClassificationAlbum = albumRepository.findById(foundNonClassificationId).orElseThrow(() -> new CustomException(ExceptionCode.NON_CLASSIFICATION_ALBUM_IS_NOT_EXIST));
         // 앨범과 연관관계가 맺어져있는 snap들의 목록을 가져온다
         List<Snap> snapList = foundAlbum.getSnap();
