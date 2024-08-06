@@ -27,6 +27,7 @@ public class ParentReply extends BaseTimeEntity {
     private String content;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "snap_id",nullable = false)
     private Snap snap;
 
