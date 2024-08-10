@@ -29,6 +29,7 @@ public class ChildReply extends BaseTimeEntity {
     private User user;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "parent_reply_id",nullable = false)
     private ParentReply parentReply;
 
