@@ -29,8 +29,10 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
             String message = e.getExceptionCode().getMessage();
             if(message.contains("AccessToken")){
                 setErrorResponse(response,ExceptionCode.ACCESS_TOKEN_EXPIRED);
-            }else{
+            }else if(message.contains("RefreshToken")){
                 setErrorResponse(response,ExceptionCode.REFRESH_TOKEN_EXPIRED);
+            }else{
+                setErrorResponse(response, ExceptionCode.USER_NOT_EXIST);
             }
         } catch (DecodingException e) { //jwt 디코딩 중 발생할 수 있는 예외. Base64 형식이 아닌경우, 헤더,페이로드,서명이 유효하지 않은경우, 페이로드 파싱에 문제가 있는경우
             setErrorResponse(response, ExceptionCode.TOKEN_INVALID);

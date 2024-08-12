@@ -161,10 +161,10 @@ public class UserControllerTest {
     void deleteUserTest() throws Exception{
         //given
         //when
-        mockMvc.perform(delete("/users"))
+        mockMvc.perform(delete("/users").param("password", "test1234"))
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(userService,times(1)).deleteUser("kang4746");
+        verify(userService,times(1)).deleteUser("test1234","kang4746");
     }
 }

@@ -8,6 +8,6 @@ public interface UserService {
     UserFindResDto getUser(String loginId);
     UserPagingResDto findUserPageByName(String searchKeyword, Long pageNum);
     UserFindResDto updateUser(String loginId, UserUpdateReqDto userUpdateReqDto);
-    void deleteUser(String loginId);
+    void deleteUser(String password, String loginId);
     void updatePassword(String loginId, String password);
 }

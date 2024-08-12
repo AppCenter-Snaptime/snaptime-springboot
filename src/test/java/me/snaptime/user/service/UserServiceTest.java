@@ -168,8 +168,12 @@ class UserServiceTest {
 
         Mockito.when(userRepository.findByLoginId("kang4746"))
                 .thenReturn(Optional.of(user));
+
+        Mockito.when(passwordEncoder.matches("test1234", user.getPassword()))
+                .thenReturn(true);
+
         //when
-        userService.deleteUser("kang4746");
+        userService.deleteUser("test1234","kang4746");
 
         //then
         verify(userRepository,times(1)).findByLoginId("kang4746");
