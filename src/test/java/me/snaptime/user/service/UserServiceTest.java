@@ -169,7 +169,7 @@ class UserServiceTest {
         Mockito.when(userRepository.findByLoginId("kang4746"))
                 .thenReturn(Optional.of(user));
         //when
-        userService.deleteUser("kang4746");
+        userService.deleteUser("kang476","kang4746");
 
         //then
         verify(userRepository,times(1)).findByLoginId("kang4746");

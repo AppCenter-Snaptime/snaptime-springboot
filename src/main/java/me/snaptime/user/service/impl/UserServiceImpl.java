@@ -77,8 +77,12 @@ public class UserServiceImpl implements UserService {
         return UserFindResDto.toDto(user);
     }
 
-    public void deleteUser(String loginId) {
+    public void deleteUser(String password, String loginId) {
+
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new CustomException(ExceptionCode.PASSWORD_NOT_EQUAL);
+        }
         userRepository.deleteById(user.getUserId());
     }
 

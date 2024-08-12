@@ -73,7 +73,7 @@ public class UserController {
     @PatchMapping("/password")
     public ResponseEntity<CommonResponseDto<Void>> changeUser(@AuthenticationPrincipal UserDetails userDetails,
                                                               @RequestParam("password")
-                                                              @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String password) {
+                                                              @NotBlank(message = "패스워드 입력은 필수입니다.") String password) {
         userService.updatePassword(userDetails.getUsername(), password);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
@@ -84,8 +84,10 @@ public class UserController {
 
     @Operation(summary = "유저 삭제",description = "유저 번호로 유저를 삭제합니다.")
     @DeleteMapping()
-    public ResponseEntity<CommonResponseDto<Void>> deleteUser(@AuthenticationPrincipal UserDetails userDetails){
-        userService.deleteUser(userDetails.getUsername());
+    public ResponseEntity<CommonResponseDto<Void>> deleteUser(@AuthenticationPrincipal UserDetails userDetails,
+                                                              @RequestParam("password")
+                                                              @NotBlank(message = "패스워드 입력은 필수입니다.") String password){
+        userService.deleteUser(password, userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 삭제가 성공적으로 완료되었습니다.",
