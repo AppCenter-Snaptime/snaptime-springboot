@@ -43,7 +43,7 @@ public class AlbumServiceImpl implements AlbumService {
         User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         List<Album> foundAlbums = albumRepository.findAlbumsByUser(foundUser);
         return foundAlbums.stream().map(album -> {
-            Optional<Snap> firstSnapOptional = album.getSnap().isEmpty() ? Optional.empty() : Optional.of(album.getSnap().get(0));
+            Optional<Snap> firstSnapOptional = album.getSnap().isEmpty() ? Optional.empty() : Optional.of(album.getSnap().getLast());
             String photoUrl = firstSnapOptional.map(snap -> urlComponent.makePhotoURL(snap.getFileName(), snap.isPrivate())).orElse(null);
             return FindAllAlbumsResDto.builder()
                     .id(album.getId())
