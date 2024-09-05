@@ -11,7 +11,6 @@ import me.snaptime.profilePhoto.service.ProfilePhotoService;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.util.FileNameGenerator;
-import me.snaptime.util.ProfilePhotoNameGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
