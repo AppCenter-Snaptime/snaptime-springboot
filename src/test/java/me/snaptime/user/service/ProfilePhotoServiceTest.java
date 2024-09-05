@@ -6,7 +6,6 @@ import me.snaptime.profilePhoto.repository.ProfilePhotoRepository;
 import me.snaptime.profilePhoto.service.impl.ProfilePhotoServiceImpl;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
-import me.snaptime.util.ProfilePhotoNameGenerator;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
