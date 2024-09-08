@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import me.snaptime.alarm.common.AlarmType;
 import me.snaptime.alarm.dto.res.AlarmFindAllResDto;
 import me.snaptime.alarm.service.AlarmService;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/alarms")
 @RequiredArgsConstructor
 @Tag(name = "[Alarm] Alarm API")
+@Log4j2
 public class AlarmController {
 
     private final AlarmService alarmService;
@@ -67,7 +69,7 @@ public class AlarmController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new CommonResponseDto("댓글알림 조회 성공",
-                        alarmService.readSnapAlarm(userDetails.getUsername(), replyAlarmId)));
+                        alarmService.readReplyAlarm(userDetails.getUsername(), replyAlarmId)));
     }
 
     @GetMapping("/count/not-read")
