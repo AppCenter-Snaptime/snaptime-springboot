@@ -10,7 +10,7 @@ import me.snaptime.profilePhoto.repository.ProfilePhotoRepository;
 import me.snaptime.profilePhoto.service.ProfilePhotoService;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
-import me.snaptime.util.ProfilePhotoNameGenerator;
+import me.snaptime.util.FileNameGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,7 +76,7 @@ public class ProfilePhotoServiceImpl implements ProfilePhotoService {
         User updateUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
         ProfilePhoto profilePhoto = profilePhotoRepository.findById(updateUser.getProfilePhoto().getProfilePhotoId()).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
 
-        String updateFileName = ProfilePhotoNameGenerator.generatorProfilePhotoName(updateFile.getOriginalFilename());
+        String updateFileName = FileNameGenerator.generatorName(updateFile.getOriginalFilename());
         String updateFilePath = FOLDER_PATH + updateFileName;
 
         try{
