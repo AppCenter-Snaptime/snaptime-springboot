@@ -1,7 +1,7 @@
 package me.snaptime.social.service;
 
 import com.querydsl.core.Tuple;
-import me.snaptime.alarm.service.CreateAlarmService;
+import me.snaptime.alarm.service.AlarmAddService;
 import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
@@ -46,7 +46,7 @@ public class FriendServiceImplTest {
     @Mock
     private NextPageChecker nextPageChecker;
     @Mock
-    private CreateAlarmService createAlarmService;
+    private AlarmAddService alarmAddService;
 
     private Friend friend;
     private User user1;

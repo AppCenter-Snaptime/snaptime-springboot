@@ -8,7 +8,7 @@ import me.snaptime.alarm.domain.SnapAlarm;
 import me.snaptime.alarm.repository.FollowAlarmRepository;
 import me.snaptime.alarm.repository.ReplyAlarmRepository;
 import me.snaptime.alarm.repository.SnapAlarmRepository;
-import me.snaptime.alarm.service.CreateAlarmService;
+import me.snaptime.alarm.service.AlarmAddService;
 import me.snaptime.snap.domain.Snap;
 import me.snaptime.user.domain.User;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CreateAlarmServiceImpl implements CreateAlarmService {
+public class AlarmAddServiceImpl implements AlarmAddService {
 
     private final SnapAlarmRepository snapAlarmRepository;
     private final FollowAlarmRepository followAlarmRepository;

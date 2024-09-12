@@ -2,7 +2,7 @@ package me.snaptime.snapLike.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import me.snaptime.alarm.common.AlarmType;
-import me.snaptime.alarm.service.CreateAlarmService;
+import me.snaptime.alarm.service.AlarmAddService;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.snap.domain.Snap;
@@ -25,7 +25,7 @@ public class SnapLikeServiceImpl implements SnapLikeService {
     private final SnapRepository snapRepository;
     private final UserRepository userRepository;
     private final SnapLikeRepository snapLikeRepository;
-    private final CreateAlarmService createAlarmService;
+    private final AlarmAddService alarmAddService;
 
     @Override
     @Transactional
@@ -45,7 +45,7 @@ public class SnapLikeServiceImpl implements SnapLikeService {
                             .user(reqUser)
                             .build()
             );
-            createAlarmService.createSnapAlarm(reqUser,snap.getUser(),snap, AlarmType.LIKE);
+            alarmAddService.createSnapAlarm(reqUser,snap.getUser(),snap, AlarmType.LIKE);
             return "좋아요를 눌렀습니다.";
         }
         else{
