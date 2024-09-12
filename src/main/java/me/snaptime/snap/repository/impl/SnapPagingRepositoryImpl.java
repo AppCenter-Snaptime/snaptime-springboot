@@ -1,9 +1,6 @@
 package me.snaptime.snap.repository.impl;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.exception.CustomException;
@@ -31,15 +28,25 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
     public List<Tuple> findSnapPage(Long pageNum, User reqUser) {
 
         Pageable pageable= PageRequest.of((int) (pageNum-1),10);
+
+        // 내가 팔로우한 유저의 id를 가져오는 쿼리
+        List<Long> followUserIds = jpaQueryFactory.select( user.userId ).distinct()
+                .from(user)
+                .join(friend).on(friend.receiver.userId.eq(user.userId))
+                .where(friend.sender.userId.eq(reqUser.getUserId()))
+                .fetch();
+
+        // 나의 스냅도 커뮤니티에 포함되기 위해 나의 id추가
+        followUserIds.add(reqUser.getUserId());
+
         List<Tuple> tuples =  jpaQueryFactory.select(
                         user.loginId, user.profilePhoto.profilePhotoId, user.name,
                         snap.id, snap.createdDate, snap.lastModifiedDate, snap.oneLineJournal, snap.fileName
                 ).distinct()
                 .from(friend)
-                .rightJoin(user).on(friend.receiver.userId.eq(user.userId))
                 .join(snap).on(snap.user.userId.eq(user.userId))
-                .where(getBuilder(reqUser))
-                .orderBy(createOrderSpecifier())
+                .where(user.userId.in(followUserIds).and(snap.isPrivate.isFalse()))
+                .orderBy(snap.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1) //다음 페이지 유무체크를 위해 +1을 합니다.
                 .fetch();
@@ -49,21 +56,5 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
 
         return tuples;
     }
-
-    // 정렬 조건을 동적으로 생성하는 메소드
-    private OrderSpecifier createOrderSpecifier() {
-        return new OrderSpecifier(Order.DESC, snap.createdDate);
-    }
-
-    // 쿼리의 WHERE절을 생성하는 메소드
-    private BooleanBuilder getBuilder(User reqUser){
-        BooleanBuilder builder = new BooleanBuilder();
-
-        builder.and( friend.sender.userId.eq(reqUser.getUserId()).and(snap.isPrivate.isFalse()) );
-        builder.or( user.eq(reqUser).and(snap.isPrivate.isFalse()) );
-
-        return builder;
-    }
-
 
 }
