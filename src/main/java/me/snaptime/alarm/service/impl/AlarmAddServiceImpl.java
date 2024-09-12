@@ -25,6 +25,9 @@ public class AlarmAddServiceImpl implements AlarmAddService {
     @Override
     @Transactional
     public void createSnapAlarm(User sender, User receiver, Snap snap, AlarmType alarmType) {
+        if(sender.getUserId() == receiver.getUserId())
+            return ;
+
         SnapAlarm snapAlarm = SnapAlarm.builder()
                 .sender(sender)
                 .receiver(receiver)
@@ -50,6 +53,9 @@ public class AlarmAddServiceImpl implements AlarmAddService {
     @Override
     @Transactional
     public void createReplyAlarm(User sender, User receiver, Snap snap, String replyMessage) {
+        if(sender.getUserId() == receiver.getUserId())
+            return ;
+
         ReplyAlarm replyAlarm = ReplyAlarm.builder()
                 .sender(sender)
                 .receiver(receiver)

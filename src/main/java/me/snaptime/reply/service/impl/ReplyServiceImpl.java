@@ -69,6 +69,7 @@ public class ReplyServiceImpl implements ReplyService {
 
         ParentReply parentReply = parentReplyRepository.findById(childReplyAddReqDto.parentReplyId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
+        Snap snap = parentReply.getSnap();
 
         // 태그유저가 없는 댓글 등록이면
         if( childReplyAddReqDto.tagLoginId().isBlank()){
@@ -93,7 +94,9 @@ public class ReplyServiceImpl implements ReplyService {
                             .content(childReplyAddReqDto.replyMessage())
                             .build()
             );
+            alarmAddService.createReplyAlarm(reqUser, tagUser, snap, childReplyAddReqDto.replyMessage());
         }
+        alarmAddService.createReplyAlarm(reqUser, snap.getUser(), snap, childReplyAddReqDto.replyMessage());
     }
 
     public ParentReplyPagingResDto findParentReplyPage(Long snapId, Long pageNum){

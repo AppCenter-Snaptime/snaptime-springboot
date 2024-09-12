@@ -23,7 +23,7 @@ public class Snap extends BaseTimeEntity {
 
     private String oneLineJournal;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id")
     private Album album;
 
