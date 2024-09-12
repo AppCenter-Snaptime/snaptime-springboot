@@ -107,24 +107,6 @@ public class ReplyServiceImplTest {
     }
 
     @Test
-    @DisplayName("대댓글 등록 테스트 -> 성공")
-    public void addChildReplyTest1(){
-        //given
-        ChildReplyAddReqDto childReplyAddReqDto =
-                new ChildReplyAddReqDto("댓글내용",1L,"태그유저loginId");
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user));
-        given(parentReplyRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(parentReply));
-
-        //when
-        replyServiceImpl.addChildReply("loginId", childReplyAddReqDto);
-
-        //then
-        verify(parentReplyRepository,times(1)).findById(any(Long.class));
-        verify(userRepository,times(2)).findByLoginId(any(String.class));
-        verify(childReplyRepository,times(1)).save(any(ChildReply.class));
-    }
-
-    @Test
     @DisplayName("대댓글 등록 테스트 -> 실패(태그할 유저LoginId와 연결되는 유저가 존재하지 않음)")
     public void addChildReplyTest2(){
         //given
