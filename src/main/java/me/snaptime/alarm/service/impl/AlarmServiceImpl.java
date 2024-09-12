@@ -14,11 +14,6 @@ import me.snaptime.alarm.service.AlarmService;
 import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
-import me.snaptime.friend.service.FriendService;
-import me.snaptime.reply.dto.res.ParentReplyPagingResDto;
-import me.snaptime.reply.service.ReplyService;
-import me.snaptime.snap.dto.res.SnapDetailInfoResDto;
-import me.snaptime.snap.service.SnapService;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.util.TimeAgoCalculator;
@@ -38,15 +33,12 @@ public class AlarmServiceImpl implements AlarmService {
     private final FollowAlarmRepository followAlarmRepository;
     private final ReplyAlarmRepository replyAlarmRepository;
     private final UserRepository userRepository;
-    private final FriendService friendService;
-    private final SnapService snapService;
-    private final ReplyService replyService;
     private final UrlComponent urlComponent;
 
 
     @Override
     @Transactional
-    public SnapDetailInfoResDto readSnapAlarm(String reqLoginId, Long snapAlarmId) {
+    public void readSnapAlarm(String reqLoginId, Long snapAlarmId) {
 
         SnapAlarm snapAlarm = snapAlarmRepository.findById(snapAlarmId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.ALARM_NOT_EXIST));
@@ -56,29 +48,25 @@ public class AlarmServiceImpl implements AlarmService {
 
         snapAlarm.readAlarm();
         snapAlarmRepository.save(snapAlarm);
-
-        return snapService.findSnap(snapAlarm.getSnap().getId(), reqLoginId);
     }
 
     @Override
     @Transactional
-    public String readFollowAlarm(String reqLoginId, Long followAlarmId, boolean isAccept) {
+    public void readFollowAlarm(String reqLoginId, Long followAlarmId) {
         FollowAlarm followAlarm = followAlarmRepository.findById(followAlarmId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.ALARM_NOT_EXIST));
 
         // 자신한테 온 알림인지 여부체크
         isMyAlarm(reqLoginId, followAlarm.getReceiver().getLoginId());
 
-        String msg = friendService.acceptFollow(followAlarm.getSender(), followAlarm.getReceiver(), isAccept);
+
         followAlarm.readAlarm();
         followAlarmRepository.save(followAlarm);
-
-        return msg;
     }
 
     @Override
     @Transactional
-    public ParentReplyPagingResDto readReplyAlarm(String reqLoginId, Long replyAlarmId) {
+    public void readReplyAlarm(String reqLoginId, Long replyAlarmId) {
         ReplyAlarm replyAlarm = replyAlarmRepository.findById(replyAlarmId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.ALARM_NOT_EXIST));
 
@@ -87,8 +75,6 @@ public class AlarmServiceImpl implements AlarmService {
 
         replyAlarm.readAlarm();
         replyAlarmRepository.save(replyAlarm);
-
-        return replyService.findParentReplyPage(replyAlarm.getSnap().getId(), 1L);
     }
 
     @Override
@@ -113,15 +99,15 @@ public class AlarmServiceImpl implements AlarmService {
     @Transactional
     public void deleteAlarm(String reqLoginId, Long alarmId, AlarmType alarmType) {
 
-        // 팔로우 알림일 경우 거절처리 후 삭제
+        // 팔로우 알림일 경우
         if(alarmType == AlarmType.FOLLOW){
             FollowAlarm followAlarm = followAlarmRepository.findById(alarmId)
                     .orElseThrow(() -> new CustomException(ExceptionCode.ALARM_NOT_EXIST));
 
             isMyAlarm(reqLoginId, followAlarm.getReceiver().getLoginId());
-            friendService.acceptFollow(followAlarm.getSender(), followAlarm.getReceiver(), false);
+            followAlarmRepository.delete(followAlarm);
         }
-        // 댓글알림일 경우 바로삭제
+        // 댓글알림일 경우
         else if(alarmType == AlarmType.REPLY){
             ReplyAlarm replyAlarm = replyAlarmRepository.findById(alarmId)
                     .orElseThrow(() -> new CustomException(ExceptionCode.ALARM_NOT_EXIST));
@@ -129,7 +115,7 @@ public class AlarmServiceImpl implements AlarmService {
             isMyAlarm(reqLoginId, replyAlarm.getReceiver().getLoginId());
             replyAlarmRepository.delete(replyAlarm);
         }
-        // 스냅(스냅태그, 좋아요)에 대한 알림일 경우 바로 삭제
+        // 스냅(스냅태그, 좋아요)에 대한 알림일 경우
         else{
             SnapAlarm snapAlarm = snapAlarmRepository.findById(alarmId)
                     .orElseThrow(() -> new CustomException(ExceptionCode.ALARM_NOT_EXIST));
@@ -170,7 +156,7 @@ public class AlarmServiceImpl implements AlarmService {
 
             User sender = replyAlarm.getSender();
             String profilePhotoURL = urlComponent.makeProfileURL(sender.getProfilePhoto().getProfilePhotoId());
-            String snapPhotoURL = urlComponent.makePhotoURL(replyAlarm.getSnap().getFileName(),false);
+            String snapPhotoURL = urlComponent.makePhotoURL(replyAlarm.getSnap().getFileName(),replyAlarm.getSnap().isPrivate());
             String timeAgo = TimeAgoCalculator.findTimeAgo(replyAlarm.getCreatedDate());
 
             AlarmInfoResDto alarmInfoResDto = AlarmInfoResDto.toDtoByReplyAlarm(profilePhotoURL, snapPhotoURL, timeAgo, replyAlarm);
@@ -181,7 +167,7 @@ public class AlarmServiceImpl implements AlarmService {
 
             User sender = snapAlarm.getSender();
             String profilePhotoURL = urlComponent.makeProfileURL(sender.getProfilePhoto().getProfilePhotoId());
-            String snapPhotoURL = urlComponent.makePhotoURL(snapAlarm.getSnap().getFileName(),false);
+            String snapPhotoURL = urlComponent.makePhotoURL(snapAlarm.getSnap().getFileName(),snapAlarm.getSnap().isPrivate());
             String timeAgo = TimeAgoCalculator.findTimeAgo(snapAlarm.getCreatedDate());
 
             AlarmInfoResDto alarmInfoResDto = AlarmInfoResDto.toDtoBySnapAlarm(profilePhotoURL, snapPhotoURL, timeAgo, snapAlarm);
