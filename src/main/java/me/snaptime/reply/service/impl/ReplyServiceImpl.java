@@ -2,7 +2,7 @@ package me.snaptime.reply.service.impl;
 
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
-import me.snaptime.alarm.service.CreateAlarmService;
+import me.snaptime.alarm.service.AlarmAddService;
 import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
@@ -19,7 +19,6 @@ import me.snaptime.reply.repository.ParentReplyRepository;
 import me.snaptime.reply.service.ReplyService;
 import me.snaptime.snap.domain.Snap;
 import me.snaptime.snap.repository.SnapRepository;
-import me.snaptime.user.domain.QUser;
 import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.util.NextPageChecker;
@@ -30,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.snaptime.reply.domain.QChildReply.childReply;
 import static me.snaptime.reply.domain.QParentReply.parentReply;
 import static me.snaptime.user.domain.QUser.user;
 
@@ -45,7 +43,7 @@ public class ReplyServiceImpl implements ReplyService {
     private final UserRepository userRepository;
     private final SnapRepository snapRepository;
     private final UrlComponent urlComponent;
-    private final CreateAlarmService createAlarmService;
+    private final AlarmAddService alarmAddService;
 
     @Override
     @Transactional
@@ -62,7 +60,7 @@ public class ReplyServiceImpl implements ReplyService {
                         .build()
         );
 
-        createAlarmService.createReplyAlarm(reqUser, snap.getUser(), snap, parentReplyAddReqDto.replyMessage());
+        alarmAddService.createReplyAlarm(reqUser, snap.getUser(), snap, parentReplyAddReqDto.replyMessage());
     }
 
     @Transactional
@@ -71,9 +69,10 @@ public class ReplyServiceImpl implements ReplyService {
 
         ParentReply parentReply = parentReplyRepository.findById(childReplyAddReqDto.parentReplyId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
+        Snap snap = parentReply.getSnap();
 
         // 태그유저가 없는 댓글 등록이면
-        if( childReplyAddReqDto.tagLoginId() == "" || childReplyAddReqDto.tagLoginId() == null){
+        if( childReplyAddReqDto.tagLoginId().isBlank()){
             childReplyRepository.save(
                     ChildReply.builder()
                             .parentReply(parentReply)
@@ -95,7 +94,9 @@ public class ReplyServiceImpl implements ReplyService {
                             .content(childReplyAddReqDto.replyMessage())
                             .build()
             );
+            alarmAddService.createReplyAlarm(reqUser, tagUser, snap, childReplyAddReqDto.replyMessage());
         }
+        alarmAddService.createReplyAlarm(reqUser, snap.getUser(), snap, childReplyAddReqDto.replyMessage());
     }
 
     public ParentReplyPagingResDto findParentReplyPage(Long snapId, Long pageNum){
@@ -115,16 +116,15 @@ public class ReplyServiceImpl implements ReplyService {
 
     public ChildReplyPagingResDto findChildReplyPage(Long parentReplyId, Long pageNum){
 
-        QUser writerUser = new QUser("writerUser");
-        List<Tuple> tuples = childReplyRepository.findReplyPage(parentReplyId,pageNum);
-        boolean hasNextPage = NextPageChecker.hasNextPage(tuples,20L);
+        List<ChildReply> childReplies = childReplyRepository.findReplyPage(parentReplyId,pageNum);
+        boolean hasNextPage = NextPageChecker.hasNextPageByChildReplies(childReplies,20L);
 
-        List<ChildReplyInfoResDto> childReplyInfoResDtos = tuples.stream().map(tuple ->
+        List<ChildReplyInfoResDto> childReplyInfoResDtos = childReplies.stream().map(childReply ->
         {
-            String profilePhotoURL = urlComponent.makeProfileURL( tuple.get(writerUser.profilePhoto.profilePhotoId));
-            String timeAgo = TimeAgoCalculator.findTimeAgo( tuple.get(childReply.lastModifiedDate));
+            String profilePhotoURL = urlComponent.makeProfileURL( childReply.getUser().getProfilePhoto().getProfilePhotoId());
+            String timeAgo = TimeAgoCalculator.findTimeAgo( childReply.getCreatedDate());
 
-            return ChildReplyInfoResDto.toDto( tuple,profilePhotoURL,timeAgo);
+            return ChildReplyInfoResDto.toDto( childReply,profilePhotoURL,timeAgo);
         }).collect(Collectors.toList());
 
         return ChildReplyPagingResDto.toDto(childReplyInfoResDtos, hasNextPage);

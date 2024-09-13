@@ -1,10 +1,7 @@
 package me.snaptime.reply.dto.res;
 
-import com.querydsl.core.Tuple;
 import lombok.Builder;
-import me.snaptime.user.domain.QUser;
-
-import static me.snaptime.reply.domain.QChildReply.childReply;
+import me.snaptime.reply.domain.ChildReply;
 
 
 @Builder
@@ -21,19 +18,27 @@ public record ChildReplyInfoResDto(
         String timeAgo
 ) {
 
-    public static ChildReplyInfoResDto toDto(Tuple tuple, String profilePhotoURL, String timeAgo){
-        QUser tagUser = new QUser("tagUser");
-        QUser writerUser = new QUser("writerUser");
-
+    public static ChildReplyInfoResDto toDto(ChildReply childReply, String profilePhotoURL, String timeAgo){
+        if(childReply.getReplyTagUser() == null){
+            return ChildReplyInfoResDto.builder()
+                    .writerLoginId(childReply.getUser().getLoginId())
+                    .writerProfilePhotoURL(profilePhotoURL)
+                    .writerUserName(childReply.getUser().getName())
+                    .content(childReply.getContent())
+                    .parentReplyId(childReply.getParentReply().getParentReplyId())
+                    .childReplyId(childReply.getChildReplyId())
+                    .timeAgo(timeAgo)
+                    .build();
+        }
         return ChildReplyInfoResDto.builder()
-                .writerLoginId(tuple.get(writerUser.loginId))
+                .writerLoginId(childReply.getUser().getLoginId())
                 .writerProfilePhotoURL(profilePhotoURL)
-                .writerUserName(tuple.get(writerUser.name))
-                .content(tuple.get(childReply.content))
-                .tagUserLoginId(tuple.get(tagUser.loginId))
-                .tagUserName(tuple.get(tagUser.name))
-                .parentReplyId(tuple.get(childReply.parentReply.parentReplyId))
-                .childReplyId(tuple.get(childReply.childReplyId))
+                .writerUserName(childReply.getUser().getName())
+                .content(childReply.getContent())
+                .tagUserLoginId(childReply.getReplyTagUser().getLoginId())
+                .tagUserName(childReply.getReplyTagUser().getName())
+                .parentReplyId(childReply.getParentReply().getParentReplyId())
+                .childReplyId(childReply.getChildReplyId())
                 .timeAgo(timeAgo)
                 .build();
     }

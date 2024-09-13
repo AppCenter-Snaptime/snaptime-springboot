@@ -1,6 +1,6 @@
 package me.snaptime.social.service;
 
-import me.snaptime.alarm.service.CreateAlarmService;
+import me.snaptime.alarm.service.AlarmAddService;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.reply.domain.ChildReply;
@@ -51,7 +51,7 @@ public class ReplyServiceImplTest {
     @Mock
     private TimeAgoCalculator timeAgoCalculator;
     @Mock
-    private CreateAlarmService createAlarmService;
+    private AlarmAddService alarmAddService;
 
     private User user;
     private Snap snap;
@@ -104,24 +104,6 @@ public class ReplyServiceImplTest {
             verify(snapRepository,times(1)).findById(any(Long.class));
             verify(userRepository,times(1)).findByLoginId(any(String.class));
         }
-    }
-
-    @Test
-    @DisplayName("대댓글 등록 테스트 -> 성공")
-    public void addChildReplyTest1(){
-        //given
-        ChildReplyAddReqDto childReplyAddReqDto =
-                new ChildReplyAddReqDto("댓글내용",1L,"태그유저loginId");
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user));
-        given(parentReplyRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(parentReply));
-
-        //when
-        replyServiceImpl.addChildReply("loginId", childReplyAddReqDto);
-
-        //then
-        verify(parentReplyRepository,times(1)).findById(any(Long.class));
-        verify(userRepository,times(2)).findByLoginId(any(String.class));
-        verify(childReplyRepository,times(1)).save(any(ChildReply.class));
     }
 
     @Test

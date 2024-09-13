@@ -2,7 +2,7 @@ package me.snaptime.friend.service.impl;
 
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
-import me.snaptime.alarm.service.CreateAlarmService;
+import me.snaptime.alarm.service.AlarmAddService;
 import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
@@ -34,7 +34,7 @@ public class FriendServiceImpl implements FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final UrlComponent urlComponent;
-    private final CreateAlarmService createAlarmService;
+    private final AlarmAddService alarmAddService;
 
     @Override
     @Transactional
@@ -58,7 +58,7 @@ public class FriendServiceImpl implements FriendService {
                         .receiver(receiver)
                         .build());
 
-        createAlarmService.createFollowAlarm(sender,receiver);
+        alarmAddService.createFollowAlarm(sender,receiver);
     }
 
     @Override

@@ -1,8 +1,6 @@
 package me.snaptime.reply.repository.impl;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.exception.CustomException;
@@ -35,7 +33,7 @@ public class ParentReplyPagingRepositoryImpl implements ParentReplyPagingReposit
                 .from(parentReply)
                 .join(user).on(parentReply.user.userId.eq(user.userId))
                 .where(parentReply.snap.id.eq(snapId))
-                .orderBy(createOrderSpecifier())
+                .orderBy(parentReply.createdDate.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1) //페이지의 크기
                 .fetch();
@@ -44,10 +42,6 @@ public class ParentReplyPagingRepositoryImpl implements ParentReplyPagingReposit
             throw new CustomException(ExceptionCode.PAGE_NOT_FOUND);
 
         return tuples;
-    }
-
-    private OrderSpecifier createOrderSpecifier() {
-        return new OrderSpecifier(Order.DESC, parentReply.createdDate);
     }
 
 }

@@ -2,7 +2,7 @@ package me.snaptime.snapTag.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import me.snaptime.alarm.common.AlarmType;
-import me.snaptime.alarm.service.CreateAlarmService;
+import me.snaptime.alarm.service.AlarmAddService;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
 import me.snaptime.snap.domain.Snap;
@@ -16,6 +16,7 @@ import me.snaptime.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,17 +29,24 @@ public class SnapTagServiceImpl implements SnapTagService {
     private final SnapTagRepository snapTagRepository;
     private final UserRepository userRepository;
     private final SnapRepository snapRepository;
-    private final CreateAlarmService createAlarmService;
+    private final AlarmAddService alarmAddService;
 
     @Override
     @Transactional
     public void addTagUser(List<String> tagUserLoginIds, Snap snap){
 
+        if(tagUserLoginIds == null)
+            tagUserLoginIds = new ArrayList<>();
+
         List<SnapTag> snapTags = tagUserLoginIds.stream().map( tagUserloginId -> {
+
             User tagUser = userRepository.findByLoginId(tagUserloginId)
                     .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-            createAlarmService.createSnapAlarm(snap.getUser(), tagUser,snap, AlarmType.SNAPTAG);
+            // 셀프태그인지 체크
+            checkSelfTag(snap,tagUserloginId);
+
+            alarmAddService.createSnapAlarm(snap.getUser(), tagUser,snap, AlarmType.SNAPTAG);
             return SnapTag.builder()
                     .snap(snap)
                     .tagUser(tagUser)
@@ -51,6 +59,9 @@ public class SnapTagServiceImpl implements SnapTagService {
     @Override
     @Transactional
     public void modifyTagUser(List<String> tagUserLoginIds, Snap snap){
+
+        if(tagUserLoginIds == null)
+            tagUserLoginIds = new ArrayList<>();
 
         List<SnapTag> snapTags = snapTagRepository.findBySnap(snap);
 
@@ -93,7 +104,10 @@ public class SnapTagServiceImpl implements SnapTagService {
                     .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
             if(!snapTagRepository.existsBySnapAndTagUser(snap,tagUser)){
-                createAlarmService.createSnapAlarm(snap.getUser(), tagUser, snap, AlarmType.SNAPTAG);
+                // 셀프태그인지 체크
+                checkSelfTag(snap,tagUserloginId);
+
+                alarmAddService.createSnapAlarm(snap.getUser(), tagUser, snap, AlarmType.SNAPTAG);
                 return SnapTag.builder()
                         .snap(snap)
                         .tagUser(tagUser)
@@ -104,4 +118,9 @@ public class SnapTagServiceImpl implements SnapTagService {
         }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
+    private void checkSelfTag(Snap snap, String tagUserLoginId){
+
+        if(snap.getUser().getLoginId().equals(tagUserLoginId))
+            throw new CustomException(ExceptionCode.CAN_NOT_SELF_TAG);
+    }
 }

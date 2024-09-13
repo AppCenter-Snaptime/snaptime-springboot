@@ -4,7 +4,7 @@ import me.snaptime.alarm.common.AlarmType;
 import me.snaptime.snap.domain.Snap;
 import me.snaptime.user.domain.User;
 
-public interface CreateAlarmService {
+public interface AlarmAddService {
 
     /*
         알림을 생성합니다.

@@ -1,10 +1,10 @@
 package me.snaptime.reply.repository;
 
-import com.querydsl.core.Tuple;
+import me.snaptime.reply.domain.ChildReply;
 
 import java.util.List;
 
 public interface ChildReplyPagingRepository {
 
-    List<Tuple> findReplyPage(Long parentReplyId, Long pageNum);
+    List<ChildReply> findReplyPage(Long parentReplyId, Long pageNum);
 }
