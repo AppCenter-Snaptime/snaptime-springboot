@@ -29,8 +29,8 @@ public class SnapLikeServiceImpl implements SnapLikeService {
 
     @Override
     @Transactional
-    public String toggleSnapLike(String reqLoginId, Long snapId){
-        User reqUser = userRepository.findByLoginId(reqLoginId)
+    public String toggleSnapLike(String reqEmail, Long snapId){
+        User reqUser = userRepository.findByEmail(reqEmail)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         Snap snap = snapRepository.findById(snapId)
@@ -63,11 +63,11 @@ public class SnapLikeServiceImpl implements SnapLikeService {
     }
 
     @Override
-    public boolean isLikedSnap(Long snapId, String reqLoginId){
+    public boolean isLikedSnap(Long snapId, String reqEmail){
         Snap snap = snapRepository.findById(snapId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
 
-        User reqUser = userRepository.findByLoginId(reqLoginId)
+        User reqUser = userRepository.findByEmail(reqEmail)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         return snapLikeRepository.existsBySnapAndUser(snap,reqUser);

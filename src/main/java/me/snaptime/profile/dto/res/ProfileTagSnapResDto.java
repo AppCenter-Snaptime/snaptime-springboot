@@ -6,7 +6,7 @@ import lombok.Builder;
 public record ProfileTagSnapResDto(
 
         Long taggedSnapId,
-        String snapOwnLoginId,
+        String snapOwnEmail,
         String taggedSnapUrl
 
 ){}

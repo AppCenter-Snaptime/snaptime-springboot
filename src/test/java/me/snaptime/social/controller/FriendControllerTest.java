@@ -52,7 +52,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("receiverLoginId","followName"))
+                        .param("receiverEmail","followName"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.msg").value("팔로우가 완료되었습니다."))
                 .andDo(print());
@@ -70,7 +70,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("receiverLoginId","followName"))
+                        .param("receiverEmail","followName"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("사용자가 존재하지 않습니다."))
                 .andDo(print());
@@ -88,7 +88,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("receiverLoginId","followName"))
+                        .param("receiverEmail","followName"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("이미 팔로우관계입니다."))
                 .andDo(print());
@@ -106,7 +106,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("receiverLoginId","followName"))
+                        .param("receiverEmail","followName"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("팔로우요청이 거절되었습니다."))
                 .andDo(print());
@@ -124,7 +124,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("receiverLoginId","followName"))
+                        .param("receiverEmail","followName"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("자신에게 친구추가 요청을 보낼 수 없습니다."))
                 .andDo(print());
@@ -141,7 +141,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(post("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("receiverLoginId",""))
+                        .param("receiverEmail",""))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("팔로우요청을 보낼 유저의 이름을 입력해주세요."))
                 .andDo(print());
@@ -158,7 +158,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(delete("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("deletedUserLoginId","testLoginId"))
+                        .param("deletedUserEmail","testEmail"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.msg").value("팔로우삭제가 완료되었습니다."))
                 .andDo(print());
@@ -175,9 +175,9 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(delete("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("deletedUserLoginId",""))
+                        .param("deletedUserEmail",""))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.msg").value("언팔로우할 유저의 loginId를 입력해주세요."))
+                .andExpect(jsonPath("$.msg").value("언팔로우할 유저의 email을 입력해주세요."))
                 .andDo(print());
 
         verify(friendService,times(0)).unFollow(any(String.class),any(String.class));
@@ -194,7 +194,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(delete("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("deletedUserLoginId","testLoginId"))
+                        .param("deletedUserEmail","testEmail"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.msg").value("존재하지 않는 친구입니다."))
                 .andDo(print());
@@ -213,7 +213,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(delete("/friends")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("deletedUserLoginId","testLoginId"))
+                        .param("deletedUserEmail","testEmail"))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.msg").value("해당 친구에 대한 권한이 없습니다."))
                 .andDo(print());
@@ -230,7 +230,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","FOLLOWING")
-                        .param("targetLoginId","tempLoginId")
+                        .param("targetEmail","tempEmail")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.msg").value("친구조회가 완료되었습니다."))
@@ -249,7 +249,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","FOLLOWER")
-                        .param("targetLoginId","tempLoginId")
+                        .param("targetEmail","tempEmail")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.msg").value("친구조회가 완료되었습니다."))
@@ -268,7 +268,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","FOLLOWING")
-                        .param("targetLoginId","tempLoginId")
+                        .param("targetEmail","tempEmail")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -288,7 +288,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","TEST")
-                        .param("targetLoginId","tempLoginId")
+                        .param("targetEmail","tempEmail")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -308,7 +308,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}","test")
                         .param("friendSearchType","FOLLOWER")
-                        .param("targetLoginId","tempLoginId")
+                        .param("targetEmail","tempEmail")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -328,7 +328,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","")
-                        .param("targetLoginId","tempLoginId")
+                        .param("targetEmail","tempEmail")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -351,7 +351,7 @@ public class FriendControllerTest {
         //when, then
         this.mockMvc.perform(get("/friends/{pageNum}",1L)
                         .param("friendSearchType","FOLLOWER")
-                        .param("targetLoginId","tempLoginId")
+                        .param("targetEmail","tempEmail")
                         .param("searchKeyword","박")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())

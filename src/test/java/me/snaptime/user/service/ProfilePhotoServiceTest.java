@@ -84,20 +84,20 @@ public class ProfilePhotoServiceTest {
         given(mockProfile.getProfilePhotoName()).willReturn("image");
         given(mockProfile.getProfilePhotoPath()).willReturn("/image");
 
-        Mockito.when(userRepository.findByLoginId("kang4746"))
+        Mockito.when(userRepository.findByEmail("kang@gmail.com"))
                 .thenReturn(Optional.of(mockuser));
         Mockito.when(profilePhotoRepository.findById(1L))
                 .thenReturn(Optional.of(mockProfile));
         Mockito.when(profilePhotoRepository.save(any(ProfilePhoto.class))).thenReturn(updateProfilePhoto);
 
         //when
-        ProfilePhotoResDto responseDto = profilePhotoService.updatePhotoFromFileSystem("kang4746", updateFile);
+        ProfilePhotoResDto responseDto = profilePhotoService.updatePhotoFromFileSystem("kang@gmail.com", updateFile);
 
         //then
         Assertions.assertEquals(updateProfilePhoto.getProfilePhotoName(), responseDto.profilePhotoName());
         Assertions.assertEquals(updateProfilePhoto.getProfilePhotoPath(), responseDto.profilePhotoPath());
 
-        verify(userRepository, times(1)).findByLoginId("kang4746");
+        verify(userRepository, times(1)).findByEmail("kang@gmail.com");
         verify(profilePhotoRepository, times(1)).findById(1L);
         verify(profilePhotoRepository, times(1)).save(any());
 

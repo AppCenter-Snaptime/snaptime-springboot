@@ -42,8 +42,8 @@ public class JwtProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String createAccessToken(Long userId, String loginId, List<String> roles){
-        Claims claims = Jwts.claims().setSubject(loginId);
+    public String createAccessToken(Long userId, String email, List<String> roles){
+        Claims claims = Jwts.claims().setSubject(email);
         claims.put("userId",userId);
         claims.put("type","access");
         claims.put("roles",roles);
@@ -58,8 +58,8 @@ public class JwtProvider {
         return token;
     }
 
-    public String createRefreshToken(Long id, String loginId, List<String> roles){
-        Claims claims = Jwts.claims().setSubject(loginId);
+    public String createRefreshToken(Long id, String email, List<String> roles){
+        Claims claims = Jwts.claims().setSubject(email);
         claims.put("userId", id);
         claims.put("type", "refresh");
         claims.put("roles", roles);
@@ -73,8 +73,8 @@ public class JwtProvider {
         return token;
     }
 
-    public String testCreateAccessToken(Long userId, String loginId, List<String> roles){
-        Claims claims = Jwts.claims().setSubject(loginId);
+    public String testCreateAccessToken(Long userId, String email, List<String> roles){
+        Claims claims = Jwts.claims().setSubject(email);
         claims.put("userId",userId);
         claims.put("type","testAccess");
         claims.put("roles",roles);
@@ -89,8 +89,8 @@ public class JwtProvider {
         return token;
     }
 
-    public String testCreateRefreshToken(Long id, String loginId, List<String> roles){
-        Claims claims = Jwts.claims().setSubject(loginId);
+    public String testCreateRefreshToken(Long id, String email, List<String> roles){
+        Claims claims = Jwts.claims().setSubject(email);
         claims.put("userId", id);
         claims.put("type", "testRefresh");
         claims.put("roles", roles);
@@ -123,14 +123,14 @@ public class JwtProvider {
     //Jwts.parser()를 통해 secretKey를 설정하고 클레임을 추출해서 토큰을 생성할 때 넣었던 sub값을 추출합니다.
     public String getUsername(String token)
     {
-        String loginId = Jwts.parserBuilder()
+        String email = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
-        log.info("[getUsername] 토큰 기반 회원 구별 정보 추출 완료, loginId : {}",loginId);
-        return loginId;
+        log.info("[getUsername] 토큰 기반 회원 구별 정보 추출 완료, loginId : {}", email);
+        return email;
     }
 
     public String getAuthorizationToken(HttpServletRequest request){

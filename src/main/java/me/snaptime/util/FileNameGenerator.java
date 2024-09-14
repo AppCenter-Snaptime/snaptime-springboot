@@ -6,7 +6,6 @@ import java.util.Random;
 
 public class FileNameGenerator {
 
-
     public static String generatorName(String fileName) {
         String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMddHHmmssSSS"));
         Random rd = new Random();

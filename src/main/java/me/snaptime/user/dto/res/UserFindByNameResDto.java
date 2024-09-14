@@ -8,15 +8,17 @@ import static me.snaptime.user.domain.QUser.user;
 @Builder
 public record UserFindByNameResDto (
 
-        String foundLoginId,
+        String foundEmail,
         String profilePhotoURL,
-        String foundUserName
+        String foundUserName,
+        String foundNickName
 ){
     public static UserFindByNameResDto toDto(Tuple tuple, String profilePhotoURL){
         return UserFindByNameResDto.builder()
-                .foundLoginId(tuple.get(user.loginId))
+                .foundEmail(tuple.get(user.email))
                 .profilePhotoURL(profilePhotoURL)
                 .foundUserName(tuple.get(user.name))
+                .foundNickName(tuple.get(user.nickName))
                 .build();
     }
 }

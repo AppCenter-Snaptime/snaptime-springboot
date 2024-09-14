@@ -9,7 +9,7 @@ import static me.snaptime.user.domain.QUser.user;
 @Builder
 public record FriendInfoResDto(
 
-        String foundLoginId,
+        String foundEmail,
         String profilePhotoURL,
         String foundUserName,
         Long friendId,
@@ -17,7 +17,7 @@ public record FriendInfoResDto(
 ) {
     public static FriendInfoResDto toDto(Tuple tuple, String profilePhotoURL, boolean isMyFriend){
         return FriendInfoResDto.builder()
-                .foundLoginId(tuple.get(user.loginId))
+                .foundEmail(tuple.get(user.email))
                 .profilePhotoURL(profilePhotoURL)
                 .foundUserName(tuple.get(user.name))
                 .friendId(tuple.get(friend.friendId))

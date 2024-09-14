@@ -49,11 +49,10 @@ public class FriendPagingRepositoryTest {
                 .build();
         reqUser = User.builder()
                 .email("test@google.com")
-                .loginId("testLoginId")
+                .nickName("testg")
                 .name("testName")
                 .password("1234")
                 .profilePhoto(reqProfilePhoto)
-                .birthDay(String.valueOf(LocalDateTime.now()))
                 .build();
         userRepository.save(reqUser);
         for(int i=0;i<5;i++){
@@ -120,11 +119,10 @@ public class FriendPagingRepositoryTest {
 
         User user = User.builder()
                 .email("test"+i+"@google.com")
-                .loginId("test"+i+"LoginId")
+                .nickName("test"+i+"g")
                 .name("testName"+i)
                 .password("1234")
                 .profilePhoto(profilePhoto)
-                .birthDay(String.valueOf(LocalDateTime.now()))
                 .build();
         userRepository.save(user);
         friendRepository.save(

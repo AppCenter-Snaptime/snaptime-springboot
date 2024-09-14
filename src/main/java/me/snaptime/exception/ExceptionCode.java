@@ -40,7 +40,7 @@ public enum ExceptionCode {
     USER_NOT_EXIST(HttpStatus.BAD_REQUEST, "사용자가 존재하지 않습니다."),
     PASSWORD_DUPLICATE(HttpStatus.BAD_REQUEST,"같은 비밀번호로 수정 할 수 없습니다."),
     LOGIN_ID_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 존재하는 loginId 입니다."),
-
+    EMAIL_DUPLICATE(HttpStatus.BAD_REQUEST,"이미 존재하는 이메일입니다."),
     // Snap Exception
     SNAP_NOT_EXIST(HttpStatus.BAD_REQUEST, "스냅이 존재하지 않습니다."),
     SNAP_IS_PRIVATE(HttpStatus.BAD_REQUEST, "사용자가 이 스냅을 비공개로 설정했습니다."),

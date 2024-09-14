@@ -40,7 +40,7 @@ public class SnapPagingRepositoryImpl implements SnapPagingRepository {
         followUserIds.add(reqUser.getUserId());
 
         List<Tuple> tuples =  jpaQueryFactory.select(
-                        user.loginId, user.profilePhoto.profilePhotoId, user.name,
+                        user.email, user.profilePhoto.profilePhotoId, user.name,
                         snap.id, snap.createdDate, snap.lastModifiedDate, snap.oneLineJournal, snap.fileName
                 ).distinct()
                 .from(friend)

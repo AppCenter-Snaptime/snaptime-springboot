@@ -44,9 +44,9 @@ public class ProfilePhotoController {
     @PutMapping(consumes = MULTIPART_FORM_DATA)
     public ResponseEntity<?> updateProfileToFileSystem(@AuthenticationPrincipal UserDetails userDetails,
                                                        @RequestParam MultipartFile file) throws Exception {
-        String loginId = userDetails.getUsername();
-        log.info("[updateProfile] 유저의 프로필 사진을 수정합니다. loginId : {}", loginId);
-        ProfilePhotoResDto updateProfile = profilePhotoService.updatePhotoFromFileSystem(loginId, file);
+        String userEmail = userDetails.getUsername();
+        log.info("[updateProfile] 유저의 프로필 사진을 수정합니다. userEmail : {}", userEmail);
+        ProfilePhotoResDto updateProfile = profilePhotoService.updatePhotoFromFileSystem(userEmail, file);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "프로필 사진 수정을 성공적으로 완료하였습니다.",
