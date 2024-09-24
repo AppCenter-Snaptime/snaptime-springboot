@@ -39,8 +39,8 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<FindAllAlbumsResDto> findAllAlbumsByLoginId(String uid) {
-        User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    public List<FindAllAlbumsResDto> findAllAlbumsByEmail(String userEmail) {
+        User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         List<Album> foundAlbums = albumRepository.findAlbumsByUser(foundUser);
         return foundAlbums.stream().map(album -> {
             int lastNumber = album.getSnap().size();
@@ -56,9 +56,9 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(readOnly = true)
-    public FindAlbumResDto findAlbum(String uId, Long album_id) {
+    public FindAlbumResDto findAlbum(String userEmail, Long album_id) {
         Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
-        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         try {
             isUserHavePermission(foundUser, album_id);
         } catch (CustomException e) {
@@ -119,15 +119,15 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GetAllAlbumListResDto> getAlbumListByLoginId(String uid) {
-        User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    public List<GetAllAlbumListResDto> getAlbumListByEmail(String userEmail) {
+        User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         return albumRepository.findAlbumsByUser(foundUser).stream().map(album -> GetAllAlbumListResDto.builder().id(album.getId()).name(album.getName()).build()).toList();
     }
 
     @Override
     @Transactional
-    public void createAlbum(CreateAlbumReqDto createAlbumReqDto, String uid) {
-        User foundUser = userRepository.findByLoginId(uid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    public void createAlbum(CreateAlbumReqDto createAlbumReqDto, String userEmail) {
+        User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         albumRepository.save(Album.builder().name(createAlbumReqDto.name()).user(foundUser).build());
     }
 
@@ -146,8 +146,8 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional
-    public void removeAlbum(String uId, Long album_id) {
-        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    public void removeAlbum(String userEmail, Long album_id) {
+        User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         isUserHavePermission(foundUser, album_id);
         Album foundAlbum = albumRepository.findById(album_id).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
         // 사용자가 가지고 있는 non-classification id를 가져온다.

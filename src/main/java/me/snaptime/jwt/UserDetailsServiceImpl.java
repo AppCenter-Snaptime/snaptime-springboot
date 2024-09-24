@@ -18,8 +18,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
-        log.info("[loadUserByUsername] loadUserByUsername 수행. username: {}", loginId);
-        return (UserDetails) userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        log.info("[loadUserByUsername] loadUserByUsername 수행. username: {}", email);
+        return (UserDetails) userRepository.findByEmail(email).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
     }
 }

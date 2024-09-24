@@ -42,7 +42,7 @@ public class SignServiceImpl implements SignService {
     public UserFindResDto signUp(UserReqDto userReqDto) {
 
         //로그인 id가 이미 존재하는지 확인
-        if(userRepository.findByLoginId(userReqDto.loginId()).isPresent()){
+        if(userRepository.findByEmail(userReqDto.email()).isPresent()){
             throw new CustomException(ExceptionCode.LOGIN_ID_ALREADY_EXIST);
         }
 
@@ -59,10 +59,9 @@ public class SignServiceImpl implements SignService {
         //새로운 사용자 객체 생성
         User user = User.builder()
                 .name(userReqDto.name())
-                .loginId(userReqDto.loginId())
                 .password(passwordEncoder.encode(userReqDto.password()))
                 .email(userReqDto.email())
-                .birthDay(userReqDto.birthDay())
+                .nickName(UserReqDto.makeNickName(userReqDto.email()))
                 //단일 권한을 가진 리스트 생성, 하나의 요소를 가진 불변의 리스트 생성
                 .roles(Collections.singletonList("ROLE_USER"))
                 .profilePhoto(profilePhoto)
@@ -77,13 +76,13 @@ public class SignServiceImpl implements SignService {
     @Override
     @Transactional(readOnly = true)
     public SignInResDto signIn(SignInReqDto signInReqDto) {
-        User user = userRepository.findByLoginId(signInReqDto.loginId()).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        User user = userRepository.findByEmail(signInReqDto.email()).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         if (!passwordEncoder.matches(signInReqDto.password(), user.getPassword())) {
             throw new CustomException(ExceptionCode.PASSWORD_NOT_EQUAL);
         }
-        String accessToken = jwtProvider.createAccessToken(user.getUserId(), user.getLoginId(), user.getRoles());
-        String refreshToken = jwtProvider.createRefreshToken(user.getUserId(), user.getLoginId(),user.getRoles());
+        String accessToken = jwtProvider.createAccessToken(user.getUserId(), user.getEmail(), user.getRoles());
+        String refreshToken = jwtProvider.createRefreshToken(user.getUserId(), user.getEmail(),user.getRoles());
         refreshTokenRepository.save(new RefreshToken(user.getUserId(),refreshToken));
 
         return SignInResDto.builder()
@@ -105,8 +104,8 @@ public class SignServiceImpl implements SignService {
 
         User user = userRepository.findById(userId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        String newAccessToken = jwtProvider.createAccessToken(userId,user.getLoginId(),user.getRoles());
-        String newRefreshToken = jwtProvider.createRefreshToken(userId,user.getLoginId(),user.getRoles());
+        String newAccessToken = jwtProvider.createAccessToken(userId,user.getEmail(), user.getRoles());
+        String newRefreshToken = jwtProvider.createRefreshToken(userId,user.getEmail(), user.getRoles());
 
         SignInResDto signInResDto = SignInResDto.builder()
                 .accessToken(newAccessToken)
@@ -121,13 +120,13 @@ public class SignServiceImpl implements SignService {
     @Override
     @Transactional(readOnly = true)
     public TestSignInResDto testSignIn(SignInReqDto signInReqDto) {
-        User testUser = userRepository.findByLoginId(signInReqDto.loginId()).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        User testUser = userRepository.findByEmail(signInReqDto.email()).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         if (!passwordEncoder.matches(signInReqDto.password(), testUser.getPassword())) {
             throw new CustomException(ExceptionCode.PASSWORD_NOT_EQUAL);
         }
-        String testAccessToken = jwtProvider.testCreateAccessToken(testUser.getUserId(), testUser.getLoginId(), testUser.getRoles());
-        String testRefreshToken = jwtProvider.testCreateRefreshToken(testUser.getUserId(), testUser.getLoginId(),testUser.getRoles());
+        String testAccessToken = jwtProvider.testCreateAccessToken(testUser.getUserId(), testUser.getEmail(), testUser.getRoles());
+        String testRefreshToken = jwtProvider.testCreateRefreshToken(testUser.getUserId(), testUser.getEmail(),testUser.getRoles());
         refreshTokenRepository.save(new RefreshToken(testUser.getUserId(),testRefreshToken));
 
         return TestSignInResDto.builder()

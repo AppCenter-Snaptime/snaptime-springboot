@@ -5,9 +5,9 @@ import me.snaptime.user.dto.res.UserFindResDto;
 import me.snaptime.user.dto.res.UserPagingResDto;
 
 public interface UserService {
-    UserFindResDto getUser(String loginId);
+    UserFindResDto getUser(String email);
     UserPagingResDto findUserPageByName(String searchKeyword, Long pageNum);
-    UserFindResDto updateUser(String loginId, UserUpdateReqDto userUpdateReqDto);
-    void deleteUser(String password, String loginId);
-    void updatePassword(String loginId, String password);
+    UserFindResDto updateUser(String email, UserUpdateReqDto userUpdateReqDto);
+    void deleteUser(String email, String password);
+    void updatePassword(String email, String password);
 }

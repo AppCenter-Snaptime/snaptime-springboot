@@ -9,10 +9,10 @@ public interface EncryptionComponent {
 
     /*
     * getSecretKey
-    * User LoginId를 인자로 받아
+    * User Email을 인자로 받아
     * Encryption Entity의 field인 SecretKey에 접근하여 SecretKey를 가져오는 메소드
     * */
-    SecretKey getSecretKey(String uId);
+    SecretKey getSecretKey(String userEmail);
 
     /*
     * getEncryption

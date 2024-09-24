@@ -27,15 +27,15 @@ public class AlbumController {
 
     @Operation(summary = "Album 목록(썸네일 포함) 조회", description = "사용자의 Album 목록(썸네일 포함)을 조회합니다.")
     @GetMapping(path = "/albumListWithThumbnail")
-    public ResponseEntity<CommonResponseDto<List<FindAllAlbumsResDto>>> findAllAlbumsByLoginId(
+    public ResponseEntity<CommonResponseDto<List<FindAllAlbumsResDto>>> findAllAlbumsByEmail(
             final @AuthenticationPrincipal UserDetails userDetails
             ) {
-        String uId = userDetails.getUsername();
+        String userEmail = userDetails.getUsername();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(
                         new CommonResponseDto<>(
                                 "사용자의 앨범 목록(썸네일 포함)이 정상적으로 불러와졌습니다.",
-                                albumService.findAllAlbumsByLoginId(uId)
+                                albumService.findAllAlbumsByEmail(userEmail)
                         )
                 );
     }
@@ -46,8 +46,8 @@ public class AlbumController {
             final @RequestBody CreateAlbumReqDto createAlbumReqDto,
             final @AuthenticationPrincipal UserDetails userDetails
             ) {
-        String uId = userDetails.getUsername();
-        albumService.createAlbum(createAlbumReqDto, uId);
+        String userEmail = userDetails.getUsername();
+        albumService.createAlbum(createAlbumReqDto, userEmail);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new CommonResponseDto<>(
                         "사용자의 앨범을 정상적으로 생성했습니다.",
@@ -61,11 +61,11 @@ public class AlbumController {
     public ResponseEntity<CommonResponseDto<List<GetAllAlbumListResDto>>> findAlbumList(
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
-        String uId = userDetails.getUsername();
+        String userEmail = userDetails.getUsername();
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "사용자의 앨범 목록(앨범의 이름들)을 정상적으로 가져왔습니다.",
-                        albumService.getAlbumListByLoginId(uId)
+                        albumService.getAlbumListByEmail(userEmail)
                 )
         );
     }
@@ -76,11 +76,11 @@ public class AlbumController {
             final @PathVariable("album_id") Long album_id,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
-        String uId = userDetails.getUsername();
+        String userEmail = userDetails.getUsername();
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         album_id + "번 Album의 내용을 전부 가져오는데 성공했습니다.",
-                        albumService.findAlbum(uId, album_id)
+                        albumService.findAlbum(userEmail, album_id)
                 )
         );
     }
@@ -107,8 +107,8 @@ public class AlbumController {
             final @RequestParam Long albumId,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
-        String uId = userDetails.getUsername();
-        albumService.removeAlbum(uId, albumId);
+        String userEmail = userDetails.getUsername();
+        albumService.removeAlbum(userEmail, albumId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         albumId + "번 album을 정상적으로 삭제했습니다.",
@@ -116,10 +116,4 @@ public class AlbumController {
                 )
         );
     }
-
-
-
-
-
-
 }

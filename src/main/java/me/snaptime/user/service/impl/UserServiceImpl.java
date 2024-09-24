@@ -36,20 +36,16 @@ public class UserServiceImpl implements UserService {
     private final UrlComponent urlComponent;
 
     @Transactional(readOnly = true)
-    public UserFindResDto getUser(String loginId) {
-        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-
+    public UserFindResDto getUser(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         return UserFindResDto.toDto(user);
     }
 
     @Override
     public UserPagingResDto findUserPageByName(String searchKeyword, Long pageNum){
-
         List<Tuple> tuples = userRepository.findUserPageByName(searchKeyword,pageNum);
-
         // 다음 페이지 유무 체크
         boolean hasNextPage = NextPageChecker.hasNextPage(tuples,20L);
-
         List<UserFindByNameResDto> userFindByNameResDtos = tuples.stream().map(tuple ->
         {
             String profilePhotoURL = urlComponent.makeProfileURL(tuple.get(user.profilePhoto.profilePhotoId));
@@ -59,35 +55,28 @@ public class UserServiceImpl implements UserService {
         return UserPagingResDto.toDto(userFindByNameResDtos, hasNextPage);
     }
 
-    public UserFindResDto updateUser(String loginId, UserUpdateReqDto userUpdateReqDto) {
-
-        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-
+    public UserFindResDto updateUser(String email, UserUpdateReqDto userUpdateReqDto) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         if (userUpdateReqDto.name() != null && !userUpdateReqDto.name().isEmpty()) {
             user.updateUserName(userUpdateReqDto.name());
         }
-
-        if (userUpdateReqDto.email() != null && !userUpdateReqDto.email().isEmpty()) {
-            user.updateUserEmail(userUpdateReqDto.email());
-        }
-
-        if (userUpdateReqDto.birthDay() != null && !userUpdateReqDto.birthDay().isEmpty()) {
-            user.updateUserBirthDay(userUpdateReqDto.birthDay());
+        if(userUpdateReqDto.nickName() != null && !userUpdateReqDto.nickName().isEmpty()){
+            user.updateNickName(userUpdateReqDto.nickName());
         }
         return UserFindResDto.toDto(user);
     }
 
-    public void deleteUser(String password, String loginId) {
+    public void deleteUser(String email, String password) {
 
-        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new CustomException(ExceptionCode.PASSWORD_NOT_EQUAL);
         }
         userRepository.deleteById(user.getUserId());
     }
 
-    public void updatePassword(String loginId, String password){
-        User user = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    public void updatePassword(String email, String password){
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             user.updateUserPassword(passwordEncoder.encode(password));

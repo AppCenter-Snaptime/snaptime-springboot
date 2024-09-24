@@ -38,13 +38,13 @@ public class ProfileController {
     @Operation(summary = "유저 앨범, 스냅 조회", description = "유저의 앨범들과, 각 앨범의 스냅들을 조회합니다." +
             "<br> 자신의 프로필 조회 -> 앨범 당 private, public 관계 없이 최근 snap 2개 리턴" +
             "<br> 다른 사람의 프로필 조회 -> snap이 전부 private이거나 없는 경우 앨범 리턴 x 그리고 private 인 snap 리턴 x")
-    @Parameter(name = "targetLoginId", description = "앨범과 사진들을 가져오기 위한 loginId", required = true)
+    @Parameter(name = "targetEmail", description = "앨범과 사진들을 가져오기 위한 email", required = true)
     @GetMapping("/album-snap")
     public ResponseEntity<CommonResponseDto<List<AlbumSnapResDto>>> getAlbumSnap(@AuthenticationPrincipal UserDetails userDetails,
-                                                                                 @RequestParam("targetLoginId")
-                                                                                 @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String targetLoginId){
-        String reqLoginId = userDetails.getUsername();
-        List<AlbumSnapResDto> albumSnapResDtos = profileService.getAlbumSnap(reqLoginId, targetLoginId);
+                                                                                 @RequestParam("targetEmail")
+                                                                                 @NotBlank(message = "조회할 유저의 이메일 입력은 필수입니다.") String targetEmail){
+        String reqEmail = userDetails.getUsername();
+        List<AlbumSnapResDto> albumSnapResDtos = profileService.getAlbumSnap(reqEmail, targetEmail);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 앨범과 스냅 조회를 성공적으로 완료하였습니다.",
@@ -55,13 +55,13 @@ public class ProfileController {
     @Operation(summary = "유저 이름, 프로필 사진 조회", description = "유저의 이름과, 프로필 사진을 조회합니다." +
             "<br> 유저 번호, 유저 이름, 프로필 사진 url 리턴(토큰 없이 url 접근 가능)" +
             "<br> 토큰이 없어도 해당 Api 엔드포인트를 요청할 수 있습니다.")
-    @Parameter(name = "targetLoginId", description = "이름과 프로필 사진을 가져오기 위한 loginId", required = true)
+    @Parameter(name = "targetEmail", description = "이름과 프로필 사진을 가져오기 위한 email", required = true)
     @GetMapping("/profile")
     public ResponseEntity<CommonResponseDto<UserProfileResDto>> getUserProfile(@AuthenticationPrincipal UserDetails userDetails,
-                                                                               @RequestParam("targetLoginId")
-                                                                               @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String targetLoginId){
-        String reqLoginId = userDetails.getUsername();
-        UserProfileResDto userProfileResDto = profileService.getUserProfile(reqLoginId, targetLoginId);
+                                                                               @RequestParam("targetEmail")
+                                                                               @NotBlank(message = "조회할 유저의 이메일 입력은 필수입니다.") String targetEmail){
+        String reqEmail = userDetails.getUsername();
+        UserProfileResDto userProfileResDto = profileService.getUserProfile(reqEmail, targetEmail);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 이름과, 프로필 사진 조회를 성공적으로 완료하였습니다.",
@@ -70,11 +70,11 @@ public class ProfileController {
     }
 
     @Operation(summary = "유저의 Snap 수, Follower 수,  Following 수 조회", description = "유저의 loginId로 유저의 snap 수, 팔로워 수, 팔로잉 수를 조회합니다.")
-    @Parameter(name = "loginId", description = "팔로워와 팔로잉 수를 가져오기 위한 loginId", required = true)
+    @Parameter(name = "email", description = "팔로워와 팔로잉 수를 가져오기 위한 email", required = true)
     @GetMapping("/count")
-    public ResponseEntity<CommonResponseDto<ProfileCntResDto>> getProfileCnt(@RequestParam("loginId")
-                                                                             @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String loginId){
-        ProfileCntResDto profileCntResDto = profileService.getUserProfileCnt(loginId);
+    public ResponseEntity<CommonResponseDto<ProfileCntResDto>> getProfileCnt(@RequestParam("email")
+                                                                             @NotBlank(message = "조회할 유저의 이메일 입력은 필수입니다.") String email){
+        ProfileCntResDto profileCntResDto = profileService.getUserProfileCnt(email);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 팔로워, 팔로잉 수 조회를 성공적으로 완료하였습니다.",
@@ -82,13 +82,13 @@ public class ProfileController {
                 ));
     }
 
-    @Operation(summary = "유저의 태그된 snap 들 조회", description = "유저의 loginId로 유저가 태그된 snap 들을 조회합니다" +
+    @Operation(summary = "유저의 태그된 snap 들 조회", description = "유저의 email 로 유저가 태그된 snap 들을 조회합니다" +
             "<br> snap id 기준 내림차순으로 조회합니다.(최근 snap 이 제일 먼저 조회)")
-    @Parameter(name = "loginId", description = "팔로워와 팔로잉 수를 가져오기 위한 loginId", required = true)
+    @Parameter(name = "email", description = "팔로워와 팔로잉 수를 가져오기 위한 email", required = true)
     @GetMapping("/tag-snap")
-    public ResponseEntity<CommonResponseDto<List<ProfileTagSnapResDto>>> getTagSnap(@RequestParam("loginId")
-                                                                                    @NotBlank(message = "로그인 아이디 입력은 필수입니다.") String loginId){
-        List<ProfileTagSnapResDto> profileTagSnapResDto = profileService.getTagSnap(loginId);
+    public ResponseEntity<CommonResponseDto<List<ProfileTagSnapResDto>>> getTagSnap(@RequestParam("email")
+                                                                                    @NotBlank(message = "조회할 유저의 이메일 입력은 필수입니다.") String email){
+        List<ProfileTagSnapResDto> profileTagSnapResDto = profileService.getTagSnap(email);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저가 태그된 Snap 들을 성공적으로 조회하였습니다.",

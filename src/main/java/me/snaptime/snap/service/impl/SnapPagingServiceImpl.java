@@ -35,9 +35,9 @@ public class SnapPagingServiceImpl implements SnapPagingService {
     private final SnapTagService snapTagService;
     private final SnapLikeService snapLikeService;
 
-    public SnapPagingResDto findSnapPage(String reqLoginId, Long pageNum){
+    public SnapPagingResDto findSnapPage(String reqEmail, Long pageNum){
 
-        User reqUser = userRepository.findByLoginId(reqLoginId)
+        User reqUser = userRepository.findByEmail(reqEmail)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         List<Tuple> tuples = snapRepository.findSnapPage(pageNum,reqUser);
@@ -53,7 +53,7 @@ public class SnapPagingServiceImpl implements SnapPagingService {
             return SnapDetailInfoResDto.toDto(tuple,profilePhotoURL,snapPhotoURL,
                     snapTagService.findTagUsers(snapId),
                     snapLikeService.findSnapLikeCnt(snapId),
-                    snapLikeService.isLikedSnap(snapId, reqLoginId));
+                    snapLikeService.isLikedSnap(snapId, reqEmail));
         }).collect(Collectors.toList());
 
         return SnapPagingResDto.toDto(snapDetailInfoResDtos,hasNextPage);

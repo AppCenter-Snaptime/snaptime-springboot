@@ -27,7 +27,7 @@ public class ParentReplyPagingRepositoryImpl implements ParentReplyPagingReposit
         Pageable pageable= PageRequest.of((int) (pageNum-1),20);
 
         List<Tuple> tuples =  jpaQueryFactory.select(
-                        user.loginId,user.profilePhoto.profilePhotoId,user.name,
+                        user.email,user.profilePhoto.profilePhotoId,user.name,
                         parentReply.content,parentReply.parentReplyId,parentReply.lastModifiedDate
                 )
                 .from(parentReply)

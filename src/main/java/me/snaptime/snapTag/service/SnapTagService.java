@@ -8,10 +8,10 @@ import java.util.List;
 public interface SnapTagService {
 
     // snap에 태그유저를 등록합니다.
-    void addTagUser(List<String> tagUserLoginIds, Snap snap);
+    void addTagUser(List<String> tagUserEmails, Snap snap);
 
     // 스냅 수정 시 태그정보를 갱신합니다.
-    void modifyTagUser(List<String> tagUserLoginIds, Snap snap);
+    void modifyTagUser(List<String> tagUserEmails, Snap snap);
 
     // 스냅에 저장된 모든 태그정보를 삭제합니다.
     void deleteAllTagUser(Snap snap);

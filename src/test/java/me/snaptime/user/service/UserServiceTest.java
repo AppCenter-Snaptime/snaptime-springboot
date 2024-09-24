@@ -66,10 +66,9 @@ class UserServiceTest {
     public void setUpTestSet() {
         givenUser = User.builder()
                 .name("홍길순")
-                .loginId("kang4746")
+                .email("kang@gmail.com")
                 .password("test1234")
-                .email("strong@gmail.com")
-                .birthDay("1999-10-29")
+                .nickName("kangg")
                 .build();
     }
 
@@ -77,19 +76,18 @@ class UserServiceTest {
     @DisplayName("given_when_then 방식으로 getUser 서비스 성공 테스트")
     public void getUser() {
         //given
-        Mockito.when(userRepository.findByLoginId("kang4746"))
+        Mockito.when(userRepository.findByEmail("kang@gmail.com"))
                 .thenReturn(Optional.of(givenUser));
         //when
-        UserFindResDto userFindResDto = userService.getUser("kang4746");
+        UserFindResDto userFindResDto = userService.getUser("kang@gmail.com");
 
         //then
         Assertions.assertEquals(givenUser.getUserId(), userFindResDto.userId());
         Assertions.assertEquals(givenUser.getName(), userFindResDto.name());
-        Assertions.assertEquals(givenUser.getLoginId(), userFindResDto.loginId());
         Assertions.assertEquals(givenUser.getEmail(), userFindResDto.email());
-        Assertions.assertEquals(givenUser.getBirthDay(), userFindResDto.birthDay());
+        Assertions.assertEquals(givenUser.getNickName(), userFindResDto.nickName());
 
-        verify(userRepository, times(1)).findByLoginId("kang4746");
+        verify(userRepository, times(1)).findByEmail("kang@gmail.com");
     }
 
     @Test
@@ -98,10 +96,8 @@ class UserServiceTest {
         //given
         UserReqDto givenRequest = UserReqDto.builder()
                 .name("홍길순")
-                .loginId("kang4746")
+                .email("kang@gmail.com")
                 .password("test1234")
-                .email("strong@gmail.com")
-                .birthDay("1999-10-29")
                 .build();
 
 
@@ -117,9 +113,8 @@ class UserServiceTest {
 
         //then
         Assertions.assertEquals(givenRequest.name(), userFindResDto.name());
-        Assertions.assertEquals(givenRequest.loginId(), userFindResDto.loginId());
         Assertions.assertEquals(givenRequest.email(), userFindResDto.email());
-        Assertions.assertEquals(givenRequest.birthDay(), userFindResDto.birthDay());
+
         verify(userRepository,times(1)).save(any());
     }
 
@@ -128,17 +123,17 @@ class UserServiceTest {
     public void signIn(){
         //given
         SignInReqDto signInReqDto = SignInReqDto.builder()
-                .loginId("kang4746")
+                .email("kang@gmail.com")
                 .password("test1234")
                 .build();
 
-        Mockito.when(userRepository.findByLoginId("kang4746"))
+        Mockito.when(userRepository.findByEmail("kang@gmail.com"))
                 .thenReturn(Optional.of(givenUser));
         Mockito.when(passwordEncoder.matches(signInReqDto.password(), givenUser.getPassword()))
                 .thenReturn(true);
-        Mockito.when(jwtProvider.createAccessToken(givenUser.getUserId(),givenUser.getLoginId(), givenUser.getRoles()))
+        Mockito.when(jwtProvider.createAccessToken(givenUser.getUserId(),givenUser.getEmail(), givenUser.getRoles()))
                 .thenReturn("mockAccessToken");
-        Mockito.when(jwtProvider.createRefreshToken(givenUser.getUserId(),givenUser.getLoginId(), givenUser.getRoles()))
+        Mockito.when(jwtProvider.createRefreshToken(givenUser.getUserId(),givenUser.getEmail(), givenUser.getRoles()))
                 .thenReturn("mockRefreshToken");
         Mockito.when(refreshTokenRepository.save(any(RefreshToken.class)))
                 .then(returnsFirstArg());
@@ -149,12 +144,12 @@ class UserServiceTest {
         //then
         Assertions.assertEquals("mockAccessToken",signInResDto.accessToken());
         Assertions.assertEquals("mockRefreshToken",signInResDto.refreshToken());
-        Assertions.assertEquals(signInReqDto.loginId(),givenUser.getLoginId());
+        Assertions.assertEquals(signInReqDto.email(),givenUser.getEmail());
         Assertions.assertEquals(signInReqDto.password(),givenUser.getPassword());
 
-        verify(userRepository,times(1)).findByLoginId("kang4746");
+        verify(userRepository,times(1)).findByEmail("kang@gmail.com");
         verify(passwordEncoder,times(1)).matches(signInReqDto.password(),givenUser.getPassword());
-        verify(jwtProvider,times(1)).createAccessToken(givenUser.getUserId(),givenUser.getLoginId(),givenUser.getRoles());
+        verify(jwtProvider,times(1)).createAccessToken(givenUser.getUserId(),givenUser.getEmail(),givenUser.getRoles());
 
     }
 
@@ -166,17 +161,17 @@ class UserServiceTest {
         User user = spy(givenUser);
         given(user.getUserId()).willReturn(1L);
 
-        Mockito.when(userRepository.findByLoginId("kang4746"))
+        Mockito.when(userRepository.findByEmail("kang@gmail.com"))
                 .thenReturn(Optional.of(user));
 
         Mockito.when(passwordEncoder.matches("test1234", user.getPassword()))
                 .thenReturn(true);
 
         //when
-        userService.deleteUser("test1234","kang4746");
+        userService.deleteUser("kang@gmail.com","test1234");
 
         //then
-        verify(userRepository,times(1)).findByLoginId("kang4746");
+        verify(userRepository,times(1)).findByEmail("kang@gmail.com");
         verify(userRepository,times(1)).deleteById(1L);
     }
 
@@ -186,22 +181,19 @@ class UserServiceTest {
         //given
         UserUpdateReqDto userUpdateDto = UserUpdateReqDto.builder()
                 .name("")
-                .email("strong@naver.com")
-                .birthDay("")
+                .nickName("kanghj")
                 .build();
 
-        Mockito.when(userRepository.findByLoginId("kang4746"))
+        Mockito.when(userRepository.findByEmail("kang@gmail.com"))
                 .thenReturn(Optional.of(givenUser));
 
         //when
-        UserFindResDto userResponseDto = userService.updateUser("kang4746",userUpdateDto);
+        UserFindResDto userResponseDto = userService.updateUser("kang@gmail.com",userUpdateDto);
 
         //then
         Assertions.assertEquals("홍길순",userResponseDto.name());
-        Assertions.assertEquals("kang4746",userResponseDto.loginId());
-        Assertions.assertEquals("strong@naver.com",userResponseDto.email());
-        Assertions.assertEquals("1999-10-29",userResponseDto.birthDay());
-
-        verify(userRepository,times(1)).findByLoginId("kang4746");
+        Assertions.assertEquals("kang@gmail.com",userResponseDto.email());
+        Assertions.assertEquals("kanghj",userResponseDto.nickName());
+        verify(userRepository,times(1)).findByEmail("kang@gmail.com");
     }
 }

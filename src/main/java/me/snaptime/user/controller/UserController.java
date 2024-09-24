@@ -87,7 +87,7 @@ public class UserController {
     public ResponseEntity<CommonResponseDto<Void>> deleteUser(@AuthenticationPrincipal UserDetails userDetails,
                                                               @RequestParam("password")
                                                               @NotBlank(message = "패스워드 입력은 필수입니다.") String password){
-        userService.deleteUser(password, userDetails.getUsername());
+        userService.deleteUser(userDetails.getUsername(), password);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "유저 삭제가 성공적으로 완료되었습니다.",

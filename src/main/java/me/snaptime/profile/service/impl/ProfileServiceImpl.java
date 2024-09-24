@@ -34,21 +34,21 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AlbumSnapResDto> getAlbumSnap(String reqLoginId, String targetLoginId) {
-        User targetUser = userRepository.findByLoginId(targetLoginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    public List<AlbumSnapResDto> getAlbumSnap(String reqEmail, String targetEmail) {
+        User targetUser = userRepository.findByEmail(targetEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        return profileRepository.findAlbumSnap(targetUser, reqLoginId.equals(targetLoginId));
+        return profileRepository.findAlbumSnap(targetUser, reqEmail.equals(targetEmail));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public UserProfileResDto getUserProfile(String reqLoginId, String targetLoginId) {
+    public UserProfileResDto getUserProfile(String reqEmail, String targetEmail) {
 
         Boolean isFollow = null;
-        User targetUser = userRepository.findByLoginId(targetLoginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        User targetUser = userRepository.findByEmail(targetEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        if(!reqLoginId.equals(targetLoginId)){
-            User reqUser = userRepository.findByLoginId(reqLoginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        if(!reqEmail.equals(targetEmail)){
+            User reqUser = userRepository.findByEmail(reqEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
             isFollow = friendService.checkIsFollow(reqUser, targetUser);
         }
 
@@ -59,10 +59,10 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProfileCntResDto getUserProfileCnt(String loginId) {
-        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    public ProfileCntResDto getUserProfileCnt(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         Long userSnapCnt = snapRepository.countByUser(user);
-        FriendCntResDto friendCntResDto = friendService.findFriendCnt(loginId);
+        FriendCntResDto friendCntResDto = friendService.findFriendCnt(email);
 
         return ProfileCntResDto.builder()
                 .snapCnt(userSnapCnt)
@@ -73,8 +73,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProfileTagSnapResDto> getTagSnap(String loginId) {
-        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    public List<ProfileTagSnapResDto> getTagSnap(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         return profileRepository.findTagSnap(user);
     }

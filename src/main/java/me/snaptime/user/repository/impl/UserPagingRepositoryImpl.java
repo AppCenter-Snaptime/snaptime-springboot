@@ -27,10 +27,10 @@ public class UserPagingRepositoryImpl implements UserPagingRepository {
         Pageable pageable= PageRequest.of((int) (pageNum-1),20);
 
         List<Tuple> tuples =  jpaQueryFactory.select(
-                        user.loginId, user.profilePhoto.profilePhotoId, user.name
+                        user.email, user.profilePhoto.profilePhotoId, user.name,user.nickName
                 )
                 .from(user)
-                .where(user.name.startsWith(searchKeyword).or(user.loginId.startsWith(searchKeyword)))
+                .where(user.name.startsWith(searchKeyword).or(user.email.startsWith(searchKeyword).or(user.nickName.startsWith(searchKeyword))))
                 .orderBy(new OrderSpecifier(Order.ASC, user.userId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1) //페이지의 크기

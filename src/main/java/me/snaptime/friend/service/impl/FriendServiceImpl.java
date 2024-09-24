@@ -38,10 +38,10 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     @Transactional
-    public void sendFollow(String senderLoginId, String receiverLoginId){
+    public void sendFollow(String senderEmail, String receiverEmail){
 
-        User sender = findUserByLoginId(senderLoginId);
-        User receiver = findUserByLoginId(receiverLoginId);
+        User sender = findUserByEmail(senderEmail);
+        User receiver = findUserByEmail(receiverEmail);
 
         Optional<Friend> friendOptional = friendRepository.findBySenderAndReceiver(sender,receiver);
         
@@ -87,10 +87,10 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     @Transactional
-    public void unFollow(String deletorLoginId, String deletedUserLoginId){
+    public void unFollow(String deletorEmail, String deletedUserEmail){
 
-        User deletor = findUserByLoginId(deletorLoginId);
-        User deletedUser = findUserByLoginId(deletedUserLoginId);
+        User deletor = findUserByEmail(deletorEmail);
+        User deletedUser = findUserByEmail(deletedUserEmail);
         Friend friend = friendRepository.findBySenderAndReceiver(deletor,deletedUser)
                 .orElseThrow(() -> new CustomException(ExceptionCode.FRIEND_NOT_EXIST));
 
@@ -98,11 +98,11 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public FriendPagingResDto findFriendPage(String reqLoginId, String targetLoginId, Long pageNum,
+    public FriendPagingResDto findFriendPage(String reqEmail, String targetEmail, Long pageNum,
                                              FriendSearchType searchType, String searchKeyword){
 
-        User reqUser = findUserByLoginId(reqLoginId);
-        User targetUser = findUserByLoginId(targetLoginId);
+        User reqUser = findUserByEmail(reqEmail);
+        User targetUser = findUserByEmail(targetEmail);
         List<Tuple> tuples = friendRepository.findFriendPage(targetUser,searchType,pageNum,searchKeyword);
 
         // 다음 페이지 유무 체크
@@ -110,7 +110,7 @@ public class FriendServiceImpl implements FriendService {
 
         List<FriendInfoResDto> friendInfoResDtos = tuples.stream().map(tuple ->
         {
-            boolean isMyFriend = checkIsFollow(reqUser ,findUserByLoginId(tuple.get(user.loginId)));
+            boolean isMyFriend = checkIsFollow(reqUser ,findUserByEmail(tuple.get(user.email)));
             String profilePhotoURL = urlComponent.makeProfileURL(tuple.get(user.profilePhoto.profilePhotoId));
             return FriendInfoResDto.toDto(tuple,profilePhotoURL,isMyFriend);
         }).collect(Collectors.toList());
@@ -119,9 +119,9 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public FriendCntResDto findFriendCnt(String loginId){
+    public FriendCntResDto findFriendCnt(String email){
 
-        User targetUser = findUserByLoginId(loginId);
+        User targetUser = findUserByEmail(email);
 
         // target의 팔로잉,팔로워 수 조회
         Long followingCnt = friendRepository.countBySender(targetUser);
@@ -135,8 +135,8 @@ public class FriendServiceImpl implements FriendService {
         return friendRepository.existsBySenderAndReceiver(reqUser, targetUser);
     }
 
-    private User findUserByLoginId(String loginId){
-        return userRepository.findByLoginId(loginId)
+    private User findUserByEmail(String email){
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
     }
 

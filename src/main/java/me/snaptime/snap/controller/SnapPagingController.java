@@ -29,9 +29,9 @@ public class SnapPagingController {
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final Long pageNum) {
 
-        String reqLoginId = userDetails.getUsername();
+        String reqUserEmail = userDetails.getUsername();
         return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto(
-                "스냅 페이징조회가 완료되었습니다.", snapPagingService.findSnapPage(reqLoginId,pageNum)));
+                "스냅 페이징조회가 완료되었습니다.", snapPagingService.findSnapPage(reqUserEmail,pageNum)));
     }
 
 }

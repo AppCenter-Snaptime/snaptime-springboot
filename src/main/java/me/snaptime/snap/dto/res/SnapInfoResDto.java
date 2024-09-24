@@ -12,15 +12,15 @@ public record SnapInfoResDto(
         String snapPhotoURL,
         LocalDateTime snapCreatedDate,
         LocalDateTime snapModifiedDate,
-        String loginId,
+        String email,
         String profilePhotoURL,
         String userName
 ) {
     public static SnapInfoResDto entityToResDto(Snap entity, String snapPhotoURL, String profilePhotoURL) {
-        String userUid = null;
+        String userEmail = null;
         String userName = null;
         if (entity.getUser() != null) {
-            userUid = entity.getUser().getLoginId();
+            userEmail = entity.getUser().getEmail();
             userName = entity.getUser().getName();
         }
         return SnapInfoResDto.builder()
@@ -29,7 +29,7 @@ public record SnapInfoResDto(
                 .snapPhotoURL(snapPhotoURL)
                 .snapCreatedDate(entity.getCreatedDate())
                 .snapModifiedDate(entity.getLastModifiedDate())
-                .loginId(userUid)
+                .email(userEmail)
                 .profilePhotoURL(profilePhotoURL)
                 .userName(userName)
                 .build();

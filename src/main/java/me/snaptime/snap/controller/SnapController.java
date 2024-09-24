@@ -33,12 +33,12 @@ public class SnapController {
     public ResponseEntity<CommonResponseDto<Long>> createSnap(
             final @RequestParam(value = "isPrivate") boolean isPrivate,
             final @RequestParam(value = "albumId", required = false) Long album_id,
-            final @RequestParam(value = "tagUserLoginIds", required = false) List<String> tagUserLoginIds,
+            final @RequestParam(value = "tagUserEmails", required = false) List<String> tagUserEmails,
             final @ModelAttribute CreateSnapReqDto createSnapReqDto,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
-        String uId = userDetails.getUsername();
-        Long snapId = snapService.createSnap(createSnapReqDto, uId, isPrivate, tagUserLoginIds, album_id);
+        String userEmail = userDetails.getUsername();
+        Long snapId = snapService.createSnap(createSnapReqDto, userEmail, isPrivate, tagUserEmails, album_id);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CommonResponseDto<>(
@@ -54,11 +54,11 @@ public class SnapController {
             final @PathVariable("id") Long id,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
-        String uId = userDetails.getUsername();
+        String userEmail = userDetails.getUsername();
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "스냅이 정상적으로 불러와졌습니다.",
-                        snapService.findSnap(id, uId)
+                        snapService.findSnap(id, userEmail)
                 )
         );
     }
@@ -67,21 +67,21 @@ public class SnapController {
     @Parameters({
             @Parameter(name = "isPrivate", description = "변경 할 상태"),
             @Parameter(name = "snapId", description = "변경 할 Snap의 ID"),
-            @Parameter(name = "tagUserLoginIds", description = "변경 할 TagID")
+            @Parameter(name = "tagUserEmails", description = "변경 할 TagID")
     })
     @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CommonResponseDto<Long>> modifySnap(
             final @ModelAttribute ModifySnapReqDto modifySnapReqDto,
             final @RequestParam boolean isPrivate,
             final @RequestParam Long snapId,
-            final @RequestParam(required = false) List<String> tagUserLoginIds,
+            final @RequestParam(required = false) List<String> tagUserEmails,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
-        String uId = userDetails.getUsername();
+        String userEmail = userDetails.getUsername();
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "스냅이 정상적으로 수정되었습니다.",
-                        snapService.modifySnap(snapId, modifySnapReqDto, uId, tagUserLoginIds, isPrivate)
+                        snapService.modifySnap(snapId, modifySnapReqDto, userEmail, tagUserEmails, isPrivate)
                 )
         );
     }
@@ -97,8 +97,8 @@ public class SnapController {
             final @RequestParam("isPrivate") boolean isPrivate,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
-        String uId = userDetails.getUsername();
-        snapService.changeVisibility(snapId, uId, isPrivate);
+        String userEmail = userDetails.getUsername();
+        snapService.changeVisibility(snapId, userEmail, isPrivate);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "게시글의 상태가 성공적으로 변경되었습니다.",
@@ -118,8 +118,8 @@ public class SnapController {
             final @RequestParam Long albumId,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
-        String uId = userDetails.getUsername();
-        snapService.relocateSnap(snapId, albumId, uId);
+        String userEmail = userDetails.getUsername();
+        snapService.relocateSnap(snapId, albumId, userEmail);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         "스냅의 위치가 " + albumId + "번 앨범으로 변경되었습니다.",
@@ -135,8 +135,8 @@ public class SnapController {
             final @RequestParam Long snapId,
             final @AuthenticationPrincipal UserDetails userDetails
     ) {
-        String uId = userDetails.getUsername();
-        snapService.deleteSnap(snapId, uId);
+        String userEmail = userDetails.getUsername();
+        snapService.deleteSnap(snapId, userEmail);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new CommonResponseDto<>(
                         snapId + "번 스냅이 삭제되었습니다.",

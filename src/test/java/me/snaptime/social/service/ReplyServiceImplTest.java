@@ -60,9 +60,9 @@ public class ReplyServiceImplTest {
     @BeforeEach
     void beforeEach(){
         user = User.builder()
-                .loginId("loginId1")
-                .name("user1")
                 .email("email1@google.com")
+                .nickName("email1g")
+                .name("user1")
                 .build();
         snap = Snap.builder()
                 .build();
@@ -74,55 +74,55 @@ public class ReplyServiceImplTest {
     @DisplayName("댓글 등록 테스트 -> 성공")
     public void addParentReplyTest1(){
         //given
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user));
+        given(userRepository.findByEmail(any(String.class))).willReturn(Optional.ofNullable(user));
         given(snapRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(snap));
 
         //when
-        replyServiceImpl.addParentReply("loginId", new ParentReplyAddReqDto("댓글내용",1L));
+        replyServiceImpl.addParentReply("reqEmail", new ParentReplyAddReqDto("댓글내용",1L));
 
         //then
         verify(parentReplyRepository,times(1)).save(any(ParentReply.class));
         verify(snapRepository,times(1)).findById(any(Long.class));
-        verify(userRepository,times(1)).findByLoginId(any(String.class));
+        verify(userRepository,times(1)).findByEmail(any(String.class));
     }
 
     @Test
     @DisplayName("댓글 등록 테스트 -> 실패(존재하지 않는 snap)")
     public void addParentReplyTest2(){
         //given
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user));
+        given(userRepository.findByEmail(any(String.class))).willReturn(Optional.ofNullable(user));
         given(snapRepository.findById(any(Long.class))).willReturn(Optional.empty());
 
         //when
         try{
-            replyServiceImpl.addParentReply("loginId",new ParentReplyAddReqDto("댓글내용",1L));
+            replyServiceImpl.addParentReply("reqEmail",new ParentReplyAddReqDto("댓글내용",1L));
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.SNAP_NOT_EXIST);
             verify(parentReplyRepository,times(0)).save(any(ParentReply.class));
             verify(snapRepository,times(1)).findById(any(Long.class));
-            verify(userRepository,times(1)).findByLoginId(any(String.class));
+            verify(userRepository,times(1)).findByEmail(any(String.class));
         }
     }
 
     @Test
-    @DisplayName("대댓글 등록 테스트 -> 실패(태그할 유저LoginId와 연결되는 유저가 존재하지 않음)")
+    @DisplayName("대댓글 등록 테스트 -> 실패(태그할 유저 Email 과 연결되는 유저가 존재하지 않음)")
     public void addChildReplyTest2(){
         //given
         ChildReplyAddReqDto childReplyAddReqDto =
-                new ChildReplyAddReqDto("댓글내용",1L,"태그유저loginId");
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.empty());
+                new ChildReplyAddReqDto("댓글내용",1L,"태그유저Email");
+        given(userRepository.findByEmail(any(String.class))).willReturn(Optional.empty());
 
         //when
         try{
-            replyServiceImpl.addChildReply("loginId", childReplyAddReqDto);
+            replyServiceImpl.addChildReply("reqEmail", childReplyAddReqDto);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.USER_NOT_EXIST);
             verify(parentReplyRepository,times(0)).findById(any(Long.class));
-            verify(userRepository,times(1)).findByLoginId(any(String.class));
+            verify(userRepository,times(1)).findByEmail(any(String.class));
             verify(childReplyRepository,times(0)).save(any(ChildReply.class));
         }
     }
@@ -132,19 +132,19 @@ public class ReplyServiceImplTest {
     public void addChildReplyTest3(){
         //given
         ChildReplyAddReqDto childReplyAddReqDto =
-                new ChildReplyAddReqDto("댓글내용",1L,"태그유저loginId");
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user));
+                new ChildReplyAddReqDto("댓글내용",1L,"태그유저Email");
+        given(userRepository.findByEmail(any(String.class))).willReturn(Optional.ofNullable(user));
         given(parentReplyRepository.findById(any(Long.class))).willReturn(Optional.empty());
 
         //when
         try{
-            replyServiceImpl.addChildReply("loginId", childReplyAddReqDto);
+            replyServiceImpl.addChildReply("reqEmail", childReplyAddReqDto);
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.REPLY_NOT_FOUND);
             verify(parentReplyRepository,times(1)).findById(any(Long.class));
-            verify(userRepository,times(1)).findByLoginId(any(String.class));
+            verify(userRepository,times(1)).findByEmail(any(String.class));
             verify(childReplyRepository,times(0)).save(any(ChildReply.class));
         }
     }

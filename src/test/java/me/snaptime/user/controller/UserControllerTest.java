@@ -54,16 +54,16 @@ public class UserControllerTest {
     private JwtProvider jwtProvider;
 
     @Test
-    @WithMockUser(username = "kang4746",password = "test1234",roles = "USER")
+    @WithMockUser(username = "kang@gmail.com",password = "test1234",roles = "USER")
     @DisplayName("유저 정보 조회 컨트롤러 테스트")
     void getUserTest() throws Exception{
 
         //given
-        given(userService.getUser("kang4746")).willReturn(
+        given(userService.getUser("kang@gmail.com")).willReturn(
                 UserFindResDto.builder()
-                        .loginId("kang4746")
-                        .email("strong@gmail.com")
-                        .birthDay("1999-10-29")
+                        .name("홍길순")
+                        .email("kang@gmail.com")
+                        .nickName("kangg")
                         .build());
 
         //when
@@ -71,13 +71,13 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 //json response 형식을 잘 봅시다.
                 .andExpect(jsonPath("$.msg").exists())
-                .andExpect(jsonPath("$.result.loginId").exists())
+                .andExpect(jsonPath("$.result.name").exists())
                 .andExpect(jsonPath("$.result.email").exists())
-                .andExpect(jsonPath("$.result.birthDay").exists())
+                .andExpect(jsonPath("$.result.nickName").exists())
                 .andDo(print());
 
         //then
-        verify(userService,times(1)).getUser("kang4746");
+        verify(userService,times(1)).getUser("kang@gmail.com");
     }
 
     @Test
@@ -86,20 +86,17 @@ public class UserControllerTest {
 
         //given
         UserReqDto userRequestDto = UserReqDto.builder()
-                .loginId("kang4746")
+                .email("kang@gmail.com")
                 .password("test1234")
                 .name("홍길순")
-                .email("strong@gmail.com")
-                .birthDay("1999-10-29")
                 .build();
 
         given(signService.signUp(any(UserReqDto.class)))
                 .willReturn(UserFindResDto.builder()
                         .userId(1L)
-                        .loginId("kang4746")
                         .name("홍길순")
-                        .email("strong@gmail.com")
-                        .birthDay("1999-10-29")
+                        .email("kang@gmail.com")
+                        .nickName("kangg")
                         .build());
 
         Gson gson = new Gson();
@@ -110,9 +107,9 @@ public class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.msg").exists())
                 .andExpect(jsonPath("$.result.userId").exists())
-                .andExpect(jsonPath("$.result.loginId").exists())
+                .andExpect(jsonPath("$.result.name").exists())
                 .andExpect(jsonPath("$.result.email").exists())
-                .andExpect(jsonPath("$.result.birthDay").exists())
+                .andExpect(jsonPath("$.result.nickName").exists())
                 .andDo(print());
 
         //then
@@ -120,23 +117,21 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "kang4746",password = "test1234",roles = "USER")
+    @WithMockUser(username = "kang@gmail.com",password = "test1234",roles = "USER")
     @DisplayName("유저 수정 테스트")
     void updateUserTest() throws Exception{
 
         //given
         UserUpdateReqDto userUpdateDto = UserUpdateReqDto.builder()
                 .name("홍길순")
-                .email("strong@naver.com")
-                .birthDay("1999-10-29")
+                .nickName("kanghj")
                 .build();
 
-        given(userService.updateUser(eq("kang4746"),any(UserUpdateReqDto.class)))
+        given(userService.updateUser(eq("kang@gmail.com"),any(UserUpdateReqDto.class)))
                 .willReturn(UserFindResDto.builder()
-                        .loginId("kang4746")
                         .name("홍길순")
-                        .email("strong@gmail.com")
-                        .birthDay("1999-10-29")
+                        .email("kang@gmail.com")
+                        .nickName("kanghj")
                         .build());
 
         Gson gson = new Gson();
@@ -146,17 +141,16 @@ public class UserControllerTest {
         mockMvc.perform(patch("/users")
                         .content(content).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.msg").exists())
-                .andExpect(jsonPath("$.result.loginId").exists())
                 .andExpect(jsonPath("$.result.email").exists())
-                .andExpect(jsonPath("$.result.birthDay").exists())
+                .andExpect(jsonPath("$.result.nickName").exists())
                 .andDo(print());
 
         //then
-        verify(userService,times(1)).updateUser(eq("kang4746"),any(UserUpdateReqDto.class));
+        verify(userService,times(1)).updateUser(eq("kang@gmail.com"),any(UserUpdateReqDto.class));
     }
 
     @Test
-    @WithMockUser(username = "kang4746",password = "test1234",roles = "USER")
+    @WithMockUser(username = "kang@gmail.com",password = "test1234",roles = "USER")
     @DisplayName("유저 삭제 테스트")
     void deleteUserTest() throws Exception{
         //given
@@ -165,6 +159,6 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(userService,times(1)).deleteUser("test1234","kang4746");
+        verify(userService,times(1)).deleteUser("kang@gmail.com","test1234");
     }
 }

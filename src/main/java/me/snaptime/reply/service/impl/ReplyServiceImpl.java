@@ -47,8 +47,8 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     @Transactional
-    public void addParentReply(String reqLoginId, ParentReplyAddReqDto parentReplyAddReqDto){
-        User reqUser = findUserByLoginId(reqLoginId);
+    public void addParentReply(String reqEmail, ParentReplyAddReqDto parentReplyAddReqDto){
+        User reqUser = findUserByEmail(reqEmail);
         Snap snap = snapRepository.findById(parentReplyAddReqDto.snapId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
 
@@ -64,15 +64,15 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Transactional
-    public void addChildReply(String reqLoginId, ChildReplyAddReqDto childReplyAddReqDto){
-        User reqUser = findUserByLoginId(reqLoginId);
+    public void addChildReply(String reqEmail, ChildReplyAddReqDto childReplyAddReqDto){
+        User reqUser = findUserByEmail(reqEmail);
 
         ParentReply parentReply = parentReplyRepository.findById(childReplyAddReqDto.parentReplyId())
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
         Snap snap = parentReply.getSnap();
 
         // 태그유저가 없는 댓글 등록이면
-        if( childReplyAddReqDto.tagLoginId().isBlank()){
+        if( childReplyAddReqDto.tagEmail().isBlank()){
             childReplyRepository.save(
                     ChildReply.builder()
                             .parentReply(parentReply)
@@ -83,7 +83,7 @@ public class ReplyServiceImpl implements ReplyService {
         }
         // 태그유저가 있는 댓글등록이면
         else{
-            User tagUser = userRepository.findByLoginId(childReplyAddReqDto.tagLoginId())
+            User tagUser = userRepository.findByEmail(childReplyAddReqDto.tagEmail())
                     .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
             childReplyRepository.save(
@@ -131,51 +131,51 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Transactional
-    public void updateParentReply(String reqLoginId ,Long parentReplyId, String newContent){
+    public void updateParentReply(String reqEmail ,Long parentReplyId, String newContent){
         ParentReply parentReply = parentReplyRepository.findById(parentReplyId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
 
-        isMyReply(reqLoginId,parentReply.getUser().getLoginId());
+        isMyReply(reqEmail,parentReply.getUser().getEmail());
         parentReply.updateReply(newContent);
         parentReplyRepository.save(parentReply);
     }
 
     @Transactional
-    public void updateChildReply(String reqLoginId, Long childReplyId, String newContent){
+    public void updateChildReply(String reqEmail, Long childReplyId, String newContent){
         ChildReply childReply = childReplyRepository.findById(childReplyId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
 
-        isMyReply(reqLoginId,childReply.getUser().getLoginId());
+        isMyReply(reqEmail,childReply.getUser().getEmail());
         childReply.updateReply(newContent);
         childReplyRepository.save(childReply);
     }
 
     @Transactional
-    public void deleteParentReply(String reqLoginId, Long parentReplyId){
+    public void deleteParentReply(String reqEmail, Long parentReplyId){
         ParentReply parentReply = parentReplyRepository.findById(parentReplyId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
 
-        isMyReply(reqLoginId,parentReply.getUser().getLoginId());
+        isMyReply(reqEmail,parentReply.getUser().getEmail());
         parentReplyRepository.delete(parentReply);
     }
 
     @Transactional
-    public void deleteChildReply(String reqLoginId, Long childReplyId){
+    public void deleteChildReply(String reqEmail, Long childReplyId){
         ChildReply childReply = childReplyRepository.findById(childReplyId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.REPLY_NOT_FOUND));
 
-        isMyReply(reqLoginId,childReply.getUser().getLoginId());
+        isMyReply(reqEmail,childReply.getUser().getEmail());
         childReplyRepository.delete(childReply);
     }
 
-    private User findUserByLoginId(String loginId){
-        return userRepository.findByLoginId(loginId)
+    private User findUserByEmail(String email){
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
     }
 
-    private void isMyReply(String reqLoginId, String targetLoginId){
+    private void isMyReply(String reqEmail, String targetEmail){
 
-        if(!targetLoginId.equals(reqLoginId))
+        if(!targetEmail.equals(reqEmail))
             throw new CustomException(ExceptionCode.ACCESS_FAIL_REPLY);
     }
 }

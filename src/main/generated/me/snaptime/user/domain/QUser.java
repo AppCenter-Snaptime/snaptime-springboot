@@ -24,8 +24,6 @@ public class QUser extends EntityPathBase<User> {
 
     public final me.snaptime.common.QBaseTimeEntity _super = new me.snaptime.common.QBaseTimeEntity(this);
 
-    public final StringPath birthDay = createString("birthDay");
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
 
@@ -34,9 +32,9 @@ public class QUser extends EntityPathBase<User> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
 
-    public final StringPath loginId = createString("loginId");
-
     public final StringPath name = createString("name");
+
+    public final StringPath nickName = createString("nickName");
 
     public final StringPath password = createString("password");
 

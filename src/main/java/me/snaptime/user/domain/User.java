@@ -32,19 +32,16 @@ public class User extends BaseTimeEntity implements UserDetails{
     @Column(name = "user_name",nullable = false)
     private String name;
 
-    @Column(name = "user_loginId",nullable = false, unique = true)
-    private String loginId;
+    @Column(name = "user_nick_name")
+    private String nickName;
+
+    @Column(name = "user_email",nullable = false, unique = true)
+    private String email;
 
     //메서드의 프로퍼티를 JSON 직렬화에서 제외하도록 지정합니다.
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "user_password",nullable = false)
     private String password;
-
-    @Column(name = "user_email",nullable = false)
-    private String email;
-
-    @Column(name = "user_birthDay",nullable = false)
-    private String birthDay;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "profile_photo_id")
@@ -57,20 +54,18 @@ public class User extends BaseTimeEntity implements UserDetails{
     private List<String> roles = new ArrayList<>();
 
     @Builder
-    protected User(String name,String loginId,String password, String email, String birthDay, List<String> roles, ProfilePhoto profilePhoto){
+    protected User(String name,String nickName, String email, String password,  List<String> roles, ProfilePhoto profilePhoto){
         this.name = name;
-        this.loginId = loginId;
-        this.password =password;
+        this.nickName = nickName;
         this.email = email;
-        this.birthDay = birthDay;
+        this.password = password;
         this.roles = roles;
         this.profilePhoto = profilePhoto;
     }
 
     public void updateUserName(String name) { this.name = name;}
-    public void updateUserLoginId(String loginId) { this.loginId = loginId;}
+    public void updateNickName(String nickName){this.nickName = nickName;}
     public void updateUserEmail(String email) { this.email = email;}
-    public void updateUserBirthDay(String birthDay) { this.birthDay = birthDay;}
     public void updateUserPassword(String password){this.password = password;}
 
 
@@ -87,7 +82,7 @@ public class User extends BaseTimeEntity implements UserDetails{
     //일반적으로 외부에 노출되어도 되는 정보이기 때문에 JsonProperty.Access.WRITE_ONLY 가 필요하지 않다.
     @Override
     public String getUsername() {
-        return this.loginId;
+        return this.email;
     }
 
     //사용자 계정의 만료 여부

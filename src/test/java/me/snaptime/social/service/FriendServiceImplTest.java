@@ -70,17 +70,17 @@ public class FriendServiceImplTest {
         given(sender.getUserId()).willReturn(1L);
         given(receiver.getUserId()).willReturn(2L);
 
-        given(userRepository.findByLoginId(any(String.class)))
+        given(userRepository.findByEmail(any(String.class)))
                 .willReturn(Optional.of(sender))
                 .willReturn(Optional.ofNullable(receiver));
 
         given(friendRepository.findBySenderAndReceiver(any(User.class),any(User.class))).willReturn(Optional.empty());
 
         //when
-        friendServiceImpl.sendFollow("senderLoginId","testName");
+        friendServiceImpl.sendFollow("senderEmail","testName");
 
         //then
-        verify(userRepository,times(2)).findByLoginId(any(String.class));
+        verify(userRepository,times(2)).findByEmail(any(String.class));
         verify(friendRepository,times(1)).findBySenderAndReceiver(any(User.class),any(User.class));
         verify(friendRepository,times(1)).save(any(Friend.class));
     }
@@ -90,18 +90,18 @@ public class FriendServiceImplTest {
     public void sendFriendReqTest2(){
         //given
         User sender = spy(user1);
-        given(userRepository.findByLoginId(any(String.class)))
+        given(userRepository.findByEmail(any(String.class)))
                 .willReturn(Optional.ofNullable(sender))
                 .willReturn(Optional.empty());
 
         //when
         try{
-            friendServiceImpl.sendFollow("senderLoginId","testName");
+            friendServiceImpl.sendFollow("senderEmail","testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.USER_NOT_EXIST);
-            verify(userRepository,times(2)).findByLoginId(any(String.class));
+            verify(userRepository,times(2)).findByEmail(any(String.class));
             verify(friendRepository,times(0)).findBySenderAndReceiver(any(User.class),any(User.class));
             verify(friendRepository,times(0)).save(any(Friend.class));
         }
@@ -115,7 +115,7 @@ public class FriendServiceImplTest {
         User receiver = spy(user1);
         Friend friend = spy(this.friend);
 
-        given(userRepository.findByLoginId(any(String.class)))
+        given(userRepository.findByEmail(any(String.class)))
                 .willReturn(Optional.ofNullable(sender))
                 .willReturn(Optional.of(receiver));
 
@@ -123,12 +123,12 @@ public class FriendServiceImplTest {
 
         //when
         try{
-            friendServiceImpl.sendFollow("senderLoginId","testName");
+            friendServiceImpl.sendFollow("senderEmail","testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.ALREADY_FOLLOW);
-            verify(userRepository,times(2)).findByLoginId(any(String.class));
+            verify(userRepository,times(2)).findByEmail(any(String.class));
             verify(friendRepository,times(1)).findBySenderAndReceiver(any(User.class),any(User.class));
             verify(friendRepository,times(0)).save(any(Friend.class));
         }
@@ -144,7 +144,7 @@ public class FriendServiceImplTest {
         given(sender.getUserId()).willReturn(1L);
         given(receiver.getUserId()).willReturn(1L);
 
-        given(userRepository.findByLoginId(any(String.class)))
+        given(userRepository.findByEmail(any(String.class)))
                 .willReturn(Optional.of(sender))
                 .willReturn(Optional.of(receiver));
 
@@ -152,12 +152,12 @@ public class FriendServiceImplTest {
 
         //when
         try{
-            friendServiceImpl.sendFollow("senderLoginId","testName");
+            friendServiceImpl.sendFollow("senderEmail","testName");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.SELF_FRIEND_REQ);
-            verify(userRepository,times(2)).findByLoginId(any(String.class));
+            verify(userRepository,times(2)).findByEmail(any(String.class));
             verify(friendRepository,times(1)).findBySenderAndReceiver(any(User.class),any(User.class));
             verify(friendRepository,times(0)).save(any(Friend.class));
         }
@@ -220,19 +220,19 @@ public class FriendServiceImplTest {
         //given
         User deletor = spy(user1);
         User deletedUser = spy(user1);
-        given(userRepository.findByLoginId(any(String.class)))
+        given(userRepository.findByEmail(any(String.class)))
                 .willReturn(Optional.ofNullable(deletor))
                 .willReturn(Optional.of(deletedUser));
 
         given(friendRepository.findBySenderAndReceiver(any(User.class),any(User.class))).willReturn(Optional.ofNullable(friend));
 
         //when
-        friendServiceImpl.unFollow("senderLoginId","deletedUserLoginId");
+        friendServiceImpl.unFollow("senderEmail","deletedUserEmail");
 
         //then
         verify(friendRepository,times(1)).delete(any(Friend.class));
         verify(friendRepository,times(1)).findBySenderAndReceiver(any(User.class),any(User.class));
-        verify(userRepository,times(2)).findByLoginId(any(String.class));
+        verify(userRepository,times(2)).findByEmail(any(String.class));
     }
 
     @Test
@@ -241,21 +241,21 @@ public class FriendServiceImplTest {
         //given
         User deletor = spy(user1);
         User deletedUser = spy(user1);
-        given(userRepository.findByLoginId(any(String.class)))
+        given(userRepository.findByEmail(any(String.class)))
                 .willReturn(Optional.ofNullable(deletor))
                 .willReturn(Optional.of(deletedUser));
 
         given(friendRepository.findBySenderAndReceiver(any(User.class),any(User.class))).willReturn(Optional.empty());
         //when
         try{
-            friendServiceImpl.unFollow("senderLoginId","deletedUserLoginId");
+            friendServiceImpl.unFollow("senderEmail","deletedUserEmail");
             fail("예외가 발생하지 않음");
         }catch (CustomException ex){
             //then
             assertThat(ex.getExceptionCode()).isEqualTo(ExceptionCode.FRIEND_NOT_EXIST);
             verify(friendRepository,times(0)).delete(any(Friend.class));
             verify(friendRepository,times(1)).findBySenderAndReceiver(any(User.class),any(User.class));
-            verify(userRepository,times(2)).findByLoginId(any(String.class));
+            verify(userRepository,times(2)).findByEmail(any(String.class));
         }
     }
 
@@ -263,12 +263,12 @@ public class FriendServiceImplTest {
     @DisplayName("친구 수 조회 : 성공")
     public void findFriendShipCntTest1(){
         // given
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user1));
+        given(userRepository.findByEmail(any(String.class))).willReturn(Optional.ofNullable(user1));
         given(friendRepository.countBySender(any(User.class))).willReturn(2l);
         given(friendRepository.countByReceiver(any(User.class))).willReturn(1l);
 
         // when
-        FriendCntResDto friendCntResDto = friendServiceImpl.findFriendCnt("loginId");
+        FriendCntResDto friendCntResDto = friendServiceImpl.findFriendCnt("email");
 
         // then
         assertThat(friendCntResDto.followerCnt()).isEqualTo(1l);
@@ -286,9 +286,9 @@ public class FriendServiceImplTest {
                 .willReturn("profile1")
                 .willReturn("profile2")
                 .willReturn("profile3");
-        given(tuple1.get(user.loginId)).willReturn("testLoginId1");
-        given(tuple2.get(user.loginId)).willReturn("testLoginId2");
-        given(tuple3.get(user.loginId)).willReturn("testLoginId3");
+        given(tuple1.get(user.email)).willReturn("testEmail1");
+        given(tuple2.get(user.email)).willReturn("testEmail2");
+        given(tuple3.get(user.email)).willReturn("testEmail3");
 
         given(tuple1.get(user.profilePhoto.profilePhotoId)).willReturn(4L);
         given(tuple2.get(user.profilePhoto.profilePhotoId)).willReturn(5L);
@@ -298,18 +298,18 @@ public class FriendServiceImplTest {
         given(tuple2.get(user.name)).willReturn("name2");
         given(tuple3.get(user.name)).willReturn("name3");
 
-        given(userRepository.findByLoginId(any(String.class))).willReturn(Optional.ofNullable(user1));
+        given(userRepository.findByEmail(any(String.class))).willReturn(Optional.ofNullable(user1));
         given(friendRepository.findFriendPage(any(User.class),any(FriendSearchType.class),any(Long.class),any(String.class)))
                 .willReturn(List.of(tuple1,tuple2,tuple3));
 
         // when
         FriendPagingResDto result = friendServiceImpl
-                .findFriendPage("writerLoginId","targetLoginId",1L,FriendSearchType.FOLLOWER,"searchKeyword");
+                .findFriendPage("writerEmail","targetEmail",1L,FriendSearchType.FOLLOWER,"searchKeyword");
 
         // then
-        assertThat(result.friendInfoResDtos().get(0).foundLoginId()).isEqualTo("testLoginId1");
-        assertThat(result.friendInfoResDtos().get(1).foundLoginId()).isEqualTo("testLoginId2");
-        assertThat(result.friendInfoResDtos().get(2).foundLoginId()).isEqualTo("testLoginId3");
+        assertThat(result.friendInfoResDtos().get(0).foundEmail()).isEqualTo("testEmail1");
+        assertThat(result.friendInfoResDtos().get(1).foundEmail()).isEqualTo("testEmail2");
+        assertThat(result.friendInfoResDtos().get(2).foundEmail()).isEqualTo("testEmail3");
 
         assertThat(result.friendInfoResDtos().get(0).foundUserName()).isEqualTo("name1");
         assertThat(result.friendInfoResDtos().get(1).foundUserName()).isEqualTo("name2");
@@ -321,7 +321,7 @@ public class FriendServiceImplTest {
 
         assertThat(result.hasNextPage()).isFalse();
 
-        verify(userRepository,times(5)).findByLoginId(any(String.class));
+        verify(userRepository,times(5)).findByEmail(any(String.class));
         verify(urlComponent,times(3)).makeProfileURL(any(Long.class));
         verify(friendRepository,times(1))
                 .findFriendPage(any(User.class),any(FriendSearchType.class),any(Long.class),any(String.class));

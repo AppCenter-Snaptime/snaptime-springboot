@@ -36,16 +36,15 @@ public class PhotoControllerTest {
 
 
     @DisplayName("Photo 조회 테스트")
-    @WithMockUser(username = "mockUid",password = "test1234",roles = "USER")
+    @WithMockUser(username = "kang@gmail.com",password = "test1234",roles = "USER")
     @Test
     public void findPhotoTest() throws Exception {
         // given
         signService.signUp(new UserReqDto(
-                "김원정", "mockUid", "test1234", "test@test.com", "990303"
-        ));
+                "김원정", "kang@gmail.com", "test1234"));
         byte[] emptyByte = {};
 
-        given(snapService.downloadPhotoFromFileSystem("image.png", "mockUid", true)).willReturn(emptyByte);
+        given(snapService.downloadPhotoFromFileSystem("image.png", "kang@gmail.com", true)).willReturn(emptyByte);
         // when
         mockMvc.perform(
                 get("/photo?fileName=image.png&isEncrypted=true"))

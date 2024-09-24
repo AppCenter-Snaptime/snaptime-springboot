@@ -91,10 +91,10 @@ public class ProfileRepositoryImpl implements ProfileRepository {
     @Override
     public List<ProfileTagSnapResDto> findTagSnap(User targetUser) {
         List<Tuple> tagSnaps = jpaQueryFactory
-                .select(snap.id,snap.user.loginId, snap.fileName, snap.isPrivate, snap.createdDate).distinct()
+                .select(snap.id,snap.user.email, snap.fileName, snap.isPrivate, snap.createdDate).distinct()
                 .from(snap)
                 .join(snapTag).on(snapTag.snap.id.eq(snap.id))
-                .where(snapTag.tagUser.loginId.eq(targetUser.getLoginId()))
+                .where(snapTag.tagUser.email.eq(targetUser.getEmail()))
                 .orderBy(snap.createdDate.desc())
                 .fetch();
 
@@ -102,7 +102,7 @@ public class ProfileRepositoryImpl implements ProfileRepository {
                 .map(tuple -> {
                     return ProfileTagSnapResDto.builder()
                             .taggedSnapId(tuple.get(snap.id))
-                            .snapOwnLoginId(tuple.get(snap.user.loginId))
+                            .snapOwnEmail(tuple.get(snap.user.email))
                             .taggedSnapUrl(urlComponent.makePhotoURL(tuple.get(snap.fileName), tuple.get(snap.isPrivate)))
                             .build();
                 })

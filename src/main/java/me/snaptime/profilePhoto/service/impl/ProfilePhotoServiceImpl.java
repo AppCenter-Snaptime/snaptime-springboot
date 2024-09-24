@@ -72,8 +72,8 @@ public class ProfilePhotoServiceImpl implements ProfilePhotoService {
     //트랜잭션 어노테이션을 사용하면 upload -> delete -> update, 프로필을 삭제를 해도 수정에 성공함.
     @Override
     @Transactional
-    public ProfilePhotoResDto updatePhotoFromFileSystem(String loginId, MultipartFile updateFile) throws Exception{
-        User updateUser = userRepository.findByLoginId(loginId).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    public ProfilePhotoResDto updatePhotoFromFileSystem(String email, MultipartFile updateFile) throws Exception{
+        User updateUser = userRepository.findByEmail(email).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
         ProfilePhoto profilePhoto = profilePhotoRepository.findById(updateUser.getProfilePhoto().getProfilePhotoId()).orElseThrow(()-> new CustomException(ExceptionCode.PROFILE_PHOTO_NOT_FOUND));
 
         String updateFileName = FileNameGenerator.generatorName(updateFile.getOriginalFilename());

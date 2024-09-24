@@ -47,8 +47,8 @@ public class SnapServiceImpl implements SnapService {
     private final SnapLikeService snapLikeService;
 
     @Override
-    public Long createSnap(CreateSnapReqDto createSnapReqDto, String userUid, boolean isPrivate, List<String> tagUserLoginIds, Long album_id) {
-        User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+    public Long createSnap(CreateSnapReqDto createSnapReqDto, String userEmail, boolean isPrivate, List<String> tagUserEmails, Long album_id) {
+        User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         WritePhotoToFileSystemResult writePhotoToFileSystemResult = savePhotoToFileSystem(foundUser, createSnapReqDto.multipartFile(), isPrivate);
         Snap savedSnap = snapRepository.save(
                 Snap.builder()
@@ -77,18 +77,18 @@ public class SnapServiceImpl implements SnapService {
         }
 
         // tagUserLoginIds가 파라미터로 주어졌을 경우 태그에 추가
-        if (tagUserLoginIds != null) {
-            snapTagService.addTagUser(tagUserLoginIds, savedSnap);
+        if (tagUserEmails != null) {
+            snapTagService.addTagUser(tagUserEmails, savedSnap);
         }
 
         return savedSnap.getId();
     }
 
     @Override
-    public SnapDetailInfoResDto findSnap(Long id, String uId) {
+    public SnapDetailInfoResDto findSnap(Long id, String userEmail) {
         Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         if(foundSnap.isPrivate()) {
-            User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+            User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
             // Snap이 비공개라면, 요청한 유저와 스냅의 ID가 일치하는지 확인한다.
             if (!Objects.equals(foundUser.getUserId(), foundSnap.getUser().getUserId())) {
                 throw new CustomException(ExceptionCode.SNAP_IS_PRIVATE);
@@ -98,14 +98,14 @@ public class SnapServiceImpl implements SnapService {
         String profilePhotoUrl = urlComponent.makeProfileURL(foundSnap.getUser().getProfilePhoto().getProfilePhotoId());
         List<TagUserFindResDto> tagUserFindResDtos = snapTagService.findTagUsers(foundSnap.getId());
         Long likeCnt = snapLikeService.findSnapLikeCnt(foundSnap.getId());
-        boolean isLikedSnap = snapLikeService.isLikedSnap(foundSnap.getId(), uId);
+        boolean isLikedSnap = snapLikeService.isLikedSnap(foundSnap.getId(), userEmail);
         return SnapDetailInfoResDto.toDto(foundSnap, profilePhotoUrl, snapPhotoUrl, tagUserFindResDtos, likeCnt, isLikedSnap);
     }
 
     @Override
-    public Long modifySnap(Long snapId, ModifySnapReqDto modifySnapReqDto, String userUid, List<String> tagUserLoginIds, boolean isPrivate) {
+    public Long modifySnap(Long snapId, ModifySnapReqDto modifySnapReqDto, String userEmail, List<String> tagUserEmails, boolean isPrivate) {
         Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
-        User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         // 수정하려는 유저와 수정되려는 스냅의 저자가 일치하는지 확인한다.
         if (!foundSnap.getUser().getUserId().equals(foundUser.getUserId())) {
@@ -142,8 +142,8 @@ public class SnapServiceImpl implements SnapService {
                     // Snap의 암호화 상태를 비활성화로 변경한다.
                     foundSnap.updateIsPrivate(false);
 
-                    if (tagUserLoginIds != null) {
-                        snapTagService.modifyTagUser(tagUserLoginIds, foundSnap);
+                    if (tagUserEmails != null) {
+                        snapTagService.modifyTagUser(tagUserEmails, foundSnap);
                     }
                 }
             } catch (IOException e) {
@@ -156,9 +156,9 @@ public class SnapServiceImpl implements SnapService {
     }
 
     @Override
-    public void changeVisibility(Long snapId, String userUid, boolean isPrivate) {
+    public void changeVisibility(Long snapId, String userEmail, boolean isPrivate) {
         Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
-        User foundUser = userRepository.findByLoginId(userUid).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         // 설정되어 있는 값하고 똑같다면
         if (foundSnap.isPrivate() == isPrivate) {
@@ -189,9 +189,9 @@ public class SnapServiceImpl implements SnapService {
     }
 
     @Override
-    public void deleteSnap(Long snapId, String uId) {
+    public void deleteSnap(Long snapId, String userEmail) {
         Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
-        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         // 삭제를 요청한 사용자가 Snap를 만든 사용자인지 확인한다.
         if (!Objects.equals(foundSnap.getUser().getUserId(), foundUser.getUserId())) {
@@ -206,11 +206,11 @@ public class SnapServiceImpl implements SnapService {
     }
 
     @Override
-    public byte[] downloadPhotoFromFileSystem(String fileName, String uId, boolean isEncrypted) {
+    public byte[] downloadPhotoFromFileSystem(String fileName, String userEmail, boolean isEncrypted) {
         byte[] photoData = fileComponent.downloadPhotoFromFileSystem(fileName);
         if (isEncrypted) {
             try {
-                SecretKey secretKey = encryptionComponent.getSecretKey(uId);
+                SecretKey secretKey = encryptionComponent.getSecretKey(userEmail);
                 return EncryptionUtil.decryptData(photoData, secretKey);
             } catch (Exception e) {
                 log.error(e.getMessage());
@@ -221,10 +221,10 @@ public class SnapServiceImpl implements SnapService {
     }
 
     @Override
-    public void relocateSnap(Long snapId, Long albumId, String uId) {
+    public void relocateSnap(Long snapId, Long albumId, String userEmail) {
         Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
         Album foundAlbum = albumRepository.findById(albumId).orElseThrow(() -> new CustomException(ExceptionCode.ALBUM_NOT_EXIST));
-        User foundUser = userRepository.findByLoginId(uId).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
         // 찾은 Snap의 소유자가 요청자와 일치하고, 새로 옮길 앨범의 소유자가 요청자와 일치한다면
         if (Objects.equals(foundSnap.getUser().getUserId(), foundUser.getUserId()) && Objects.equals(foundSnap.getAlbum().getUser().getUserId(), foundUser.getUserId())) {
             // 새로 연관관계를 맺어주고 DB에 반영한다.
