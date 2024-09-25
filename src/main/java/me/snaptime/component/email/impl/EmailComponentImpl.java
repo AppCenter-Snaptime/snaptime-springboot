@@ -32,7 +32,7 @@ public class EmailComponentImpl implements EmailComponent {
         msgg += "<div class='code-block' style='border: 2px solid #2196F3; padding: 15px; background-color: #f0f8ff; border-radius: 5px;'>";
         msgg += "<h3 style='color: #2196F3;'>회원 가입 인증 코드입니다.</h3>";
         msgg += "<div class='code' style='font-size: 150%; color: #333; margin-top: 10px;'>";
-        msgg += "CODE : <strong style='color: #E91E63;'>123456</strong>"; // 여기에 verificationCode 값을 넣으세요
+        msgg += "CODE : <strong style='color: #E91E63;'>"+verificationCode+"</strong>"; // 여기에 verificationCode 값을 넣으세요
         msgg += "</div>";
         msgg += "</div>";
         msgg += "</div>";
