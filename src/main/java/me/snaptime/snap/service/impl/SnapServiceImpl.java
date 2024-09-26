@@ -25,6 +25,7 @@ import me.snaptime.user.domain.User;
 import me.snaptime.user.repository.UserRepository;
 import me.snaptime.util.EncryptionUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
@@ -220,6 +221,7 @@ public class SnapServiceImpl implements SnapService {
         return photoData;
     }
 
+    @Transactional
     @Override
     public void relocateSnap(Long snapId, Long albumId, String userEmail) {
         Snap foundSnap = snapRepository.findById(snapId).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
