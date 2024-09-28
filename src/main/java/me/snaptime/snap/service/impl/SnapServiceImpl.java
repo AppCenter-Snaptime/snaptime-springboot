@@ -96,7 +96,7 @@ public class SnapServiceImpl implements SnapService {
         }
         String snapPhotoUrl = urlComponent.makePhotoURL(foundSnap.getFileName(), foundSnap.isPrivate());
         String profilePhotoUrl = urlComponent.makeProfileURL(foundSnap.getUser().getProfilePhoto().getProfilePhotoId());
-        List<TagUserFindResDto> tagUserFindResDtos = snapTagService.findTagUsers(foundSnap.getId());
+        List<TagUserFindResDto> tagUserFindResDtos = snapTagService.findTagUsers(foundSnap.getId(), userEmail);
         Long likeCnt = snapLikeService.findSnapLikeCnt(foundSnap.getId());
         boolean isLikedSnap = snapLikeService.isLikedSnap(foundSnap.getId(), userEmail);
         return SnapDetailInfoResDto.toDto(foundSnap, profilePhotoUrl, snapPhotoUrl, tagUserFindResDtos, likeCnt, isLikedSnap);

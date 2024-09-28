@@ -17,5 +17,5 @@ public interface SnapTagService {
     void deleteAllTagUser(Snap snap);
 
     // 스냅에 태그된 유저들의 정보를 가져옵니다.
-    List<TagUserFindResDto> findTagUsers(Long snapId);
+    List<TagUserFindResDto> findTagUsers(Long snapId, String reqEmail);
 }
