@@ -8,6 +8,7 @@ import me.snaptime.exception.ExceptionCode;
 import me.snaptime.snap.domain.Snap;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snapLike.domain.SnapLike;
+import me.snaptime.snapLike.dto.res.SnapLikeResDto;
 import me.snaptime.snapLike.repository.SnapLikeRepository;
 import me.snaptime.snapLike.service.SnapLikeService;
 import me.snaptime.user.domain.User;
@@ -29,7 +30,7 @@ public class SnapLikeServiceImpl implements SnapLikeService {
 
     @Override
     @Transactional
-    public String toggleSnapLike(String reqEmail, Long snapId){
+    public SnapLikeResDto toggleSnapLike(String reqEmail, Long snapId){
         User reqUser = userRepository.findByEmail(reqEmail)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
@@ -46,11 +47,11 @@ public class SnapLikeServiceImpl implements SnapLikeService {
                             .build()
             );
             alarmAddService.createSnapAlarm(reqUser,snap.getUser(),snap, AlarmType.LIKE);
-            return "좋아요를 눌렀습니다.";
+            return SnapLikeResDto.toDto("좋아요를 눌렀습니다.", findSnapLikeCnt(snapId));
         }
         else{
             snapLikeRepository.delete(snapLikeOptional.get());
-            return "좋아요를 취소하였습니다.";
+            return SnapLikeResDto.toDto("좋아요를 취소하였습니다.", findSnapLikeCnt(snapId));
         }
     }
 
