@@ -17,4 +17,5 @@ public interface ProfileService {
     /* loginId에 해당하는 User가 Tag된 snap들을 조회합니다 */
     List<ProfileTagSnapResDto> getTagSnap(String email);
 
+
 }

@@ -26,6 +26,7 @@ public record SnapDetailInfoResDto(
         List<TagUserFindResDto> tagUserFindResDtos,
         Long likeCnt,
         boolean isLikedSnap
+        
 ) {
     public static SnapDetailInfoResDto toDto(Tuple tuple, String profilePhotoURL, String snapPhotoURL,
                                              List<TagUserFindResDto> tagUserFindResDtos, Long likeCnt, boolean isLikedSnap){
