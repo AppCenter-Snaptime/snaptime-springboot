@@ -85,18 +85,20 @@ public class SnapServiceImpl implements SnapService {
     }
 
     @Override
-    public SnapDetailInfoResDto findSnap(Long id, String userEmail) {
-        Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
-        if(foundSnap.isPrivate()) {
-            User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
-            // Snap이 비공개라면, 요청한 유저와 스냅의 ID가 일치하는지 확인한다.
-            if (!Objects.equals(foundUser.getUserId(), foundSnap.getUser().getUserId())) {
-                throw new CustomException(ExceptionCode.SNAP_IS_PRIVATE);
+        public SnapDetailInfoResDto findSnap(Long id, String userEmail) {
+            Snap foundSnap = snapRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
+            if(foundSnap.isPrivate()) {
+                User foundUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+                // Snap이 비공개라면, 요청한 유저와 스냅의 ID가 일치하는지 확인한다.
+                if (!Objects.equals(foundUser.getUserId(), foundSnap.getUser().getUserId())) {
+                    throw new CustomException(ExceptionCode.SNAP_IS_PRIVATE);
+                }
             }
-        }
+
         String snapPhotoUrl = urlComponent.makePhotoURL(foundSnap.getFileName(), foundSnap.isPrivate());
         String profilePhotoUrl = urlComponent.makeProfileURL(foundSnap.getUser().getProfilePhoto().getProfilePhotoId());
         List<TagUserFindResDto> tagUserFindResDtos = snapTagService.findTagUsers(foundSnap.getId(), userEmail);
+
         Long likeCnt = snapLikeService.findSnapLikeCnt(foundSnap.getId());
         boolean isLikedSnap = snapLikeService.isLikedSnap(foundSnap.getId(), userEmail);
         return SnapDetailInfoResDto.toDto(foundSnap, profilePhotoUrl, snapPhotoUrl, tagUserFindResDtos, likeCnt, isLikedSnap);
