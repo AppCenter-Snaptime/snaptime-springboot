@@ -94,9 +94,11 @@ public class SnapServiceImpl implements SnapService {
                     throw new CustomException(ExceptionCode.SNAP_IS_PRIVATE);
                 }
             }
-            String snapPhotoUrl = urlComponent.makePhotoURL(foundSnap.getFileName(), foundSnap.isPrivate());
-            String profilePhotoUrl = urlComponent.makeProfileURL(foundSnap.getUser().getProfilePhoto().getProfilePhotoId());
-        List<TagUserFindResDto> tagUserFindResDtos = snapTagService.findTagUsers(foundSnap.getId());
+
+        String snapPhotoUrl = urlComponent.makePhotoURL(foundSnap.getFileName(), foundSnap.isPrivate());
+        String profilePhotoUrl = urlComponent.makeProfileURL(foundSnap.getUser().getProfilePhoto().getProfilePhotoId());
+        List<TagUserFindResDto> tagUserFindResDtos = snapTagService.findTagUsers(foundSnap.getId(), userEmail);
+
         Long likeCnt = snapLikeService.findSnapLikeCnt(foundSnap.getId());
         boolean isLikedSnap = snapLikeService.isLikedSnap(foundSnap.getId(), userEmail);
         return SnapDetailInfoResDto.toDto(foundSnap, profilePhotoUrl, snapPhotoUrl, tagUserFindResDtos, likeCnt, isLikedSnap);

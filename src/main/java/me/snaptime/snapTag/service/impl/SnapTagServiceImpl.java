@@ -3,8 +3,10 @@ package me.snaptime.snapTag.service.impl;
 import lombok.RequiredArgsConstructor;
 import me.snaptime.alarm.common.AlarmType;
 import me.snaptime.alarm.service.AlarmAddService;
+import me.snaptime.component.url.UrlComponent;
 import me.snaptime.exception.CustomException;
 import me.snaptime.exception.ExceptionCode;
+import me.snaptime.friend.service.FriendService;
 import me.snaptime.snap.domain.Snap;
 import me.snaptime.snap.repository.SnapRepository;
 import me.snaptime.snapTag.domain.SnapTag;
@@ -30,6 +32,8 @@ public class SnapTagServiceImpl implements SnapTagService {
     private final UserRepository userRepository;
     private final SnapRepository snapRepository;
     private final AlarmAddService alarmAddService;
+    private final UrlComponent urlComponent;
+    private final FriendService friendService;
 
     @Override
     @Transactional
@@ -79,12 +83,21 @@ public class SnapTagServiceImpl implements SnapTagService {
     }
 
     @Override
-    public List<TagUserFindResDto> findTagUsers(Long snapId){
+    public List<TagUserFindResDto> findTagUsers(Long snapId, String reqEmail){
         Snap snap = snapRepository.findById(snapId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.SNAP_NOT_EXIST));
+        User reqUser = userRepository.findByEmail(reqEmail)
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
         List<SnapTag> snapTags = snapTagRepository.findBySnap(snap);
-        return snapTags.stream().map( snapTag -> TagUserFindResDto.toDto(snapTag)).collect(Collectors.toList());
+
+        return snapTags.stream().map( snapTag ->{
+            User tagUser = snapTag.getTagUser();
+
+            String tagUserProfileUrl = urlComponent.makeProfileURL(tagUser.getProfilePhoto().getProfilePhotoId());
+            boolean isFollow = friendService.checkIsFollow(reqUser, tagUser);
+            return TagUserFindResDto.toDto(snapTag, tagUserProfileUrl, isFollow);
+        }).collect(Collectors.toList());
     }
 
     // 삭제된 태그유저 추출

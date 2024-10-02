@@ -1,9 +1,11 @@
 package me.snaptime.snapLike.service;
 
+import me.snaptime.snapLike.dto.res.SnapLikeResDto;
+
 public interface SnapLikeService {
 
     // 스냅 좋아요 토글기능
-    String toggleSnapLike(String reqLoginId, Long snapId);
+    SnapLikeResDto toggleSnapLike(String reqLoginId, Long snapId);
 
     // 스냅에 달린 좋아요 개수 조회
     Long findSnapLikeCnt(Long snapId);

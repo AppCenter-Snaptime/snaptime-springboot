@@ -51,7 +51,7 @@ public class SnapPagingServiceImpl implements SnapPagingService {
             String snapPhotoURL = urlComponent.makePhotoURL(tuple.get(snap.fileName),false);
 
             return SnapDetailInfoResDto.toDto(tuple,profilePhotoURL,snapPhotoURL,
-                    snapTagService.findTagUsers(snapId),
+                    snapTagService.findTagUsers(snapId, reqEmail),
                     snapLikeService.findSnapLikeCnt(snapId),
                     snapLikeService.isLikedSnap(snapId, reqEmail));
         }).collect(Collectors.toList());
