@@ -7,4 +7,6 @@ import java.util.List;
 public interface ChildReplyPagingRepository {
 
     List<ChildReply> findReplyPage(Long parentReplyId, Long pageNum);
+
+    Long countByParentReplyId(Long parentReplyId);
 }
