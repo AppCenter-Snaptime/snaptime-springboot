@@ -39,4 +39,14 @@ public class ChildReplyPagingRepositoryImpl implements ChildReplyPagingRepositor
 
         return childReplies;
     }
+
+    @Override
+    public Long countByParentReplyId(Long parentReplyId) {
+        Long childReplyCnt = jpaQueryFactory.select( childReply.count() )
+                .from(childReply)
+                .where(childReply.parentReply.parentReplyId.eq(parentReplyId))
+                .fetchOne();
+
+        return childReplyCnt;
+    }
 }
