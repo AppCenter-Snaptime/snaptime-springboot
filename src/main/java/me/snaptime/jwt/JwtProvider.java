@@ -43,7 +43,7 @@ public class JwtProvider {
     }
 
     public String createAccessToken(Long userId, String email, List<String> roles){
-        Claims claims = Jwts.claims().setSubject(email);
+        Claims claims = (Claims) Jwts.claims().setSubject(email);
         claims.put("userId",userId);
         claims.put("type","access");
         claims.put("roles",roles);
@@ -90,7 +90,7 @@ public class JwtProvider {
     }
 
     public String testCreateRefreshToken(Long id, String email, List<String> roles){
-        Claims claims = Jwts.claims().setSubject(email);
+        Claims claims = (Claims) Jwts.claims().setSubject(email);
         claims.put("userId", id);
         claims.put("type", "testRefresh");
         claims.put("roles", roles);
@@ -123,9 +123,8 @@ public class JwtProvider {
     //Jwts.parser()를 통해 secretKey를 설정하고 클레임을 추출해서 토큰을 생성할 때 넣었던 sub값을 추출합니다.
     public String getUsername(String token)
     {
-        String email = Jwts.parserBuilder()
+        String email = Jwts.parser()
                 .setSigningKey(secretKey)
-                .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -171,7 +170,7 @@ public class JwtProvider {
     }
 
     private Claims getClaims(String token) {
-        JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(secretKey).build();
+        JwtParser jwtParser = Jwts.parser().setSigningKey(secretKey);
         try {
             // Try to parse claims
             return jwtParser.parseClaimsJws(token).getBody();

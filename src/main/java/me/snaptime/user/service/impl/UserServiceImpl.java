@@ -85,4 +85,12 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ExceptionCode.PASSWORD_DUPLICATE);
         }
     }
+
+    @Override
+    public void updateAuth(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new CustomException(ExceptionCode.USER_NOT_EXIST));
+        user.updateAuth();
+    }
+
+
 }

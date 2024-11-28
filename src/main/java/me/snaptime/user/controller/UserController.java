@@ -143,4 +143,11 @@ public class UserController {
                         "테스트 유저 로그인을 성공적으로 완료하였습니다.",
                         testSignInResDto));
     }
+
+    @Operation(summary = "관리자 계정으로 승격", description = "ROLE_USER 권한을 ROLE_ADMIN 으로 수정합니다.")
+    @PatchMapping("/update/auth")
+    public ResponseEntity<String> updateAuth(@AuthenticationPrincipal UserDetails userDetails){
+        userService.updateAuth(userDetails.getUsername());
+        return ResponseEntity.status(HttpStatus.OK).body("관리자 계정으로 승격");
+    }
 }

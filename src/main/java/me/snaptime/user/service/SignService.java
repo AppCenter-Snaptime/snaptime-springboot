@@ -19,4 +19,5 @@ public interface SignService {
 
     /* 토큰 유효시간 만료 후 재발급, 재로그인 테스트용 api */
     TestSignInResDto testSignIn(SignInReqDto signInReqDto);
+
 }

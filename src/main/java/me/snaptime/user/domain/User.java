@@ -53,6 +53,7 @@ public class User extends BaseTimeEntity implements UserDetails{
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
+
     @Builder
     protected User(String name,String nickName, String email, String password,  List<String> roles, ProfilePhoto profilePhoto){
         this.name = name;
@@ -67,6 +68,8 @@ public class User extends BaseTimeEntity implements UserDetails{
     public void updateNickName(String nickName){this.nickName = nickName;}
     public void updateUserEmail(String email) { this.email = email;}
     public void updateUserPassword(String password){this.password = password;}
+
+    public void updateAuth(){this.roles.clear(); this.roles.add("ROLE_ADMIN");}
 
 
     //UserDetails 인터페이스를 구현한 클래스에서 사용자의 권한을 반환하는 메서드

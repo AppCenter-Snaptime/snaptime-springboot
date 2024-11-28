@@ -41,7 +41,7 @@ public class SecurityConfig {
                                 .requestMatchers("/emails/send", "/emails/verify").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/users/profile", "/profile-photos/**","/snap/**","/friends/**").permitAll()
                                 .requestMatchers("**exception**").permitAll()
-                                .anyRequest().hasRole("USER")
+                                .anyRequest().hasAnyRole("USER", "ADMIN")
                 )
                 .addFilterBefore(new JwtExceptionHandlerFilter(),
                         UsernamePasswordAuthenticationFilter.class)

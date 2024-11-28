@@ -10,4 +10,6 @@ public interface UserService {
     UserFindResDto updateUser(String email, UserUpdateReqDto userUpdateReqDto);
     void deleteUser(String email, String password);
     void updatePassword(String email, String password);
+
+    void updateAuth(String username);
 }
