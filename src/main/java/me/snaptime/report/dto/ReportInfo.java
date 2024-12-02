@@ -1,10 +1,10 @@
-package me.snaptime.report.domain.dto;
+package me.snaptime.report.dto;
 
 import lombok.Builder;
-import me.snaptime.report.domain.entity.Report;
-import me.snaptime.report.domain.entity.ReportReason;
-import me.snaptime.report.domain.entity.ReportStatus;
-import me.snaptime.report.domain.entity.ReportType;
+import me.snaptime.report.domain.Report;
+import me.snaptime.report.domain.enums.ReportReason;
+import me.snaptime.report.domain.enums.ReportStatus;
+import me.snaptime.report.domain.enums.ReportType;
 
 @Builder
 public record ReportInfo(

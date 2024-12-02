@@ -1,4 +1,4 @@
-package me.snaptime.report.domain.entity;
+package me.snaptime.report.domain;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QReport extends EntityPathBase<Report> {
 
-    private static final long serialVersionUID = -189882034L;
+    private static final long serialVersionUID = 454582437L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
@@ -34,11 +34,11 @@ public class QReport extends EntityPathBase<Report> {
 
     public final me.snaptime.user.domain.QUser reporter;
 
-    public final EnumPath<ReportReason> reportReason = createEnum("reportReason", ReportReason.class);
+    public final EnumPath<me.snaptime.report.domain.enums.ReportReason> reportReason = createEnum("reportReason", me.snaptime.report.domain.enums.ReportReason.class);
 
-    public final EnumPath<ReportStatus> reportStatus = createEnum("reportStatus", ReportStatus.class);
+    public final EnumPath<me.snaptime.report.domain.enums.ReportStatus> reportStatus = createEnum("reportStatus", me.snaptime.report.domain.enums.ReportStatus.class);
 
-    public final EnumPath<ReportType> reportType = createEnum("reportType", ReportType.class);
+    public final EnumPath<me.snaptime.report.domain.enums.ReportType> reportType = createEnum("reportType", me.snaptime.report.domain.enums.ReportType.class);
 
     public final NumberPath<Long> targetId = createNumber("targetId", Long.class);
 

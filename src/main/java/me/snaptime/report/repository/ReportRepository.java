@@ -1,8 +1,8 @@
-package me.snaptime.report.domain.repository;
+package me.snaptime.report.repository;
 
-import me.snaptime.report.domain.entity.Report;
-import me.snaptime.report.domain.entity.ReportStatus;
-import me.snaptime.report.domain.entity.ReportType;
+import me.snaptime.report.domain.Report;
+import me.snaptime.report.domain.enums.ReportStatus;
+import me.snaptime.report.domain.enums.ReportType;
 import me.snaptime.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

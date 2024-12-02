@@ -81,6 +81,8 @@ public enum ExceptionCode {
     SELF_REPORT_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "자신의 스냅, 댓글에 신고를 할 수 없습니다."),
     DUPLICATE_REPORT(HttpStatus.BAD_REQUEST, "신고는 한번만 가능합니다."),
     REPORT_NOT_EXIST(HttpStatus.BAD_REQUEST, "신고가 존재하지 않습니다."),
+    INVALID_REPORT_STATUS(HttpStatus.BAD_REQUEST,"올바르지 않은 신고 상태입니다."),
+    INVALID_REPORT_TYPE(HttpStatus.BAD_REQUEST,"올바르지 않은 신고 타입입니다."),
     ;
 
     private final HttpStatus status;

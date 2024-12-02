@@ -1,15 +1,15 @@
-package me.snaptime.report.domain.controller;
+package me.snaptime.report.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.snaptime.common.CommonResponseDto;
-import me.snaptime.report.domain.dto.PagingReportInfo;
-import me.snaptime.report.domain.dto.ReportInfo;
-import me.snaptime.report.domain.entity.ReportReason;
-import me.snaptime.report.domain.entity.ReportStatus;
-import me.snaptime.report.domain.entity.ReportType;
+import me.snaptime.report.dto.PagingReportInfo;
+import me.snaptime.report.dto.ReportInfo;
+import me.snaptime.report.domain.enums.ReportReason;
+import me.snaptime.report.domain.enums.ReportStatus;
+import me.snaptime.report.domain.enums.ReportType;
 import me.snaptime.report.service.ReportService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,5 +73,21 @@ public class ReportController {
                 reportInfo
         ));
     }
+    @Operation(summary = "신고 처리", description = "신고의 상태에 따라서 신고를 처리합니다.")
+    @GetMapping("/admin/{targetId}")
+    public ResponseEntity<CommonResponseDto<String>> processReportByStatus(
+            @PathVariable Long targetId,
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam int penaltyPoint
+
+    ) {
+        String email = userDetails.getUsername();
+        String result = reportService.processReportByStatus(email,targetId,penaltyPoint);
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponseDto<>(
+                "신고 처리를 성공적으로 완료하였습니다.",
+                result
+        ));
+    }
+
 
 }

@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,12 +48,17 @@ public class User extends BaseTimeEntity implements UserDetails{
     @JoinColumn(name = "profile_photo_id")
     private ProfilePhoto profilePhoto;
 
+    @Column(name = "user_penalty", nullable = false)
+    private int penalty;
+
+    @Column(name = "ban_end_time")
+    private LocalDateTime banEndTime;
+
     //연관관계가 아닌 값 타입(value type)을 사용할 때 사용된다.
     //엔티티 내에 List,Set,Map과 같은 컬렉션이 있는 경우 해당 컬렉션의 요소가,
     //별도의 테이블에 저장 될 필요가 있을 때 사용한다.
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
-
 
     @Builder
     protected User(String name,String nickName, String email, String password,  List<String> roles, ProfilePhoto profilePhoto){
@@ -66,23 +72,30 @@ public class User extends BaseTimeEntity implements UserDetails{
 
     public void updateUserName(String name) { this.name = name;}
     public void updateNickName(String nickName){this.nickName = nickName;}
-    public void updateUserEmail(String email) { this.email = email;}
     public void updateUserPassword(String password){this.password = password;}
+    public void updateAdminAuth(){this.roles = List.of("ROLE_ADMIN");}
+    public void updateBenUserAuth(){this.roles=List.of("ROLE_BEN");}
+    public void addPenalty(int penaltyPoint){this.penalty = this.penalty + penaltyPoint;}
+    public void clearPenalty(){this.penalty = 0;}
 
-    public void updateAuth(){this.roles.clear(); this.roles.add("ROLE_ADMIN");}
+    public void setBanEndTime(LocalDateTime endTime) {
+        this.banEndTime = endTime;
+    }
 
+    public boolean isBanPeriodOver() {
+        return this.banEndTime != null && LocalDateTime.now().isAfter(this.banEndTime);
+    }
 
-    //UserDetails 인터페이스를 구현한 클래스에서 사용자의 권한을 반환하는 메서드
-    //Spring Security에서 사용자의 권한은 GrantedAuthority 객체의 컬렉션으로 표현
-    //GrantedAuthority는 사용자가 가지고 있는 권한을 나타내는 인터페이스이며, 대표적으로 SimpleGrantedAuthority 클래스가 이를 구현
-    //해당 메서드는 roles 리스트에 저장된 각 권한을 SimpleGrantedAuthority로 매핑하고, 그 결과를 컬렉션으로 반환
+    public void restoreRole() {
+        this.roles.clear(); // 기존 역할 제거
+        this.roles = List.of("ROLE_USER");
+        this.banEndTime = null;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
-
-    // 사용자의 loginId를 반환하는 메서드,
-    //일반적으로 외부에 노출되어도 되는 정보이기 때문에 JsonProperty.Access.WRITE_ONLY 가 필요하지 않다.
     @Override
     public String getUsername() {
         return this.email;

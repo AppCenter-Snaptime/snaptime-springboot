@@ -1,4 +1,4 @@
-package me.snaptime.report.domain.entity;
+package me.snaptime.report.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.snaptime.common.BaseTimeEntity;
+import me.snaptime.report.domain.enums.ReportReason;
+import me.snaptime.report.domain.enums.ReportStatus;
+import me.snaptime.report.domain.enums.ReportType;
 import me.snaptime.user.domain.User;
 
 @Entity

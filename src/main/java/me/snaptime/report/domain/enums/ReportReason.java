@@ -1,4 +1,4 @@
-package me.snaptime.report.domain.entity;
+package me.snaptime.report.domain.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

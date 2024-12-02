@@ -1,4 +1,4 @@
-package me.snaptime.report.domain.dto;
+package me.snaptime.report.dto;
 
 import lombok.Builder;
 
