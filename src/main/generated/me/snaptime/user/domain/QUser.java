@@ -24,6 +24,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final me.snaptime.common.QBaseTimeEntity _super = new me.snaptime.common.QBaseTimeEntity(this);
 
+    public final DateTimePath<java.time.LocalDateTime> banEndTime = createDateTime("banEndTime", java.time.LocalDateTime.class);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
 
@@ -37,6 +39,8 @@ public class QUser extends EntityPathBase<User> {
     public final StringPath nickName = createString("nickName");
 
     public final StringPath password = createString("password");
+
+    public final NumberPath<Integer> penalty = createNumber("penalty", Integer.class);
 
     public final me.snaptime.profilePhoto.domain.QProfilePhoto profilePhoto;
 

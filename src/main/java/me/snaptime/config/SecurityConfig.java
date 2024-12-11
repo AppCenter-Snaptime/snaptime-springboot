@@ -41,7 +41,12 @@ public class SecurityConfig {
                                 .requestMatchers("/emails/send", "/emails/verify").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/users/profile", "/profile-photos/**","/snap/**","/friends/**").permitAll()
                                 .requestMatchers("**exception**").permitAll()
-                                .anyRequest().hasRole("USER")
+                                .requestMatchers(HttpMethod.POST).hasAnyRole("USER", "ADMIN")
+                                .requestMatchers(HttpMethod.PUT).hasAnyRole("USER", "ADMIN")
+                                .requestMatchers(HttpMethod.PATCH).hasAnyRole("USER", "ADMIN")
+                                .requestMatchers(HttpMethod.DELETE).hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/**").hasAnyRole("USER", "ADMIN", "BEN")
+
                 )
                 .addFilterBefore(new JwtExceptionHandlerFilter(),
                         UsernamePasswordAuthenticationFilter.class)

@@ -41,6 +41,8 @@ public enum ExceptionCode {
     PASSWORD_DUPLICATE(HttpStatus.BAD_REQUEST,"같은 비밀번호로 수정 할 수 없습니다."),
     LOGIN_ID_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 존재하는 loginId 입니다."),
     EMAIL_DUPLICATE(HttpStatus.BAD_REQUEST,"이미 존재하는 이메일입니다."),
+    NOT_ADMIN(HttpStatus.BAD_REQUEST,"관리자 게정이 아닙니다."),
+
     // Snap Exception
     SNAP_NOT_EXIST(HttpStatus.BAD_REQUEST, "스냅이 존재하지 않습니다."),
     SNAP_IS_PRIVATE(HttpStatus.BAD_REQUEST, "사용자가 이 스냅을 비공개로 설정했습니다."),
@@ -73,7 +75,15 @@ public enum ExceptionCode {
     TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "토큰이 비었거나 null입니다"),
 
     // Jsoup Action
-    URL_HAVING_PROBLEM(HttpStatus.BAD_REQUEST, "문제가 있는 URL입니다.");
+    URL_HAVING_PROBLEM(HttpStatus.BAD_REQUEST, "문제가 있는 URL입니다."),
+
+    // Report Exception
+    SELF_REPORT_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "자신의 스냅, 댓글에 신고를 할 수 없습니다."),
+    DUPLICATE_REPORT(HttpStatus.BAD_REQUEST, "신고는 한번만 가능합니다."),
+    REPORT_NOT_EXIST(HttpStatus.BAD_REQUEST, "신고가 존재하지 않습니다."),
+    INVALID_REPORT_STATUS(HttpStatus.BAD_REQUEST,"올바르지 않은 신고 상태입니다."),
+    INVALID_REPORT_TYPE(HttpStatus.BAD_REQUEST,"올바르지 않은 신고 타입입니다."),
+    ;
 
     private final HttpStatus status;
     private final String message;
